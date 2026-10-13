@@ -1,0 +1,1091 @@
+# Copyright (C) 2026 Tu Soporte Online
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: TSO Login Organizer 1.0.0\n"
+"Report-Msgid-Bugs-To: https://www.tusoporteonline.es/blog\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "<strong>Error:</strong> Captcha verification failed."
+msgstr ""
+
+msgid "<strong>Error:</strong> Enter your two-factor authentication code."
+msgstr ""
+
+msgid "<strong>Error:</strong> Invalid two-factor code."
+msgstr ""
+
+msgid "<strong>Error:</strong> Password must be at least %d characters."
+msgstr ""
+
+msgid "<strong>Error:</strong> Passwords do not match."
+msgstr ""
+
+msgid "<strong>Error:</strong> Please complete the captcha."
+msgstr ""
+
+msgid "<strong>Error:</strong> Please confirm your email before logging in."
+msgstr ""
+
+msgid "<strong>Error:</strong> Please enter a password."
+msgstr ""
+
+msgid "<strong>Error:</strong> Please enter a username, not an email address."
+msgstr ""
+
+msgid "<strong>Error:</strong> Please enter a valid email address."
+msgstr ""
+
+msgid "<strong>Error:</strong> Too many failed login attempts. Please try again later."
+msgstr ""
+
+msgid "<strong>Error:</strong> User registration is currently not allowed."
+msgstr ""
+
+msgid "<strong>Error:</strong> Your account is awaiting admin approval."
+msgstr ""
+
+msgid "A new secret is created when you save with this box checked."
+msgstr ""
+
+msgid "A new tab with the module name appears at the top of this page. Open it to configure options (keys, URLs, checkboxes, etc.)."
+msgstr ""
+
+msgid "AJAX"
+msgstr ""
+
+msgid "API key"
+msgstr ""
+
+msgid "Action"
+msgstr ""
+
+msgid "Add the Facebook Login product to the app."
+msgstr ""
+
+msgid "Add the X callback URL below as a Callback URI / Redirect URL."
+msgstr ""
+
+msgid "Add this secret to your authenticator app:"
+msgstr ""
+
+msgid "Add to Menu"
+msgstr ""
+
+msgid "Add to favorites"
+msgstr ""
+
+msgid "Admin approval"
+msgstr ""
+
+msgid "After enabling: a /favorites/ page is available. Open the Favorites tab to show controls on single posts."
+msgstr ""
+
+msgid "After enabling: a /profile/ page is available. Open the Profiles tab to block wp-admin for users without edit_posts."
+msgstr ""
+
+msgid "After enabling: open the Mailchimp tab for API key, list ID and the registration consent checkbox."
+msgstr ""
+
+msgid "After enabling: open the Moderation tab to turn email confirmation and/or admin approval on or off."
+msgstr ""
+
+msgid "After enabling: open the Notifications tab to edit email subjects, bodies and HTML mode."
+msgstr ""
+
+msgid "After enabling: open the Redirection tab to set default and per-role URLs for login, logout and registration."
+msgstr ""
+
+msgid "After enabling: open the Restrictions tab for private site and shortcode examples."
+msgstr ""
+
+msgid "After enabling: open the Security tab for lockout attempts, duration, min password length and hide wp-login.php."
+msgstr ""
+
+msgid "After enabling: open the Social Login tab and fill Google / Facebook / X client IDs and secrets."
+msgstr ""
+
+msgid "After enabling: open the Two-Factor tab to choose which roles must use 2FA. Users enable a secret on the frontend profile or in wp-admin."
+msgstr ""
+
+msgid "After enabling: open the reCAPTCHA tab and paste your Google site key and secret key."
+msgstr ""
+
+msgid "After import: trash the old Theme My Login WordPress pages, keep pretty permalinks, then open each virtual URL from Core → URL slugs to confirm forms load."
+msgstr ""
+
+msgid "After login"
+msgstr ""
+
+msgid "After logout"
+msgstr ""
+
+msgid "After registration"
+msgstr ""
+
+msgid "Allow users to set a password at registration"
+msgstr ""
+
+msgid "Anyone can register"
+msgstr ""
+
+msgid "Ask for newsletter consent on the registration form"
+msgstr ""
+
+msgid "Audience / list ID where new subscribers are added."
+msgstr ""
+
+msgid "Authentication code (if enabled)"
+msgstr ""
+
+msgid "Authenticator"
+msgstr ""
+
+msgid "Auto login"
+msgstr ""
+
+msgid "Avatar file is too large."
+msgstr ""
+
+msgid "Avatar updated."
+msgstr ""
+
+msgid "Avatars"
+msgstr ""
+
+msgid "Block wp-admin"
+msgstr ""
+
+msgid "Block wp-admin prevents those users from reaching wp-admin screens (including other plugins’ profile tabs). Prefer frontend setup for 2FA when this is on."
+msgstr ""
+
+msgid "Brute force"
+msgstr ""
+
+msgid "Buttons are injected into post content; page builders that replace the_content may hide them — use the favorites page URL as a fallback."
+msgstr ""
+
+msgid "Caching plugins may serve public HTML to guests; exclude restricted pages or disable cache for logged-out users when testing."
+msgstr ""
+
+msgid "Check your email"
+msgstr ""
+
+msgid "Check your email for the confirmation link."
+msgstr ""
+
+msgid "Choose an image (JPG, PNG, GIF or WebP) under Profile picture and save. The file is stored in uploads/tso-login-organizer/ and replaces Gravatar for that user site-wide."
+msgstr ""
+
+msgid "Collision risk:"
+msgstr ""
+
+msgid "Compatibility"
+msgstr ""
+
+msgid "Configuration:"
+msgstr ""
+
+msgid "Configure the OAuth consent screen (External or Internal) and add your test users if needed."
+msgstr ""
+
+msgid "Confirm Password"
+msgstr ""
+
+msgid "Confirm privacy request"
+msgstr ""
+
+msgid "Confirm your email"
+msgstr ""
+
+msgid "Conflicts with other WordPress 2FA / TOTP plugins on the same accounts."
+msgstr ""
+
+msgid "Conflicts with other registration-approval plugins that also block wp_authenticate_user."
+msgstr ""
+
+msgid "Continue with Facebook"
+msgstr ""
+
+msgid "Continue with Google"
+msgstr ""
+
+msgid "Continue with X"
+msgstr ""
+
+msgid "Copy Client ID and Client Secret into the fields below, then Save."
+msgstr ""
+
+msgid "Copy Client ID and Client secret into the fields below, then Save."
+msgstr ""
+
+msgid "Core"
+msgstr ""
+
+msgid "Core settings saved."
+msgstr ""
+
+msgid "Create a Project and App with OAuth 2.0 enabled."
+msgstr ""
+
+msgid "Create a v2 \"I'm not a robot\" key, then paste both values here."
+msgstr ""
+
+msgid "Create an API key at https://admin.mailchimp.com/account/api/ and copy your Audience (list) ID from Audience → Settings."
+msgstr ""
+
+msgid "Create an app (type Consumer / Authenticate and request data from users with Facebook Login)."
+msgstr ""
+
+msgid "Create credentials → OAuth client ID → Application type: Web application."
+msgstr ""
+
+msgid "Customize welcome and password-reset emails (subject, body, optional HTML)."
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Default (all roles)"
+msgstr ""
+
+msgid "Default form:"
+msgstr ""
+
+msgid "Delivery"
+msgstr ""
+
+msgid "Display Name"
+msgstr ""
+
+msgid "Do not combine with Swiss Knife custom login URL or other plugins that rename wp-login.php."
+msgstr ""
+
+msgid "Do not create WordPress pages for these slugs — they are created virtually. You can delete Theme My Login pages with the same names. Profile and Favorites rewrite only when those modules are enabled."
+msgstr ""
+
+msgid "Do not enable together with CleanTalk, Kadence captcha, or another reCAPTCHA on the same forms (double challenges / failed verifies)."
+msgstr ""
+
+msgid "Each user enables Authenticator on the frontend profile page (Profiles module) or under Users → Profile in wp-admin, then adds the secret to an app (Google Authenticator, etc.)."
+msgstr ""
+
+msgid "Edit a slug below (letters, numbers, hyphens only), then click Save core settings (rewrites are flushed automatically)."
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Email Address"
+msgstr ""
+
+msgid "Email confirmation"
+msgstr ""
+
+msgid "Email only"
+msgstr ""
+
+msgid "Email only creates a username from the email address. Username + email asks for both fields."
+msgstr ""
+
+msgid "Enable"
+msgstr ""
+
+msgid "Enable AJAX form submissions"
+msgstr ""
+
+msgid "Enable Avatars as well if you want a profile-picture upload on that same page."
+msgstr ""
+
+msgid "Enable Profiles and Avatars, then Save modules (Avatars alone has nowhere to upload)."
+msgstr ""
+
+msgid "Enable TOTP (new secret generated on save if empty)"
+msgstr ""
+
+msgid "Enable lockouts"
+msgstr ""
+
+msgid "Enable only if Swiss Knife Login Protect / Kadence Security are not already doing the same job."
+msgstr ""
+
+msgid "Enable this module (keep off if another 2FA plugin is active), Save modules, open the Two-Factor tab."
+msgstr ""
+
+msgid "Enable this module and Save modules, then open the Moderation tab."
+msgstr ""
+
+msgid "Enable this module and Save modules, then open the Restrictions tab."
+msgstr ""
+
+msgid "Enable this module and Save modules. A virtual page is created (default /favorites/ — change under Core → URL slugs)."
+msgstr ""
+
+msgid "Enable this module and Save modules. A virtual profile page is created (default slug /profile/ — change under Core → URL slugs)."
+msgstr ""
+
+msgid "Enable this module and click Save modules."
+msgstr ""
+
+msgid "Enable this module, open the Notifications tab, edit subjects/bodies, Save module settings."
+msgstr ""
+
+msgid "Enable this module, paste API key and List ID, optionally keep “Ask for newsletter consent” on, Save module settings."
+msgstr ""
+
+msgid "Enable this module, paste Site key and Secret key below, Save module settings."
+msgstr ""
+
+msgid "Enable two-factor authentication (TOTP)"
+msgstr ""
+
+msgid "Facebook"
+msgstr ""
+
+msgid "Facebook app ID"
+msgstr ""
+
+msgid "Facebook app secret"
+msgstr ""
+
+msgid "Facebook apps"
+msgstr ""
+
+msgid "Failed tries allowed before a lockout starts."
+msgstr ""
+
+msgid "Favorites"
+msgstr ""
+
+msgid "Favorites module is not available."
+msgstr ""
+
+msgid "Follow the provider steps on this tab (each has a direct console link). Copy the redirect URI shown for that provider into the console."
+msgstr ""
+
+msgid "Frontend login, registration and account pages with optional premium modules. Drop-in replacement for Theme My Login."
+msgstr ""
+
+msgid "Frontend login, registration and account pages. Optional modules add redirection, moderation, security and more."
+msgstr ""
+
+msgid "Frontend profile page so users can edit their account without using wp-admin."
+msgstr ""
+
+msgid "Get New Password"
+msgstr ""
+
+msgid "Google"
+msgstr ""
+
+msgid "Google Cloud credentials"
+msgstr ""
+
+msgid "Google client ID"
+msgstr ""
+
+msgid "Google client secret"
+msgstr ""
+
+msgid "Google reCAPTCHA admin"
+msgstr ""
+
+msgid "Guests are redirected to the login page. Login, register and password URLs stay public."
+msgstr ""
+
+msgid "HTML emails"
+msgstr ""
+
+msgid "HTML emails: tick the option only if your body contains HTML; otherwise leave plain text."
+msgstr ""
+
+msgid "Hide wp-login.php"
+msgstr ""
+
+msgid "Hide wp-login.php conflicts with any plugin that renames or protects wp-login.php."
+msgstr ""
+
+msgid "Hide wp-login.php returns 404 on the default login file — use only with this plugin’s frontend login URL and no other custom-login plugins."
+msgstr ""
+
+msgid "How long the lockout lasts."
+msgstr ""
+
+msgid "How to find Audience ID"
+msgstr ""
+
+msgid "How to use"
+msgstr ""
+
+msgid "How to use modules"
+msgstr ""
+
+msgid "If Profiles → Block wp-admin is on, users should enable 2FA on the frontend profile (not wp-admin)."
+msgstr ""
+
+msgid "If off, WordPress emails a generated password. If on, the register form includes password fields."
+msgstr ""
+
+msgid "Import Theme My Login free settings (AJAX, login type, registration, passwords, auto-login, slugs). Shortcode [theme-my-login] is already aliased. Deactivate Theme My Login after verifying URLs."
+msgstr ""
+
+msgid "Import Theme My Login settings"
+msgstr ""
+
+msgid "In Facebook Login → Settings, paste the Facebook callback URL below into Valid OAuth Redirect URIs."
+msgstr ""
+
+msgid "In Settings → Basic, copy App ID and App Secret into the fields below, then Save."
+msgstr ""
+
+msgid "In posts/pages, wrap content with [tsolo-logged-in]…[/tsolo-logged-in] or [tsolo-logged-out]…[/tsolo-logged-out]."
+msgstr ""
+
+msgid "Invalid logout request."
+msgstr ""
+
+msgid "Invalid social login request."
+msgstr ""
+
+msgid "JPG, PNG, GIF or WebP. Leave empty to keep the current picture."
+msgstr ""
+
+msgid "Leave a URL empty to keep WordPress defaults. Role-specific URLs override the default for that role."
+msgstr ""
+
+msgid "Leave a field empty to keep the WordPress default for that case."
+msgstr ""
+
+msgid "Leave a provider empty to hide its button. After saving, test from the login page."
+msgstr ""
+
+msgid "Let users upload a local profile picture instead of only using Gravatar."
+msgstr ""
+
+msgid "List ID"
+msgstr ""
+
+msgid "Lock accounts after failed logins, enforce password length, and optionally hide wp-login.php."
+msgstr ""
+
+msgid "Lockout minutes"
+msgstr ""
+
+msgid "Log In"
+msgstr ""
+
+msgid "Log Out"
+msgstr ""
+
+msgid "Log in"
+msgstr ""
+
+msgid "Log users in after registration"
+msgstr ""
+
+msgid "Logged-in users can save favorite posts and view them on a dedicated page."
+msgstr ""
+
+msgid "Logged-in users open %s to edit display name, email and password."
+msgstr ""
+
+msgid "Logged-in users see a button at the end of each single post. The list page uses the Favorites URL slug from Core settings."
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Login type"
+msgstr ""
+
+msgid "Login, register or account links."
+msgstr ""
+
+msgid "Logout"
+msgstr ""
+
+msgid "Lost Password"
+msgstr ""
+
+msgid "Lost password"
+msgstr ""
+
+msgid "Lost your password?"
+msgstr ""
+
+msgid "Mailchimp"
+msgstr ""
+
+msgid "Mailchimp API key from your account. Data is sent only when this module is enabled and a list is set."
+msgstr ""
+
+msgid "Mailchimp API keys"
+msgstr ""
+
+msgid "Make the site private (login required) and restrict content with shortcodes."
+msgstr ""
+
+msgid "Max attempts"
+msgstr ""
+
+msgid "Max size (KB)"
+msgstr ""
+
+msgid "Maximum upload size for profile pictures stored under uploads/tso-login-organizer/."
+msgstr ""
+
+msgid "May conflict with TSO Swiss Knife Login Protect and Kadence Security (lockouts / hide login)."
+msgstr ""
+
+msgid "May overlap with Swiss Knife Login Protect, Kadence Security or CleanTalk. Keep off if those already cover the same job."
+msgstr ""
+
+msgid "Membership"
+msgstr ""
+
+msgid "Migration"
+msgstr ""
+
+msgid "Min password length"
+msgstr ""
+
+msgid "Minimum characters when users choose a password (0 = no extra rule)."
+msgstr ""
+
+msgid "Moderation"
+msgstr ""
+
+msgid "Module settings saved."
+msgstr ""
+
+msgid "Modules"
+msgstr ""
+
+msgid "Modules updated."
+msgstr ""
+
+msgid "Modules updated. You enabled a module that may conflict with Swiss Knife, Kadence Security or CleanTalk — keep overlapping features off elsewhere."
+msgstr ""
+
+msgid "New Password"
+msgstr ""
+
+msgid "New accounts stay pending until an administrator approves them"
+msgstr ""
+
+msgid "New registrations receive a confirmation email and/or stay pending until an administrator approves them (Users screen)."
+msgstr ""
+
+msgid "New user body"
+msgstr ""
+
+msgid "New user subject"
+msgstr ""
+
+msgid "No TML options detected (you can still use this plugin with its own defaults)."
+msgstr ""
+
+msgid "No extra settings for this module."
+msgstr ""
+
+msgid "No favorites yet."
+msgstr ""
+
+msgid "No matching WordPress pages found for your current slugs. Everything is served virtually."
+msgstr ""
+
+msgid "Not found."
+msgstr ""
+
+msgid "Notifications"
+msgstr ""
+
+msgid "On login they enter the 6-digit code in the Authentication code field."
+msgstr ""
+
+msgid "On the Favorites tab, keep “Show on posts” checked to display Add/Remove on single blog posts for logged-in users."
+msgstr ""
+
+msgid "On the registration form, users who tick the box are added to that audience after signup. No data is sent until keys are saved and the module is on."
+msgstr ""
+
+msgid "Open \"%s\" settings tab"
+msgstr ""
+
+msgid "Open Facebook Developers → Apps"
+msgstr ""
+
+msgid "Open Google Cloud Credentials and create (or select) a project."
+msgstr ""
+
+msgid "Open Google Cloud → Credentials"
+msgstr ""
+
+msgid "Open Google reCAPTCHA admin"
+msgstr ""
+
+msgid "Open Mailchimp API keys"
+msgstr ""
+
+msgid "Open Modules"
+msgstr ""
+
+msgid "Open Users screen"
+msgstr ""
+
+msgid "Open X Developer Portal"
+msgstr ""
+
+msgid "Open callback URL"
+msgstr ""
+
+msgid "Open favorites page"
+msgstr ""
+
+msgid "Open https://www.google.com/recaptcha/admin and create a reCAPTCHA v2 \"I'm not a robot\" key for your domain."
+msgstr ""
+
+msgid "Open in new tab"
+msgstr ""
+
+msgid "Open login page"
+msgstr ""
+
+msgid "Open profile page"
+msgstr ""
+
+msgid "Open register page"
+msgstr ""
+
+msgid "Open the Redirection tab. Set a default URL and, if needed, a different URL per role for After login, After logout and After registration."
+msgstr ""
+
+msgid "Open the Security tab: enable lockouts, set max attempts and lockout minutes, optional min password length."
+msgstr ""
+
+msgid "Open the new URL in the browser (e.g. /accedir/ if you changed login to accedir). Update menus/links that pointed to the old path."
+msgstr ""
+
+msgid "Optional: Block wp-admin redirects subscribers (no edit_posts) away from /wp-admin/ to the profile page and hides the admin bar."
+msgstr ""
+
+msgid "Optional: set Max size (KB) below and Save module settings."
+msgstr ""
+
+msgid "Optional: tick Private site so guests must log in before seeing any page (login/register URLs stay reachable)."
+msgstr ""
+
+msgid "Optionally subscribe new registrants to a Mailchimp audience (API key + list ID)."
+msgstr ""
+
+msgid "Other avatar plugins that filter get_avatar / get_avatar_url may override or conflict."
+msgstr ""
+
+msgid "Other login/redirect plugins (membership, LMS, WooCommerce “redirect after login”) may override these URLs depending on filter priority."
+msgstr ""
+
+msgid "Other security/spam plugins were detected. Enable colliding modules only if you know they will not conflict."
+msgstr ""
+
+msgid "Other social-login plugins on the same forms can show duplicate buttons or fight over callbacks."
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Passwords"
+msgstr ""
+
+msgid "Paste Client ID / App ID and Secret below for each provider you want. Leave a provider empty to hide its button."
+msgstr ""
+
+msgid "Please log in to view this content."
+msgstr ""
+
+msgid "Plugin sections"
+msgstr ""
+
+msgid "Possible collisions detected: %s. Keep Security, Captcha and 2FA off unless you disable overlapping features elsewhere."
+msgstr ""
+
+msgid "Private key used server-side to verify tokens. Leave empty and keep the module off if CleanTalk (or similar) already protects forms."
+msgstr ""
+
+msgid "Private site"
+msgstr ""
+
+msgid "Private site redirects guests site-wide — do not combine with another “force login” / members-only plugin."
+msgstr ""
+
+msgid "Profile"
+msgstr ""
+
+msgid "Profile picture"
+msgstr ""
+
+msgid "Profile updated."
+msgstr ""
+
+msgid "Profiles"
+msgstr ""
+
+msgid "Protect login and registration forms with Google reCAPTCHA (needs site and secret keys)."
+msgstr ""
+
+msgid "Public key from the Google reCAPTCHA admin console."
+msgstr ""
+
+msgid "Redirect / callback URI (copy into the provider console):"
+msgstr ""
+
+msgid "Redirect users without edit_posts to the profile page"
+msgstr ""
+
+msgid "Redirection"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "Registration complete. You may now log in."
+msgstr ""
+
+msgid "Registration confirmation will be emailed to you."
+msgstr ""
+
+msgid "Registration type"
+msgstr ""
+
+msgid "Remember Me"
+msgstr ""
+
+msgid "Remove from favorites"
+msgstr ""
+
+msgid "Require email confirmation and/or admin approval before new accounts can log in."
+msgstr ""
+
+msgid "Require login for all pages"
+msgstr ""
+
+msgid "Require users to confirm their email before they can log in"
+msgstr ""
+
+msgid "Required roles"
+msgstr ""
+
+msgid "Requires Profiles. After enabling both: open /profile/, upload under Profile picture. Optional max size on the Avatars tab."
+msgstr ""
+
+msgid "Requires the Profiles module."
+msgstr ""
+
+msgid "Reset Password"
+msgstr ""
+
+msgid "Reset body"
+msgstr ""
+
+msgid "Reset password"
+msgstr ""
+
+msgid "Restrictions"
+msgstr ""
+
+msgid "Return 404 on wp-login.php"
+msgstr ""
+
+msgid "SMTP / email-template plugins may still wrap or override outgoing mail after this filter runs."
+msgstr ""
+
+msgid "Save Password"
+msgstr ""
+
+msgid "Save Profile"
+msgstr ""
+
+msgid "Save core settings"
+msgstr ""
+
+msgid "Save module settings"
+msgstr ""
+
+msgid "Save module settings, then open the login page and try the social button."
+msgstr ""
+
+msgid "Save modules"
+msgstr ""
+
+msgid "Secret key"
+msgstr ""
+
+msgid "Secret:"
+msgstr ""
+
+msgid "Security"
+msgstr ""
+
+msgid "Send notification emails as HTML"
+msgstr ""
+
+msgid "Send users to different URLs after login, logout or registration, optionally per role."
+msgstr ""
+
+msgid "Sends subscriber email (and name if available) to Mailchimp’s API (see readme External services)."
+msgstr ""
+
+msgid "Sends users to Google / Facebook / X and exchanges tokens with those APIs (see readme External services). Off until credentials are saved."
+msgstr ""
+
+msgid "Sends visitor IP and token to Google for verification when forms are submitted (see readme External services)."
+msgstr ""
+
+msgid "Set App permissions to include users email if you want email on new accounts."
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Settings > Permalinks must not be \"Plain\" (use Post name or similar)."
+msgstr ""
+
+msgid "Shortcodes"
+msgstr ""
+
+msgid "Show add/remove favorite controls on single posts"
+msgstr ""
+
+msgid "Show checkbox"
+msgstr ""
+
+msgid "Show form links"
+msgstr ""
+
+msgid "Show on posts"
+msgstr ""
+
+msgid "Sign in with Google, Facebook or X using OAuth app credentials you provide."
+msgstr ""
+
+msgid "Site key"
+msgstr ""
+
+msgid "Skip the \"check your email\" step and sign the new user in immediately (not recommended with email confirmation / admin approval)."
+msgstr ""
+
+msgid "Slug"
+msgstr ""
+
+msgid "Social Login"
+msgstr ""
+
+msgid "Social login did not return an email address."
+msgstr ""
+
+msgid "Strength indicator"
+msgstr ""
+
+msgid "Subject line for the welcome / new-account email."
+msgstr ""
+
+msgid "Submit login and related forms without a full page reload. Disable if another plugin already handles form AJAX."
+msgstr ""
+
+msgid "Subscribe to our newsletter"
+msgstr ""
+
+msgid "Subscribers and similar roles cannot open /wp-admin/; they use the frontend profile instead."
+msgstr ""
+
+msgid "TML options detected on this site."
+msgstr ""
+
+msgid "TOTP authenticator codes for selected roles after password login."
+msgstr ""
+
+msgid "TSO Login Organizer"
+msgstr ""
+
+msgid "TSO Login Organizer 2FA"
+msgstr ""
+
+msgid "TSO Login Organizer creates login, logout, register, lost password, reset password, dashboard, confirm-action, and (when modules are on) profile and favorites as virtual URLs via rewrite rules. You do not create WordPress pages for them, and you do not need to keep Theme My Login pages."
+msgstr ""
+
+msgid "TSOLO Action"
+msgstr ""
+
+msgid "Temporarily block logins from an IP after too many failed attempts."
+msgstr ""
+
+msgid "The passwords do not match."
+msgstr ""
+
+msgid "The widget appears on this plugin’s login, register and lost-password forms. Leave keys empty to disable checks."
+msgstr ""
+
+msgid "Theme My Login settings imported."
+msgstr ""
+
+msgid "These WordPress pages use the same slug as an action URL (often left over from Theme My Login). You can move them to Trash — the plugin will keep serving the virtual URL."
+msgstr ""
+
+msgid "These values are the path after your site URL for each virtual form. With the default \"login\" slug, the form is at:"
+msgstr ""
+
+msgid "This module needs these modules enabled first: %s."
+msgstr ""
+
+msgid "Tick Enable on the features you want, then click Save modules."
+msgstr ""
+
+msgid "Tick roles that must enter a TOTP code after the password. Users enable the authenticator on the frontend profile (Profiles) or in wp-admin → Profile."
+msgstr ""
+
+msgid "Tick the roles that must use 2FA, Save module settings."
+msgstr ""
+
+msgid "Title:"
+msgstr ""
+
+msgid "To allow only some roles: [tsolo-role role=\"subscriber,customer\"]…[/tsolo-role]."
+msgstr ""
+
+msgid "Turn off Core → Auto login when using moderation, or new users may be signed in before they are approved."
+msgstr ""
+
+msgid "Turn on Email confirmation and/or Admin approval, then Save module settings."
+msgstr ""
+
+msgid "Two-Factor Authentication"
+msgstr ""
+
+msgid "URL preview"
+msgstr ""
+
+msgid "URL slugs"
+msgstr ""
+
+msgid "Unable to send reset email."
+msgstr ""
+
+msgid "Under Authorized redirect URIs, paste the Google callback URL shown below."
+msgstr ""
+
+msgid "Unexpected server response. Please try again."
+msgstr ""
+
+msgid "Until a module is enabled, it does nothing and has no settings tab. Disable it again anytime to turn that feature off."
+msgstr ""
+
+msgid "Use placeholders listed under each field (e.g. {user_login}, {reset_url}). Empty fields keep the WordPress default text."
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Username + email"
+msgstr ""
+
+msgid "Username only"
+msgstr ""
+
+msgid "Username or Email Address"
+msgstr ""
+
+msgid "Username or email"
+msgstr ""
+
+msgid "Users manage the list at %s."
+msgstr ""
+
+msgid "Virtual (active)"
+msgstr ""
+
+msgid "Virtual (enable module)"
+msgstr ""
+
+msgid "Virtual account dashboard for logged-in users."
+msgstr ""
+
+msgid "Virtual confirm URL for personal-data export/erase requests (WordPress privacy tools)."
+msgstr ""
+
+msgid "Virtual favorites URL (requires Favorites module)."
+msgstr ""
+
+msgid "Virtual forgot-password URL."
+msgstr ""
+
+msgid "Virtual frontend profile URL (requires Profiles module)."
+msgstr ""
+
+msgid "Virtual logout URL (menus and links). No WordPress page needed."
+msgstr ""
+
+msgid "Virtual page opened from the reset link in the email."
+msgstr ""
+
+msgid "Virtual pages"
+msgstr ""
+
+msgid "Virtual registration URL (only if \"Anyone can register\" is on)."
+msgstr ""
+
+msgid "Virtual sign-in URL (example: yoursite.com/login/). No WordPress page needed."
+msgstr ""
+
+msgid "What visitors may type in the login field: either username, email, or both."
+msgstr ""
+
+msgid "While logged in, open the profile page: %s"
+msgstr ""
+
+msgid "WordPress setting: show the registration form and allow new accounts. Same as Settings > General."
+msgstr ""
+
+msgid "X (Twitter)"
+msgstr ""
+
+msgid "X (Twitter) client ID"
+msgstr ""
+
+msgid "X (Twitter) client secret"
+msgstr ""
+
+msgid "X developer portal"
+msgstr ""
+
+msgid "You are now logged out."
+msgstr ""
+
+msgid "You do not have permission to view this content."
+msgstr ""
+
+msgid "Your Data Request"
+msgstr ""
+
+msgid "Your password has been reset."
+msgstr ""
+
+msgid "Your password reset link appears to be invalid."
+msgstr ""
+
+msgid "Your request has been confirmed."
+msgstr ""
+
+msgid "reCAPTCHA"
+msgstr ""
+
+msgid "visible only to guests"
+msgstr ""
+
+msgid "visible only to logged-in users"
+msgstr ""
+
+msgid "visible only to the listed roles"
+msgstr ""
+
