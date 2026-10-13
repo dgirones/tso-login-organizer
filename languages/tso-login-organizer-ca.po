@@ -1354,3 +1354,9 @@ msgstr "shortcode"
 
 msgid "slug"
 msgstr "slug"
+
+msgid "Login Protect is hiding wp-login.php or locking failed logins. Leave hide-login and lockouts off in this plugin while that is on."
+msgstr "Login Protect està amagant wp-login.php o bloquejant els inicis de sessió fallits. Deixeu apagats amagar l’entrada i els bloquejos d’aquest plugin mentre això estigui activat."
+
+msgid "Login Protect asks for an email code after the password. Do not also require an authenticator code on the same accounts."
+msgstr "Login Protect demana un codi per correu després de la contrasenya. No demaneu també un codi d’autenticador als mateixos comptes."

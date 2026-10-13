@@ -1353,3 +1353,9 @@ msgstr ""
 
 msgid "slug"
 msgstr ""
+
+msgid "Login Protect is hiding wp-login.php or locking failed logins. Leave hide-login and lockouts off in this plugin while that is on."
+msgstr ""
+
+msgid "Login Protect asks for an email code after the password. Do not also require an authenticator code on the same accounts."
+msgstr ""

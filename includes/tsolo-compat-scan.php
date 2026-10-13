@@ -2,6 +2,10 @@
 /**
  * Detect installed plugins that may clash with a module.
  *
+ * A plugin is listed only when it actually performs the same job (known slug,
+ * or a real hook/API call). Mentioning another product in a cleanup map, a
+ * readme, or a detection list is not a clash.
+ *
  * @package TSO_Login_Organizer
  */
 
@@ -10,12 +14,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Plugins that catalog or maintain other plugins and must never be flagged.
+ *
+ * @return string[]
+ */
+function tsolo_compat_ignored_slugs() {
+	return array(
+		'tso-options-tables-cleaner',
+		'tso-image-master',
+		'tso-link-inspector',
+		'tso-stack-inspector',
+		'tso-admin-notices',
+		'tso-tabs-widget',
+		'tso-tabla-liga',
+	);
+}
+
+/**
  * Known incompatibility signatures, one list per module.
  *
- * Slugs are the plugin directory (or the main file basename without .php).
- * Needles are matched against the plugin name and description.
- * Hooks are searched in plugin PHP (not vendor) and only count when hook context
- * also appears, so a shared WordPress hook does not flag unrelated plugins.
+ * Slugs are the plugin directory. Patterns are matched against PHP that is not
+ * a map, changelog, or translation file, and only as real registrations or API URLs.
  *
  * @return array<string,array<string,mixed>>
  */
@@ -29,7 +48,6 @@ function tsolo_get_incompatibility_rules() {
 		'google-authenticator',
 		'wp-google-authenticator',
 		'two-factor-authentication',
-		'wordfence',
 	);
 	$moderation_slugs = array(
 		'new-user-approve',
@@ -43,8 +61,6 @@ function tsolo_get_incompatibility_rules() {
 		'ultimate-member',
 		'profile-builder',
 		'profile-builder-pro',
-		'buddypress',
-		'theme-my-login',
 	);
 
 	return array(
@@ -52,21 +68,12 @@ function tsolo_get_incompatibility_rules() {
 			'reason'       => __( 'Also blocks login until a registration is approved (wp_authenticate_user). Keep only one approval plugin active.', 'tso-login-organizer' ),
 			'slugs'        => $moderation_slugs,
 			'exclude'      => $two_factor_slugs,
-			'needles'      => array(
-				'new user approve',
-				'approve user',
-				'user approval',
-				'registration approval',
-				'moderate registration',
-				'moderate new',
-				'unconfirmed',
-			),
-			'hooks'        => array( 'wp_authenticate_user' ),
-			'hook_context' => array( 'approv', 'moderat', 'pending', 'unconfirmed' ),
+			'patterns'     => array( '/add_filter\s*\(\s*[\'"]wp_authenticate_user[\'"]/' ),
+			'pattern_also' => array( '/pending_admin|awaiting approval|approve_user|user_approval|moderate_registration|unconfirmed/i' ),
 		),
 		'restrictions'  => array(
-			'reason'  => __( 'Also forces login or restricts content. Guests may be redirected twice or locked out of pages.', 'tso-login-organizer' ),
-			'slugs'   => array(
+			'reason'   => __( 'Also forces login or restricts content. Guests may be redirected twice or locked out of pages.', 'tso-login-organizer' ),
+			'slugs'    => array(
 				'wp-force-login',
 				'force-login',
 				'members',
@@ -74,19 +81,12 @@ function tsolo_get_incompatibility_rules() {
 				'restrict-content-pro',
 				'paid-memberships-pro',
 				'restrict-user-access',
-				'members-only',
 			),
-			'needles' => array(
-				'force login',
-				'members only',
-				'restrict content',
-				'private site',
-			),
+			'patterns' => array( '/add_action\s*\(\s*[\'"]template_redirect[\'"][^;]{0,180}force.?login/is' ),
 		),
 		'security'      => array(
-			'reason'  => __( 'Also locks out failed logins or hides wp-login.php. Running both can block legitimate users or hide the login URL twice.', 'tso-login-organizer' ),
-			'slugs'   => array(
-				'tso-swiss-knife-advanced-maintenance-developer-toolkit',
+			'reason' => __( 'Also locks out failed logins or hides wp-login.php. Running both can block legitimate users or hide the login URL twice.', 'tso-login-organizer' ),
+			'slugs'  => array(
 				'kadence-security',
 				'wordfence',
 				'wordfence-login-security',
@@ -99,141 +99,85 @@ function tsolo_get_incompatibility_rules() {
 				'wp-cerber',
 				'security-malware-firewall',
 			),
-			'needles' => array(
-				'hide wp-login',
-				'limit login attempts',
-				'brute force',
-				'rename wp-login',
-			),
 		),
 		'captcha'       => array(
-			'reason'       => __( 'Also adds a captcha or anti-spam check on forms. Two checks on the same form often fail verification.', 'tso-login-organizer' ),
-			'slugs'        => array(
+			'reason'   => __( 'Also adds a captcha or anti-spam check on forms. Two checks on the same form often fail verification.', 'tso-login-organizer' ),
+			'slugs'    => array(
 				'cleantalk-spam-protect',
 				'google-captcha',
 				'advanced-google-recaptcha',
 				'recaptcha-woo',
 				'invisible-recaptcha',
-				'kadence-blocks',
-				'kadence-security',
+				'really-simple-captcha',
 			),
-			'needles'      => array(
-				'recaptcha',
-				'cleantalk',
-				'anti-spam',
-				'antispam',
+			'patterns' => array(
+				'/google\.com\/recaptcha\/api/',
+				'/[\'"]g-recaptcha[\'"]/',
+				'/grecaptcha\s*\./',
 			),
-			'hooks'        => array( 'g-recaptcha', 'recaptcha/api', 'cleantalk' ),
-			'hook_context' => array( 'recaptcha', 'cleantalk', 'captcha' ),
 		),
 		'profiles'      => array(
-			'reason'  => __( 'Also blocks wp-admin or replaces the profile screen. Subscribers may be unable to reach either profile.', 'tso-login-organizer' ),
-			'slugs'   => array(
+			'reason' => __( 'Also blocks wp-admin or replaces the profile screen. Subscribers may be unable to reach either profile.', 'tso-login-organizer' ),
+			'slugs'  => array(
 				'remove-dashboard-access',
 				'remove-dashboard-access-for-non-admins',
 				'wp-frontend-profile',
-				'user-profile-picture',
-			),
-			'needles' => array(
-				'disable wp-admin',
-				'block wp-admin',
-				'redirect from wp-admin',
-				'frontend profile',
 			),
 		),
 		'notifications' => array(
-			'reason'  => __( 'Also replaces outgoing email content. The message saved here may be wrapped or discarded.', 'tso-login-organizer' ),
-			'slugs'   => array(
+			'reason' => __( 'Also replaces outgoing email content. The message saved here may be wrapped or discarded.', 'tso-login-organizer' ),
+			'slugs'  => array(
 				'wp-html-mail',
 				'email-templates',
 				'kadence-woocommerce-email-designer',
-			),
-			'needles' => array(
-				'email template',
-				'html email',
 			),
 		),
 		'two_factor'    => array(
 			'reason'       => __( 'Also asks for a second code at login. Two authenticators on the same account block sign-in.', 'tso-login-organizer' ),
 			'slugs'        => $two_factor_slugs,
 			'exclude'      => $moderation_slugs,
-			'needles'      => array(
-				'two-factor',
-				'two factor',
-				'2fa',
-				'totp',
-				'authenticator',
-			),
-			'hooks'        => array( 'wp_authenticate_user', 'totp' ),
-			'hook_context' => array( 'totp', 'authenticator', 'two-factor', 'two factor', '2fa' ),
+			'patterns'     => array( '/add_filter\s*\(\s*[\'"]wp_authenticate_user[\'"]/' ),
+			'pattern_also' => array( '/\bTOTP\b|totp_secret|google_authenticator|two_factor_code|verify_totp/i' ),
 		),
 		'social'        => array(
-			'reason'  => __( 'Also adds social login buttons or OAuth callbacks. Buttons can be duplicated or the return URL can be stolen by the other plugin.', 'tso-login-organizer' ),
-			'slugs'   => array(
+			'reason' => __( 'Also adds social login buttons or OAuth callbacks. Buttons can be duplicated or the return URL can be stolen by the other plugin.', 'tso-login-organizer' ),
+			'slugs'  => array(
 				'nextend-facebook-connect',
 				'super-socializer',
 				'wordpress-social-login',
 				'miniorange-login-openid',
-				'social-login',
 				'nextend-social-login',
-			),
-			'needles' => array(
-				'social login',
-				'login with google',
-				'login with facebook',
-				'sign in with google',
 			),
 		),
 		'avatars'       => array(
-			'reason'  => __( 'Also replaces the profile photo (get_avatar). One of the two pictures will win and the other upload may look ignored.', 'tso-login-organizer' ),
-			'slugs'   => array(
+			'reason' => __( 'Also replaces the profile photo (get_avatar). One of the two pictures will win and the other upload may look ignored.', 'tso-login-organizer' ),
+			'slugs'  => array(
 				'simple-local-avatars',
 				'one-user-avatar',
 				'wp-user-avatar',
 				'basic-user-avatars',
-				'avatar-manager',
-			),
-			'needles' => array(
-				'local avatar',
-				'custom avatar',
-				'user avatar',
 			),
 		),
 		'favorites'     => array(
-			'reason'  => __( 'Also stores favorite posts. The buttons and the list page may disagree about what is saved.', 'tso-login-organizer' ),
-			'slugs'   => array(
+			'reason' => __( 'Also stores favorite posts. The buttons and the list page may disagree about what is saved.', 'tso-login-organizer' ),
+			'slugs'  => array(
 				'wp-favorite-posts',
 				'simple-favorites',
-				'favorites',
-			),
-			'needles' => array(
-				'favorite posts',
-				'favourite posts',
 			),
 		),
 		'mailchimp'     => array(
-			'reason'  => __( 'Also sends new users to Mailchimp. The same person can be subscribed twice.', 'tso-login-organizer' ),
-			'slugs'   => array(
+			'reason' => __( 'Also sends new users to Mailchimp. The same person can be subscribed twice.', 'tso-login-organizer' ),
+			'slugs'  => array(
 				'mailchimp-for-wp',
-				'mailchimp',
 				'mc4wp-mailchimp-for-wordpress',
-			),
-			'needles' => array(
-				'mailchimp',
 			),
 		),
 		'redirection'   => array(
-			'reason'  => __( 'Also sends users somewhere after login, logout or registration. The last plugin to run decides the final URL.', 'tso-login-organizer' ),
-			'slugs'   => array(
+			'reason' => __( 'Also sends users somewhere after login, logout or registration. The last plugin to run decides the final URL.', 'tso-login-organizer' ),
+			'slugs'  => array(
 				'peters-login-redirect',
 				'wps-hide-login',
-				'login-redirect',
 				'theme-my-login',
-			),
-			'needles' => array(
-				'redirect after login',
-				'login redirect',
-				'redirect after logout',
 			),
 		),
 	);
@@ -266,85 +210,130 @@ function tsolo_compat_plugin_catalog() {
 			$slug = basename( $file, '.php' );
 		}
 		$name = isset( $data['Name'] ) ? (string) $data['Name'] : $slug;
-		$desc = isset( $data['Description'] ) ? (string) $data['Description'] : '';
 		$catalog[] = array(
 			'file'   => $file,
 			'slug'   => $slug,
 			'name'   => $name,
 			'active' => in_array( $file, $active, true ),
-			'text'   => strtolower( $name . ' ' . $desc ),
 		);
 	}
 	return $catalog;
 }
 
 /**
- * Lowercased PHP sources for one plugin, skipping vendor trees.
+ * Whether a path is a catalog, translation, or doc rather than runtime code.
+ *
+ * @param string $path Absolute path.
+ * @return bool
+ */
+function tsolo_compat_skip_source_path( $path ) {
+	$path = wp_normalize_path( (string) $path );
+	return (bool) preg_match( '~/(languages|assets|vendor|node_modules|tests|test)/|(maps?|detection|regression|changelog|readme)~i', $path );
+}
+
+/**
+ * PHP files worth scanning for hook registrations.
  *
  * @param string $plugin_file Plugin basename.
- * @return string
+ * @return string[]
  */
-function tsolo_compat_plugin_source_blob( $plugin_file ) {
+function tsolo_compat_plugin_php_files( $plugin_file ) {
 	$main = wp_normalize_path( WP_PLUGIN_DIR . '/' . $plugin_file );
 	$dir  = wp_normalize_path( dirname( $main ) );
-	$paths = array( $main );
-	if ( is_dir( $dir ) && wp_normalize_path( WP_PLUGIN_DIR ) !== $dir ) {
-		try {
-			$iterator = new RecursiveIteratorIterator(
-				new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS )
-			);
-			$count = 0;
-			foreach ( $iterator as $fileinfo ) {
-				if ( $count >= 40 ) {
-					break;
-				}
-				if ( ! $fileinfo->isFile() ) {
-					continue;
-				}
-				$path = wp_normalize_path( $fileinfo->getPathname() );
-				if ( '.php' !== substr( $path, -4 ) ) {
-					continue;
-				}
-				if ( preg_match( '#/(vendor|node_modules|languages|assets|tests|test)/#', $path ) ) {
-					continue;
-				}
-				if ( $fileinfo->getSize() > 250000 ) {
-					continue;
-				}
-				$paths[] = $path;
-				++$count;
-			}
-		} catch ( Exception $e ) {
-			unset( $e );
-		}
+	$paths = array();
+	if ( is_readable( $main ) && ! tsolo_compat_skip_source_path( $main ) ) {
+		$paths[] = $main;
 	}
-	$blob = '';
-	foreach ( array_unique( $paths ) as $path ) {
+	if ( ! is_dir( $dir ) || wp_normalize_path( WP_PLUGIN_DIR ) === $dir ) {
+		return $paths;
+	}
+	try {
+		$iterator = new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS )
+		);
+		$count = 0;
+		foreach ( $iterator as $fileinfo ) {
+			if ( $count >= 40 ) {
+				break;
+			}
+			if ( ! $fileinfo->isFile() ) {
+				continue;
+			}
+			$path = wp_normalize_path( $fileinfo->getPathname() );
+			if ( '.php' !== substr( $path, -4 ) || tsolo_compat_skip_source_path( $path ) ) {
+				continue;
+			}
+			if ( $fileinfo->getSize() > 250000 ) {
+				continue;
+			}
+			$paths[] = $path;
+			++$count;
+		}
+	} catch ( Exception $e ) {
+		unset( $e );
+	}
+	return array_values( array_unique( $paths ) );
+}
+
+/**
+ * Whether one plugin's code registers the conflicting behavior.
+ *
+ * @param string $plugin_file Plugin basename.
+ * @param array  $rule        Rule.
+ * @return bool
+ */
+function tsolo_compat_plugin_code_matches( $plugin_file, $rule ) {
+	$patterns = isset( $rule['patterns'] ) && is_array( $rule['patterns'] ) ? $rule['patterns'] : array();
+	if ( ! $patterns ) {
+		return false;
+	}
+	$also = isset( $rule['pattern_also'] ) && is_array( $rule['pattern_also'] ) ? $rule['pattern_also'] : array();
+	foreach ( tsolo_compat_plugin_php_files( $plugin_file ) as $path ) {
 		if ( ! is_readable( $path ) ) {
 			continue;
 		}
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Read-only local scan of installed plugin PHP to detect hook clashes.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Read-only local scan of installed plugin PHP for hook registrations.
 		$chunk = file_get_contents( $path );
-		if ( is_string( $chunk ) ) {
-			$blob .= "\n" . $chunk;
+		if ( ! is_string( $chunk ) || '' === $chunk ) {
+			continue;
 		}
-		if ( strlen( $blob ) > 400000 ) {
-			break;
+		$hit = false;
+		foreach ( $patterns as $pattern ) {
+			if ( is_string( $pattern ) && '' !== $pattern && preg_match( $pattern, $chunk ) ) {
+				$hit = true;
+				break;
+			}
+		}
+		if ( ! $hit ) {
+			continue;
+		}
+		if ( ! $also ) {
+			return true;
+		}
+		foreach ( $also as $pattern ) {
+			if ( is_string( $pattern ) && '' !== $pattern && preg_match( $pattern, $chunk ) ) {
+				return true;
+			}
 		}
 	}
-	return strtolower( $blob );
+	return false;
 }
 
 /**
  * Whether one catalog row matches one rule.
  *
- * @param array  $plugin Plugin row.
- * @param array  $rule   Rule.
- * @param string $blob   Optional lowercased sources.
+ * @param array $plugin Plugin row.
+ * @param array $rule   Rule.
  * @return bool
  */
-function tsolo_compat_plugin_matches_rule( $plugin, $rule, $blob ) {
-	$slug    = isset( $plugin['slug'] ) ? (string) $plugin['slug'] : '';
+function tsolo_compat_plugin_matches_rule( $plugin, $rule ) {
+	$slug = isset( $plugin['slug'] ) ? (string) $plugin['slug'] : '';
+	if ( '' === $slug || in_array( $slug, tsolo_compat_ignored_slugs(), true ) ) {
+		return false;
+	}
+	if ( 'tso-swiss-knife-advanced-maintenance-developer-toolkit' === $slug ) {
+		return false;
+	}
 	$exclude = isset( $rule['exclude'] ) && is_array( $rule['exclude'] ) ? $rule['exclude'] : array();
 	if ( in_array( $slug, $exclude, true ) ) {
 		return false;
@@ -353,35 +342,53 @@ function tsolo_compat_plugin_matches_rule( $plugin, $rule, $blob ) {
 	if ( in_array( $slug, $slugs, true ) ) {
 		return true;
 	}
-	$text    = isset( $plugin['text'] ) ? (string) $plugin['text'] : '';
-	$needles = isset( $rule['needles'] ) && is_array( $rule['needles'] ) ? $rule['needles'] : array();
-	foreach ( $needles as $needle ) {
-		$needle = strtolower( (string) $needle );
-		if ( '' !== $needle && false !== strpos( $text, $needle ) ) {
-			return true;
+	$file = isset( $plugin['file'] ) ? (string) $plugin['file'] : '';
+	return '' !== $file && tsolo_compat_plugin_code_matches( $file, $rule );
+}
+
+/**
+ * Swiss Knife clashes only when Login Protect features are actually on.
+ *
+ * @param array $catalog Plugin catalog.
+ * @return array<string,array<int,array<string,mixed>>>
+ */
+function tsolo_compat_swiss_knife_rows( $catalog ) {
+	$rows = array(
+		'security'   => array(),
+		'two_factor' => array(),
+	);
+	$file = 'tso-swiss-knife-advanced-maintenance-developer-toolkit/tso-swiss-knife-advanced-maintenance-developer-toolkit.php';
+	$found = null;
+	foreach ( $catalog as $plugin ) {
+		if ( isset( $plugin['slug'] ) && 'tso-swiss-knife-advanced-maintenance-developer-toolkit' === $plugin['slug'] ) {
+			$found = $plugin;
+			break;
 		}
 	}
-	$hooks = isset( $rule['hooks'] ) && is_array( $rule['hooks'] ) ? $rule['hooks'] : array();
-	if ( ! $hooks || '' === $blob ) {
-		return false;
+	if ( ! $found ) {
+		return $rows;
 	}
-	$context = isset( $rule['hook_context'] ) && is_array( $rule['hook_context'] ) ? $rule['hook_context'] : array();
-	foreach ( $hooks as $hook ) {
-		$hook = strtolower( (string) $hook );
-		if ( '' === $hook || false === strpos( $blob, $hook ) ) {
-			continue;
-		}
-		if ( ! $context ) {
-			return true;
-		}
-		foreach ( $context as $ctx ) {
-			$ctx = strtolower( (string) $ctx );
-			if ( '' !== $ctx && ( false !== strpos( $blob, $ctx ) || false !== strpos( $text, $ctx ) ) ) {
-				return true;
-			}
-		}
+	$settings = get_option( 'tsosk_login_protect', array() );
+	if ( ! is_array( $settings ) ) {
+		$settings = array();
 	}
-	return false;
+	$base = array(
+		'name'   => isset( $found['name'] ) ? (string) $found['name'] : 'TSO Swiss Knife',
+		'active' => ! empty( $found['active'] ),
+		'file'   => isset( $found['file'] ) ? (string) $found['file'] : $file,
+	);
+	$locks = ! empty( $settings['custom_url'] ) || ! empty( $settings['brute_force'] ) || ! empty( $settings['login_maintenance'] );
+	if ( $locks ) {
+		$row           = $base;
+		$row['reason'] = __( 'Login Protect is hiding wp-login.php or locking failed logins. Leave hide-login and lockouts off in this plugin while that is on.', 'tso-login-organizer' );
+		$rows['security'][] = $row;
+	}
+	if ( ! empty( $settings['email_2fa'] ) ) {
+		$row           = $base;
+		$row['reason'] = __( 'Login Protect asks for an email code after the password. Do not also require an authenticator code on the same accounts.', 'tso-login-organizer' );
+		$rows['two_factor'][] = $row;
+	}
+	return $rows;
 }
 
 /**
@@ -402,50 +409,29 @@ function tsolo_get_incompatibility_report() {
 		return $cached;
 	}
 
-	$needs_source = false;
-	foreach ( $rules as $rule ) {
-		if ( ! empty( $rule['hooks'] ) ) {
-			$needs_source = true;
-			break;
-		}
-	}
-	$blobs = array();
-	if ( $needs_source ) {
-		foreach ( $plugins as $plugin ) {
-			$blobs[ $plugin['file'] ] = tsolo_compat_plugin_source_blob( $plugin['file'] );
-		}
-	}
-
 	$report = array();
 	foreach ( $rules as $module => $rule ) {
 		$report[ $module ] = array();
 		foreach ( $plugins as $plugin ) {
-			$blob = isset( $blobs[ $plugin['file'] ] ) ? $blobs[ $plugin['file'] ] : '';
-			if ( ! tsolo_compat_plugin_matches_rule( $plugin, $rule, $blob ) ) {
+			if ( ! tsolo_compat_plugin_matches_rule( $plugin, $rule ) ) {
 				continue;
 			}
 			$report[ $module ][] = array(
 				'name'   => $plugin['name'],
 				'active' => ! empty( $plugin['active'] ),
 				'file'   => $plugin['file'],
+				'reason' => '',
 			);
 		}
 	}
-	$swiss_known = false;
-	if ( ! empty( $report['security'] ) ) {
-		foreach ( $report['security'] as $row ) {
-			if ( ! empty( $row['file'] ) && false !== strpos( (string) $row['file'], 'tso-swiss-knife' ) ) {
-				$swiss_known = true;
-				break;
-			}
+	$swiss = tsolo_compat_swiss_knife_rows( $plugins );
+	foreach ( $swiss as $module => $rows ) {
+		if ( empty( $report[ $module ] ) || ! is_array( $report[ $module ] ) ) {
+			$report[ $module ] = array();
 		}
-	}
-	if ( ! $swiss_known && ( class_exists( 'TSOSK_Mod_Login_Protect', false ) || get_option( 'tsosk_login_protect' ) ) ) {
-		$report['security'][] = array(
-			'name'   => 'TSO Swiss Knife (Login Protect)',
-			'active' => true,
-			'file'   => 'tso-swiss-knife-advanced-maintenance-developer-toolkit/tso-swiss-knife-advanced-maintenance-developer-toolkit.php',
-		);
+		foreach ( $rows as $row ) {
+			$report[ $module ][] = $row;
+		}
 	}
 	set_transient( $key, $report, 12 * HOUR_IN_SECONDS );
 	return $report;

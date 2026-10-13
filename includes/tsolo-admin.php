@@ -795,9 +795,10 @@ function tsolo_admin_render_module_intro( $module, $def ) {
 					$state = ! empty( $row['active'] )
 						? __( 'active — likely clash', 'tso-login-organizer' )
 						: __( 'installed, not active', 'tso-login-organizer' );
+					$line_reason = ! empty( $row['reason'] ) ? (string) $row['reason'] : $reason;
 					echo '<li><strong>' . esc_html( $row['name'] ) . '</strong> (' . esc_html( $state ) . ')';
-					if ( '' !== $reason ) {
-						echo ' — ' . esc_html( $reason );
+					if ( '' !== $line_reason ) {
+						echo ' — ' . esc_html( $line_reason );
 					}
 					echo '</li>';
 				}

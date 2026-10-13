@@ -131,13 +131,33 @@ class TSOLO_Mod_Captcha {
 	}
 
 	/**
+	 * Only forms that actually show this widget should be checked.
+	 *
+	 * wp-admin “Add user”, other plugins’ login forms, and cleanup tools must not be blocked.
+	 *
+	 * @return bool
+	 */
+	private function should_verify() {
+		if ( is_admin() && ! wp_doing_ajax() ) {
+			return false;
+		}
+		if ( function_exists( 'tsolo_is_wp_login' ) && tsolo_is_wp_login() ) {
+			return true;
+		}
+		if ( ! function_exists( 'tsolo_is_action' ) ) {
+			return false;
+		}
+		return tsolo_is_action( 'login' ) || tsolo_is_action( 'register' ) || tsolo_is_action( 'lostpassword' );
+	}
+
+	/**
 	 * Verify on registration.
 	 *
 	 * @param WP_Error $errors Errors.
 	 * @return WP_Error
 	 */
 	public function verify( $errors ) {
-		if ( ! tsolo_request_post_is_set( 'user_email' ) ) {
+		if ( ! $this->should_verify() || ! tsolo_request_post_is_set( 'user_email' ) ) {
 			return $errors;
 		}
 		$result = $this->check_token();
@@ -157,7 +177,7 @@ class TSOLO_Mod_Captcha {
 	 */
 	public function verify_login( $user, $username, $password ) {
 		unset( $username, $password );
-		if ( ! tsolo_request_post_is_set( 'log' ) ) {
+		if ( ! $this->should_verify() || ! tsolo_request_post_is_set( 'log' ) ) {
 			return $user;
 		}
 		$result = $this->check_token();
@@ -173,6 +193,9 @@ class TSOLO_Mod_Captcha {
 	 * @param WP_Error $errors Errors.
 	 */
 	public function verify_lostpassword( $errors ) {
+		if ( ! $this->should_verify() ) {
+			return;
+		}
 		$result = $this->check_token();
 		if ( is_wp_error( $result ) ) {
 			$errors->merge_from( $result );
