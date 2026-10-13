@@ -201,6 +201,16 @@ function tsolo_handle_auto_login( $user_id ) {
 	if ( empty( $settings['auto_login'] ) || is_user_logged_in() ) {
 		return;
 	}
+	if ( tsolo_is_module_enabled( 'moderation' ) && class_exists( 'TSOLO_Mod_Moderation' ) ) {
+		$mod = TSOLO_Mod_Moderation::get_settings();
+		if ( ! empty( $mod['email_confirm'] ) || ! empty( $mod['admin_approve'] ) ) {
+			return;
+		}
+	}
+	$status = get_user_meta( $user_id, 'tsolo_moderation_status', true );
+	if ( $status ) {
+		return;
+	}
 	wp_set_current_user( $user_id );
 	wp_set_auth_cookie( $user_id );
 }

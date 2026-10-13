@@ -44,10 +44,12 @@ function tsolo_admin_register_assets( $hook ) {
 		'tsolo-admin',
 		'tsoloAdminConfig',
 		array(
+			'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
 			'nonce'      => wp_create_nonce( TSOLO_NONCE_AJAX ),
 			'collisions' => tsolo_detect_collision_plugins(),
 			'i18n'       => array(
-				'collisionWarn' => __( 'Other security/spam plugins were detected. Enable colliding modules only if you know they will not conflict.', 'tso-login-organizer' ),
+				'collisionWarn'      => __( 'Other security/spam plugins were detected. Enable colliding modules only if you know they will not conflict.', 'tso-login-organizer' ),
+				'permalinkSettings'  => __( 'Open Permalink settings', 'tso-login-organizer' ),
 			),
 		)
 	);

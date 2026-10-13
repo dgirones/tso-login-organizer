@@ -141,9 +141,11 @@ class TSOLO_Mod_Two_Factor {
 			<tr>
 				<th><label for="tsolo_2fa_enable"><?php esc_html_e( 'Authenticator', 'tso-login-organizer' ); ?></label></th>
 				<td>
-					<label><input type="checkbox" name="tsolo_2fa_enable" id="tsolo_2fa_enable" value="1" <?php checked( $enabled ); ?> /> <?php esc_html_e( 'Enable TOTP (new secret generated on save if empty)', 'tso-login-organizer' ); ?></label>
+					<label><input type="checkbox" name="tsolo_2fa_enable" id="tsolo_2fa_enable" value="1" <?php checked( $enabled ); ?> /> <?php esc_html_e( 'Enable two-factor authentication (authenticator app)', 'tso-login-organizer' ); ?></label>
 					<?php if ( $secret ) : ?>
-						<p class="description"><?php esc_html_e( 'Secret:', 'tso-login-organizer' ); ?> <code><?php echo esc_html( $secret ); ?></code></p>
+						<p class="description"><?php esc_html_e( 'Two-factor is enabled. Secret for your authenticator app:', 'tso-login-organizer' ); ?> <code><?php echo esc_html( $secret ); ?></code></p>
+					<?php else : ?>
+						<p class="description"><?php esc_html_e( 'When you check this and click Update Profile, a new secret is created. Add it to Google Authenticator (or similar); logins will then require your password plus a 6-digit code from the app.', 'tso-login-organizer' ); ?></p>
 					<?php endif; ?>
 				</td>
 			</tr>

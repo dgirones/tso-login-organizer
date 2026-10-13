@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Frontend login, registration and account pages with optional premium modules. Drop-in replacement for Theme My Login.
+Frontend login, registration and account pages with optional premium modules. Free-feature parity with Theme My Login (GPL-compatible reimplementation; not affiliated with Theme My Login).
 
 == Description ==
 
@@ -67,6 +67,10 @@ Swiss Knife Login Protect can hide `wp-login.php` and lock out IPs. TSO Login Or
 = How do I keep Theme My Login shortcodes working? =
 
 `[theme-my-login]` is registered as an alias of `[tso-login-organizer]`.
+
+= Is it OK to say this plugin replaces or copies Theme My Login? =
+
+Yes. Under the GPL it is normal to document that TSO Login Organizer reimplements the **free** behavior of Theme My Login and imports its settings. That credits the UX you already know; it does not imply official affiliation. This plugin is developed by Tu Soporte Online.
 
 = What does the CA / ES / EN switcher store? =
 

@@ -133,6 +133,9 @@ function tsolo_render_profile_form() {
 		$html   .= '<p class="tsolo-field tsolo-field-avatar"><label for="tsolo_avatar">' . esc_html__( 'Profile picture', 'tso-login-organizer' ) . '</label>';
 		if ( $current ) {
 			$html .= '<span class="tsolo-avatar-preview"><img src="' . esc_url( $current ) . '" alt="" width="64" height="64" /></span> ';
+			$html .= '<span class="description">' . esc_html__( 'You have a custom profile picture (shown above).', 'tso-login-organizer' ) . '</span> ';
+		} else {
+			$html .= '<span class="description">' . esc_html__( 'No custom picture yet — your Gravatar is used until you upload one.', 'tso-login-organizer' ) . '</span> ';
 		}
 		$html .= '<input type="file" name="tsolo_avatar" id="tsolo_avatar" accept="image/jpeg,image/png,image/gif,image/webp" /></p>';
 		$html .= '<p class="description">' . esc_html__( 'JPG, PNG, GIF or WebP. Leave empty to keep the current picture.', 'tso-login-organizer' ) . '</p>';
@@ -141,11 +144,11 @@ function tsolo_render_profile_form() {
 	if ( tsolo_is_module_enabled( 'two_factor' ) && class_exists( 'TSOLO_Mod_Two_Factor' ) ) {
 		$secret  = get_user_meta( $user->ID, 'tsolo_2fa_secret', true );
 		$enabled = (bool) $secret;
-		$html   .= '<p class="tsolo-field tsolo-field-2fa-enable"><label><input type="checkbox" name="tsolo_2fa_enable" value="1" ' . checked( $enabled, true, false ) . ' /> ' . esc_html__( 'Enable two-factor authentication (TOTP)', 'tso-login-organizer' ) . '</label></p>';
+		$html   .= '<p class="tsolo-field tsolo-field-2fa-enable"><label><input type="checkbox" name="tsolo_2fa_enable" value="1" ' . checked( $enabled, true, false ) . ' /> ' . esc_html__( 'Enable two-factor authentication (authenticator app)', 'tso-login-organizer' ) . '</label></p>';
 		if ( $secret ) {
-			$html .= '<p class="description">' . esc_html__( 'Add this secret to your authenticator app:', 'tso-login-organizer' ) . ' <code>' . esc_html( $secret ) . '</code></p>';
+			$html .= '<p class="description">' . esc_html__( 'Two-factor is ON for your account. Add this secret to Google Authenticator (or similar), then enter the 6-digit code when you log in.', 'tso-login-organizer' ) . ' <code>' . esc_html( $secret ) . '</code></p>';
 		} else {
-			$html .= '<p class="description">' . esc_html__( 'A new secret is created when you save with this box checked.', 'tso-login-organizer' ) . '</p>';
+			$html .= '<p class="description">' . esc_html__( 'Checking this box and saving generates a secret key. Scan or type it into an authenticator app on your phone; after that, each login needs your password plus a 6-digit code from the app. Uncheck and save to turn 2FA off.', 'tso-login-organizer' ) . '</p>';
 		}
 	}
 

@@ -61,6 +61,52 @@
 			}
 		});
 
+		$('#tsolo-check-permalinks').on('click', function () {
+			if (!window.tsoloAdminConfig || !tsoloAdminConfig.ajaxUrl) {
+				return;
+			}
+			var $btn = $(this);
+			var $result = $('#tsolo-permalink-result');
+			$btn.prop('disabled', true);
+			$.post(tsoloAdminConfig.ajaxUrl, {
+				action: 'tsolo_check_permalinks',
+				_ajax_nonce: tsoloAdminConfig.nonce
+			})
+				.done(function (response) {
+					if (!response || !response.success || !response.data) {
+						return;
+					}
+					var data = response.data;
+					var html = '<p><strong>' + (data.ok ? '✓' : '!') + '</strong> ' + $('<div/>').text(data.message || '').html() + '</p>';
+					if (data.fix_steps && data.fix_steps.length) {
+						html += '<ol>';
+						data.fix_steps.forEach(function (step) {
+							html += '<li>' + $('<div/>').text(step).html() + '</li>';
+						});
+						html += '</ol>';
+					}
+					if (data.settings_url) {
+						html +=
+							'<p><a class="button button-small" href="' +
+							data.settings_url +
+							'" target="_blank" rel="noopener noreferrer">' +
+							(tsoloAdminConfig.i18n.permalinkSettings || 'Permalinks') +
+							'</a></p>';
+					}
+					$result.removeClass('is-ok').removeAttr('hidden').html(html);
+					if (data.ok) {
+						$result.addClass('is-ok');
+					}
+					$('.tsolo-permalink-inline')
+						.text(data.message || '')
+						.removeClass('is-ok is-warn')
+						.addClass(data.ok ? 'is-ok' : 'is-warn');
+				})
+				.always(function () {
+					$btn.prop('disabled', false);
+				});
+		});
+
 		$('.tsolo-admin-wrap').on('click', 'a[data-tsolo-tab]', function (e) {
 			var tab = $(this).attr('data-tsolo-tab');
 			if (!tab) {

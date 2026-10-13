@@ -210,14 +210,73 @@
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview {
 	width: 30%;
 	color: #646970;
+	white-space: nowrap;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview code {
 	display: inline-block;
 	max-width: 100%;
-	overflow-wrap: anywhere;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: bottom;
+	white-space: nowrap;
 	background: #f0f0f1;
 	padding: 0.2rem 0.4rem;
+}
+
+.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview a {
+	display: inline-block;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: bottom;
+}
+
+.tsolo-admin-wrap .tsolo-permalink-check {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 0.75rem;
+	margin: 0.75rem 0;
+}
+
+.tsolo-admin-wrap .tsolo-permalink-inline.is-ok {
+	color: #007017;
+}
+
+.tsolo-admin-wrap .tsolo-permalink-inline.is-warn {
+	color: #996800;
+}
+
+.tsolo-admin-wrap .tsolo-permalink-result {
+	max-width: 42rem;
+	margin: 0 0 0.75rem;
+	padding: 0.65rem 0.85rem;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left: 4px solid #dba617;
+}
+
+.tsolo-admin-wrap .tsolo-permalink-result.is-ok {
+	border-left-color: #00a32a;
+}
+
+.tsolo-admin-wrap .tsolo-shortcode-example,
+.tsolo-admin-wrap .tsolo-redir-examples {
+	max-width: 42rem;
+}
+
+.tsolo-admin-wrap .tsolo-shortcode-example {
+	display: block;
+	margin: 0.5rem 0 1rem;
+	padding: 0.65rem 0.85rem;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	overflow-x: auto;
+	font-size: 12px;
+	line-height: 1.45;
+	white-space: pre-wrap;
 }
 
 .tsolo-admin-wrap .tsolo-module-list .tsolo-module-row th {
