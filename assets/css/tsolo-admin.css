@@ -136,7 +136,8 @@
 }
 
 .tsolo-admin-wrap .tsolo-slugs-panel {
-	max-width: 56rem;
+	max-width: none;
+	overflow-x: auto;
 }
 
 .tsolo-admin-wrap .tsolo-virtual-pages-notice {
@@ -180,8 +181,8 @@
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-label {
-	width: 42%;
-	min-width: 12rem;
+	width: auto;
+	min-width: 14rem;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-label strong {
@@ -208,16 +209,35 @@
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview {
-	width: 30%;
+	width: 1%;
+	white-space: nowrap;
 	color: #646970;
 }
 
+.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview a,
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview code {
-	display: inline-block;
-	max-width: 100%;
-	overflow-wrap: anywhere;
+	white-space: nowrap;
+	word-break: keep-all;
+	overflow-wrap: normal;
+}
+
+.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview code {
+	display: inline;
 	background: #f0f0f1;
 	padding: 0.2rem 0.4rem;
+}
+
+.tsolo-admin-wrap .tsolo-permalink-status {
+	margin: 0 0 1rem;
+	max-width: 52rem;
+}
+
+.tsolo-admin-wrap .tsolo-shortcode-example {
+	display: block;
+	margin: 0.35rem 0 0.75rem;
+	padding: 0.6rem 0.75rem;
+	background: #f6f7f7;
+	white-space: pre-wrap;
 }
 
 .tsolo-admin-wrap .tsolo-module-list .tsolo-module-row th {
@@ -339,5 +359,10 @@
 
 	.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-input input.regular-text {
 		width: 100%;
+	}
+
+	.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview {
+		overflow-x: auto;
+		white-space: nowrap;
 	}
 }

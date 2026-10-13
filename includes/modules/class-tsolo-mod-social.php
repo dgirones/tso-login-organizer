@@ -220,6 +220,11 @@ class TSOLO_Mod_Social {
 			update_user_meta( $user_id, 'tsolo_social_provider', $provider );
 			$user = get_userdata( $user_id );
 		}
+		$status = get_user_meta( $user->ID, 'tsolo_moderation_status', true );
+		if ( $status ) {
+			wp_safe_redirect( add_query_arg( 'checkemail', 'moderate', tsolo_get_action_url( 'login' ) ) );
+			exit;
+		}
 		wp_set_current_user( $user->ID );
 		wp_set_auth_cookie( $user->ID );
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core login_redirect filter.

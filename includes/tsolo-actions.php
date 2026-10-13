@@ -526,6 +526,8 @@ function tsolo_login_handler() {
 		$errors->add( 'confirm', __( 'Check your email for the confirmation link.', 'tso-login-organizer' ), 'message' );
 	} elseif ( 'registered' === tsolo_get_request_text( 'checkemail', 'get' ) ) {
 		$errors->add( 'registered', __( 'Registration complete. You may now log in.', 'tso-login-organizer' ), 'message' );
+	} elseif ( 'moderate' === tsolo_get_request_text( 'checkemail', 'get' ) ) {
+		$errors->add( 'moderate', __( 'Registration received. You are not signed in yet: confirm your email and/or wait until an administrator approves the account.', 'tso-login-organizer' ), 'message' );
 	} elseif ( 'complete' === tsolo_get_request_text( 'resetpass', 'get' ) ) {
 		$errors->add( 'password_reset', __( 'Your password has been reset.', 'tso-login-organizer' ), 'message' );
 	}
@@ -581,7 +583,11 @@ function tsolo_registration_handler() {
 		$user_email = tsolo_get_request_text( 'user_email', 'post' );
 		$result     = register_new_user( $user_login, $user_email );
 		if ( ! is_wp_error( $result ) ) {
-			$redirect = apply_filters( 'tsolo_registration_redirect', add_query_arg( 'checkemail', 'registered', tsolo_get_action_url( 'login' ) ), $result );
+			$fallback = add_query_arg( 'checkemail', 'registered', tsolo_get_action_url( 'login' ) );
+			if ( class_exists( 'TSOLO_Mod_Moderation', false ) && TSOLO_Mod_Moderation::blocks_auto_login() ) {
+				$fallback = add_query_arg( 'checkemail', 'moderate', tsolo_get_action_url( 'login' ) );
+			}
+			$redirect = apply_filters( 'tsolo_registration_redirect', $fallback, $result );
 			if ( tsolo_is_ajax_request() ) {
 				tsolo_send_ajax_success( array( 'redirect' => $redirect ) );
 			}

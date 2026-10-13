@@ -201,6 +201,9 @@ function tsolo_handle_auto_login( $user_id ) {
 	if ( empty( $settings['auto_login'] ) || is_user_logged_in() ) {
 		return;
 	}
+	if ( class_exists( 'TSOLO_Mod_Moderation', false ) && TSOLO_Mod_Moderation::blocks_auto_login() ) {
+		return;
+	}
 	wp_set_current_user( $user_id );
 	wp_set_auth_cookie( $user_id );
 }

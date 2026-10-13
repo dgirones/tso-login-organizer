@@ -130,23 +130,29 @@ function tsolo_render_profile_form() {
 	if ( $avatars ) {
 		$current = get_user_meta( $user->ID, 'tsolo_avatar_url', true );
 		$html   .= '<input type="hidden" name="tsolo_avatar_nonce" value="' . esc_attr( wp_create_nonce( 'tsolo_upload_avatar' ) ) . '" />';
-		$html   .= '<p class="tsolo-field tsolo-field-avatar"><label for="tsolo_avatar">' . esc_html__( 'Profile picture', 'tso-login-organizer' ) . '</label>';
+		$html   .= '<div class="tsolo-field tsolo-field-avatar"><label for="tsolo_avatar">' . esc_html__( 'Profile picture', 'tso-login-organizer' ) . '</label>';
 		if ( $current ) {
-			$html .= '<span class="tsolo-avatar-preview"><img src="' . esc_url( $current ) . '" alt="" width="64" height="64" /></span> ';
+			$html .= '<p class="tsolo-avatar-status">' . esc_html__( 'You already have a profile picture. It is shown below. Choose a new file only if you want to replace it. Leave the file field empty to keep this one.', 'tso-login-organizer' ) . '</p>';
+			$html .= '<span class="tsolo-avatar-preview"><img src="' . esc_url( $current ) . '" alt="' . esc_attr__( 'Current profile picture', 'tso-login-organizer' ) . '" width="64" height="64" /></span>';
+		} else {
+			$html .= '<p class="tsolo-avatar-status">' . esc_html__( 'You do not have a profile picture yet. Until you upload one, the site uses Gravatar or the default avatar.', 'tso-login-organizer' ) . '</p>';
 		}
-		$html .= '<input type="file" name="tsolo_avatar" id="tsolo_avatar" accept="image/jpeg,image/png,image/gif,image/webp" /></p>';
-		$html .= '<p class="description">' . esc_html__( 'JPG, PNG, GIF or WebP. Leave empty to keep the current picture.', 'tso-login-organizer' ) . '</p>';
+		$html .= '<input type="file" name="tsolo_avatar" id="tsolo_avatar" accept="image/jpeg,image/png,image/gif,image/webp" />';
+		$html .= '<p class="description">' . esc_html__( 'JPG, PNG, GIF or WebP.', 'tso-login-organizer' ) . '</p></div>';
 	}
 
 	if ( tsolo_is_module_enabled( 'two_factor' ) && class_exists( 'TSOLO_Mod_Two_Factor' ) ) {
 		$secret  = get_user_meta( $user->ID, 'tsolo_2fa_secret', true );
 		$enabled = (bool) $secret;
-		$html   .= '<p class="tsolo-field tsolo-field-2fa-enable"><label><input type="checkbox" name="tsolo_2fa_enable" value="1" ' . checked( $enabled, true, false ) . ' /> ' . esc_html__( 'Enable two-factor authentication (TOTP)', 'tso-login-organizer' ) . '</label></p>';
+		$html   .= '<div class="tsolo-field tsolo-field-2fa-enable">';
+		$html   .= '<label><input type="checkbox" name="tsolo_2fa_enable" value="1" ' . checked( $enabled, true, false ) . ' /> ' . esc_html__( 'Require an app code at login (two-factor)', 'tso-login-organizer' ) . '</label>';
 		if ( $secret ) {
-			$html .= '<p class="description">' . esc_html__( 'Add this secret to your authenticator app:', 'tso-login-organizer' ) . ' <code>' . esc_html( $secret ) . '</code></p>';
+			$html .= '<p class="description tsolo-2fa-help">' . esc_html__( 'Two-factor is already on for this account. The key below is the one your authenticator app should contain. Saving again with the box checked does not create a new key. Uncheck the box and click Save Profile to turn two-factor off: the key is deleted and the app code stops working. Login then asks for the password only.', 'tso-login-organizer' ) . '</p>';
+			$html .= '<p class="description">' . esc_html__( 'Key to type into the app (Google Authenticator or similar):', 'tso-login-organizer' ) . ' <code>' . esc_html( $secret ) . '</code></p>';
 		} else {
-			$html .= '<p class="description">' . esc_html__( 'A new secret is created when you save with this box checked.', 'tso-login-organizer' ) . '</p>';
+			$html .= '<p class="description tsolo-2fa-help">' . esc_html__( 'Leave this unchecked if the password is enough. Check it and click Save Profile to turn two-factor on. The key is created only when you save, not when you tick the box. After saving you will see a key: type it into an authenticator app. From the next login, the password alone is not enough — the site also asks for the 6-digit code from that app.', 'tso-login-organizer' ) . '</p>';
 		}
+		$html .= '</div>';
 	}
 
 	$html .= '<p class="tsolo-field"><button type="submit" class="tsolo-button">' . esc_html__( 'Save Profile', 'tso-login-organizer' ) . '</button></p>';

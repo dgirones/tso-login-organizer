@@ -64,3 +64,18 @@
 	padding-top: 1rem;
 	border-top: 1px solid #dcdcde;
 }
+
+.tsolo-avatar-status,
+.tsolo-2fa-help {
+	margin: 0.35rem 0 0.5rem;
+}
+
+.tsolo-avatar-preview {
+	display: block;
+	margin: 0 0 0.5rem;
+}
+
+.tsolo-avatar-preview img {
+	display: block;
+	border-radius: 4px;
+}

@@ -141,9 +141,12 @@ class TSOLO_Mod_Two_Factor {
 			<tr>
 				<th><label for="tsolo_2fa_enable"><?php esc_html_e( 'Authenticator', 'tso-login-organizer' ); ?></label></th>
 				<td>
-					<label><input type="checkbox" name="tsolo_2fa_enable" id="tsolo_2fa_enable" value="1" <?php checked( $enabled ); ?> /> <?php esc_html_e( 'Enable TOTP (new secret generated on save if empty)', 'tso-login-organizer' ); ?></label>
+					<label><input type="checkbox" name="tsolo_2fa_enable" id="tsolo_2fa_enable" value="1" <?php checked( $enabled ); ?> /> <?php esc_html_e( 'Require an app code at login (two-factor)', 'tso-login-organizer' ); ?></label>
 					<?php if ( $secret ) : ?>
-						<p class="description"><?php esc_html_e( 'Secret:', 'tso-login-organizer' ); ?> <code><?php echo esc_html( $secret ); ?></code></p>
+						<p class="description"><?php esc_html_e( 'Two-factor is already on. Saving with the box checked keeps this same key. Uncheck and update the profile to turn it off and delete the key.', 'tso-login-organizer' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Key to type into the app (Google Authenticator or similar):', 'tso-login-organizer' ); ?> <code><?php echo esc_html( $secret ); ?></code></p>
+					<?php else : ?>
+						<p class="description"><?php esc_html_e( 'Check the box and update the profile to turn two-factor on. A key is created only then. The user must add that key to an authenticator app. The next login will ask for the password and for the 6-digit code from the app. Leaving the box unchecked changes nothing.', 'tso-login-organizer' ); ?></p>
 					<?php endif; ?>
 				</td>
 			</tr>

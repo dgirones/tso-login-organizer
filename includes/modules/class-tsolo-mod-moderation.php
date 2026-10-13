@@ -65,6 +65,21 @@ class TSOLO_Mod_Moderation {
 	}
 
 	/**
+	 * Whether a new account must not be signed in yet.
+	 *
+	 * Email confirmation and admin approval both override Core auto-login.
+	 *
+	 * @return bool
+	 */
+	public static function blocks_auto_login() {
+		if ( ! tsolo_is_module_enabled( 'moderation' ) ) {
+			return false;
+		}
+		$settings = self::get_settings();
+		return ! empty( $settings['email_confirm'] ) || ! empty( $settings['admin_approve'] );
+	}
+
+	/**
 	 * On register: set pending flags.
 	 *
 	 * @param int $user_id User ID.

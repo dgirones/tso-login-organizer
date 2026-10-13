@@ -68,6 +68,10 @@ Swiss Knife Login Protect can hide `wp-login.php` and lock out IPs. TSO Login Or
 
 `[theme-my-login]` is registered as an alias of `[tso-login-organizer]`.
 
+= Is it correct to say which plugin this replaces? =
+
+Yes. Theme My Login is GPL, so reusing that idea and importing its free settings is allowed if you keep the GPL license. Name it as the plugin you replace or migrate from. Do not present TSO Login Organizer as Theme My Login itself or as an official product of its authors. A readme line such as “drop-in replacement for Theme My Login” is the right kind of credit. Avoid “we copied X” as marketing: WordPress.org can reject a plugin that is only a copy, and the other project’s name is their trademark.
+
 = What does the CA / ES / EN switcher store? =
 
 Only the administrator’s interface language preference (Catalan, Spanish, or English) as user meta (`tso_login_organizer_ui_lang`). Nothing is sent to external servers for that setting. The “Support this plugin” link opens Ko-fi in a new tab.
@@ -76,3 +80,4 @@ Only the administrator’s interface language preference (Catalan, Spanish, or E
 
 = 1.0.0 =
 * Initial release: Theme My Login free parity, TML import, premium modules with collision-aware defaults.
+* Clearer core and module help, friendly-URL check, installed-plugin incompatibility scan, moderation respects auto-login.

@@ -132,6 +132,42 @@ function tsolo_admin_render_virtual_pages_notice() {
 }
 
 /**
+ * Friendly-permalink status and the button that refreshes rewrite rules.
+ */
+function tsolo_admin_render_permalink_status() {
+	$health = tsolo_permalink_health();
+	$class  = ! empty( $health['ok'] ) ? 'notice-success' : 'notice-warning';
+	$link   = admin_url( 'options-permalink.php' );
+	echo '<div class="notice inline ' . esc_attr( $class ) . ' tsolo-permalink-status"><p>';
+	if ( ! empty( $health['ok'] ) ) {
+		echo esc_html(
+			sprintf(
+				/* translators: %s: permalink structure, e.g. /%postname%/ */
+				__( 'Friendly URLs are on (current structure: %s). The login rewrite rule is present, so the preview addresses below can open.', 'tso-login-organizer' ),
+				$health['structure']
+			)
+		);
+	} elseif ( empty( $health['using'] ) ) {
+		echo esc_html__( 'Friendly URLs are off. WordPress is using Plain permalinks, so addresses such as /login/ will not open.', 'tso-login-organizer' );
+		echo ' ';
+		echo esc_html__( 'Correct setup: Settings → Permalinks → Post name. The structure box should contain /%postname%/. Then click Save Changes on that screen.', 'tso-login-organizer' );
+		echo ' <a href="' . esc_url( $link ) . '">' . esc_html__( 'Open Permalinks settings', 'tso-login-organizer' ) . '</a>';
+	} else {
+		echo esc_html(
+			sprintf(
+				/* translators: %s: permalink structure */
+				__( 'Permalinks are not Plain (current structure: %s) but the login rewrite rule is missing, so the virtual address may 404.', 'tso-login-organizer' ),
+				'' !== $health['structure'] ? $health['structure'] : '/%postname%/'
+			)
+		);
+		echo ' ';
+		echo esc_html__( 'Click “Check friendly URLs” to refresh rewrite rules. If this warning stays, open Settings → Permalinks, choose Post name (structure /%postname%/), and click Save Changes.', 'tso-login-organizer' );
+		echo ' <a href="' . esc_url( $link ) . '">' . esc_html__( 'Open Permalinks settings', 'tso-login-organizer' ) . '</a>';
+	}
+	echo '</p><p><button type="submit" class="button" form="tsolo-permalink-check">' . esc_html__( 'Check friendly URLs', 'tso-login-organizer' ) . '</button></p></div>';
+}
+
+/**
  * Register menu.
  */
 function tsolo_admin_menu() {
@@ -196,6 +232,20 @@ function tsolo_admin_handle_post() {
 		flush_rewrite_rules();
 		tsolo_admin_set_flash( __( 'Theme My Login settings imported.', 'tso-login-organizer' ), 'success' );
 		return;
+	}
+
+	if ( 'check_permalinks' === $action ) {
+		flush_rewrite_rules( false );
+		$health = tsolo_permalink_health();
+		if ( ! empty( $health['ok'] ) ) {
+			tsolo_admin_set_flash( __( 'Friendly URL check finished: permalinks are not Plain and the login rewrite rule is present.', 'tso-login-organizer' ), 'success' );
+		} elseif ( empty( $health['using'] ) ) {
+			tsolo_admin_set_flash( __( 'Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/) — see the note in URL slugs.', 'tso-login-organizer' ), 'warning' );
+		} else {
+			tsolo_admin_set_flash( __( 'Friendly URL check finished: rewrite rules were refreshed but the login rule is still missing. Open Settings → Permalinks and click Save Changes.', 'tso-login-organizer' ), 'warning' );
+		}
+		wp_safe_redirect( admin_url( 'options-general.php?page=tso-login-organizer&tab=core' ) );
+		exit;
 	}
 
 	if ( 'save_core' === $action ) {
@@ -360,6 +410,7 @@ function tsolo_admin_render_page() {
 	$modules     = tsolo_get_modules();
 	$defs        = tsolo_get_module_definitions();
 	$collisions  = tsolo_detect_collision_plugins();
+	$incompat    = tsolo_get_incompatibility_report();
 	$slug_labels = tsolo_get_slug_labels();
 
 	$lang_base    = add_query_arg(
@@ -380,6 +431,10 @@ function tsolo_admin_render_page() {
 	);
 	?>
 	<div class="wrap tsolo-admin-wrap">
+		<form id="tsolo-permalink-check" method="post" action="<?php echo esc_url( admin_url( 'options-general.php?page=tso-login-organizer&tab=core' ) ); ?>">
+			<?php wp_nonce_field( TSOLO_NONCE_FORM ); ?>
+			<input type="hidden" name="tsolo_admin_action" value="check_permalinks" />
+		</form>
 		<div class="tsolo-nav-top">
 			<h1 class="tsolo-page-title">
 				<?php esc_html_e( 'TSO Login Organizer', 'tso-login-organizer' ); ?>
@@ -431,10 +486,10 @@ function tsolo_admin_render_page() {
 				<input type="hidden" name="tsolo_admin_action" value="save_core" />
 				<table class="form-table" role="presentation">
 					<tr>
-						<th scope="row"><?php esc_html_e( 'AJAX', 'tso-login-organizer' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Forms', 'tso-login-organizer' ); ?></th>
 						<td>
-							<label><input type="checkbox" name="ajax" value="1" <?php checked( ! empty( $settings['ajax'] ) ); ?> /> <?php esc_html_e( 'Enable AJAX form submissions', 'tso-login-organizer' ); ?></label>
-							<p class="description tsolo-option-help"><?php esc_html_e( 'Submit login and related forms without a full page reload. Disable if another plugin already handles form AJAX.', 'tso-login-organizer' ); ?></p>
+							<label><input type="checkbox" name="ajax" value="1" <?php checked( ! empty( $settings['ajax'] ) ); ?> /> <?php esc_html_e( 'Send login, registration and password forms without reloading the whole page', 'tso-login-organizer' ); ?></label>
+							<p class="description tsolo-option-help"><?php esc_html_e( 'With this on, the visitor stays on the same screen and only the form updates (this is called AJAX). With this off, the browser loads the page again after each submit. Turn it off if another plugin already updates these forms in place.', 'tso-login-organizer' ); ?></p>
 						</td>
 					</tr>
 					<?php if ( ! is_multisite() ) : ?>
@@ -480,7 +535,10 @@ function tsolo_admin_render_page() {
 						<th scope="row"><?php esc_html_e( 'Auto login', 'tso-login-organizer' ); ?></th>
 						<td>
 							<label><input type="checkbox" name="auto_login" value="1" <?php checked( ! empty( $settings['auto_login'] ) ); ?> /> <?php esc_html_e( 'Log users in after registration', 'tso-login-organizer' ); ?></label>
-							<p class="description tsolo-option-help"><?php esc_html_e( 'Skip the "check your email" step and sign the new user in immediately (not recommended with email confirmation / admin approval).', 'tso-login-organizer' ); ?></p>
+							<p class="description tsolo-option-help"><?php esc_html_e( 'After a successful registration the new person is signed in immediately. If Moderation has email confirmation or admin approval turned on, this box is ignored and they stay logged out until that step is finished.', 'tso-login-organizer' ); ?></p>
+							<?php if ( class_exists( 'TSOLO_Mod_Moderation', false ) && TSOLO_Mod_Moderation::blocks_auto_login() ) : ?>
+								<p class="description tsolo-option-help"><?php esc_html_e( 'Moderation is currently holding new accounts, so this option is not applied.', 'tso-login-organizer' ); ?></p>
+							<?php endif; ?>
 						</td>
 					</tr>
 					<tr>
@@ -488,9 +546,10 @@ function tsolo_admin_render_page() {
 						<td>
 							<div class="tsolo-slugs-panel">
 								<?php tsolo_admin_render_virtual_pages_notice(); ?>
+								<?php tsolo_admin_render_permalink_status(); ?>
 								<p class="description"><?php esc_html_e( 'These values are the path after your site URL for each virtual form. With the default "login" slug, the form is at:', 'tso-login-organizer' ); ?> <code><?php echo esc_html( home_url( '/login/' ) ); ?></code></p>
 								<ol class="description tsolo-slugs-howto">
-									<li><?php esc_html_e( 'Settings > Permalinks must not be "Plain" (use Post name or similar).', 'tso-login-organizer' ); ?></li>
+									<li><?php esc_html_e( 'Use the check above. Friendly addresses work only when Permalinks is not Plain.', 'tso-login-organizer' ); ?></li>
 									<li><?php esc_html_e( 'Edit a slug below (letters, numbers, hyphens only), then click Save core settings (rewrites are flushed automatically).', 'tso-login-organizer' ); ?></li>
 									<li><?php esc_html_e( 'Open the new URL in the browser (e.g. /accedir/ if you changed login to accedir). Update menus/links that pointed to the old path.', 'tso-login-organizer' ); ?></li>
 									<li><?php esc_html_e( 'Do not create WordPress pages for these slugs — they are created virtually. You can delete Theme My Login pages with the same names. Profile and Favorites rewrite only when those modules are enabled.', 'tso-login-organizer' ); ?></li>
@@ -533,9 +592,9 @@ function tsolo_admin_render_page() {
 											</td>
 											<td class="tsolo-slug-preview">
 												<?php if ( $action_live ) : ?>
-													<a class="tsolo-ext-link" href="<?php echo esc_url( $preview_url ); ?>" target="_blank" rel="noopener noreferrer" title="<?php esc_attr_e( 'Open in new tab', 'tso-login-organizer' ); ?>"><code><?php echo esc_html( $preview ); ?></code></a>
+													<a class="tsolo-ext-link" href="<?php echo esc_url( $preview_url ); ?>" target="_blank" rel="noopener noreferrer" title="<?php esc_attr_e( 'Open in new tab', 'tso-login-organizer' ); ?>"><code><?php echo esc_html( $preview_url ); ?></code></a>
 												<?php else : ?>
-													<code><?php echo esc_html( $preview ); ?></code>
+													<code><?php echo esc_html( $preview_url ); ?></code>
 												<?php endif; ?>
 											</td>
 										</tr>
@@ -574,11 +633,17 @@ function tsolo_admin_render_page() {
 								<?php if ( ! empty( $def['description'] ) ) : ?>
 									<p class="description tsolo-option-help"><?php echo esc_html( $def['description'] ); ?></p>
 								<?php endif; ?>
-								<?php if ( ! empty( $def['configure'] ) ) : ?>
-									<p class="description tsolo-option-help"><strong><?php esc_html_e( 'Configuration:', 'tso-login-organizer' ); ?></strong> <?php echo esc_html( $def['configure'] ); ?></p>
-								<?php endif; ?>
-								<?php if ( ! empty( $def['collide'] ) ) : ?>
-									<p class="description tsolo-option-help"><strong><?php esc_html_e( 'Collision risk:', 'tso-login-organizer' ); ?></strong> <?php esc_html_e( 'May overlap with Swiss Knife Login Protect, Kadence Security or CleanTalk. Keep off if those already cover the same job.', 'tso-login-organizer' ); ?></p>
+								<?php
+								$module_hits = isset( $incompat[ $key ] ) && is_array( $incompat[ $key ] ) ? $incompat[ $key ] : array();
+								$active_hits = array();
+								foreach ( $module_hits as $hit ) {
+									if ( ! empty( $hit['active'] ) && ! empty( $hit['name'] ) ) {
+										$active_hits[] = $hit['name'];
+									}
+								}
+								if ( $active_hits ) :
+									?>
+									<p class="description tsolo-option-help"><strong><?php esc_html_e( 'Installed plugins that may clash:', 'tso-login-organizer' ); ?></strong> <?php echo esc_html( implode( ', ', $active_hits ) ); ?></p>
 								<?php endif; ?>
 							</td>
 						</tr>
@@ -705,12 +770,38 @@ function tsolo_admin_render_module_intro( $module, $def ) {
 		}
 		echo '</ol></div>';
 	}
-	if ( ! empty( $def['compat'] ) && is_array( $def['compat'] ) ) {
+	$rules   = function_exists( 'tsolo_get_incompatibility_rules' ) ? tsolo_get_incompatibility_rules() : array();
+	$has_scan = isset( $rules[ $module ] );
+	if ( ( ! empty( $def['compat'] ) && is_array( $def['compat'] ) ) || $has_scan ) {
 		echo '<div class="tsolo-compat">';
 		echo '<p><strong>' . esc_html__( 'Compatibility', 'tso-login-organizer' ) . '</strong></p>';
 		echo '<ul>';
-		foreach ( $def['compat'] as $line ) {
-			echo '<li>' . tsolo_admin_linkify_text( $line ) . '</li>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped/linkified in helper.
+		if ( ! empty( $def['compat'] ) && is_array( $def['compat'] ) ) {
+			foreach ( $def['compat'] as $line ) {
+				echo '<li>' . tsolo_admin_linkify_text( $line ) . '</li>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped/linkified in helper.
+			}
+		}
+		if ( $has_scan ) {
+			$report = tsolo_get_incompatibility_report();
+			$rows   = isset( $report[ $module ] ) && is_array( $report[ $module ] ) ? $report[ $module ] : array();
+			if ( ! $rows ) {
+				echo '<li>' . esc_html__( 'Installed plugins check: none of the plugins on this site match the known incompatibilities for this module.', 'tso-login-organizer' ) . '</li>';
+			} else {
+				$reason = isset( $rules[ $module ]['reason'] ) ? (string) $rules[ $module ]['reason'] : '';
+				foreach ( $rows as $row ) {
+					if ( empty( $row['name'] ) ) {
+						continue;
+					}
+					$state = ! empty( $row['active'] )
+						? __( 'active — likely clash', 'tso-login-organizer' )
+						: __( 'installed, not active', 'tso-login-organizer' );
+					echo '<li><strong>' . esc_html( $row['name'] ) . '</strong> (' . esc_html( $state ) . ')';
+					if ( '' !== $reason ) {
+						echo ' — ' . esc_html( $reason );
+					}
+					echo '</li>';
+				}
+			}
 		}
 		echo '</ul></div>';
 	}
@@ -757,8 +848,10 @@ function tsolo_admin_render_module_tab( $module, $def = array() ) {
 	} elseif ( 'moderation' === $module ) {
 		$s = TSOLO_Mod_Moderation::get_settings();
 		echo '<table class="form-table" role="presentation">';
-		echo '<tr><th scope="row">' . esc_html__( 'Email confirmation', 'tso-login-organizer' ) . '</th><td><label><input type="checkbox" name="mod[email_confirm]" value="1" ' . checked( ! empty( $s['email_confirm'] ), true, false ) . ' /> ' . esc_html__( 'Require users to confirm their email before they can log in', 'tso-login-organizer' ) . '</label></td></tr>';
-		echo '<tr><th scope="row">' . esc_html__( 'Admin approval', 'tso-login-organizer' ) . '</th><td><label><input type="checkbox" name="mod[admin_approve]" value="1" ' . checked( ! empty( $s['admin_approve'] ), true, false ) . ' /> ' . esc_html__( 'New accounts stay pending until an administrator approves them', 'tso-login-organizer' ) . '</label></td></tr>';
+		echo '<tr><th scope="row">' . esc_html__( 'Email confirmation', 'tso-login-organizer' ) . '</th><td><label><input type="checkbox" name="mod[email_confirm]" value="1" ' . checked( ! empty( $s['email_confirm'] ), true, false ) . ' /> ' . esc_html__( 'Require users to confirm their email before they can log in', 'tso-login-organizer' ) . '</label>';
+		echo '<p class="description tsolo-option-help">' . esc_html__( 'This overrides Core → “Log users in after registration”. The new person stays logged out until they open the link in the email, even if that Core box is checked.', 'tso-login-organizer' ) . '</p></td></tr>';
+		echo '<tr><th scope="row">' . esc_html__( 'Admin approval', 'tso-login-organizer' ) . '</th><td><label><input type="checkbox" name="mod[admin_approve]" value="1" ' . checked( ! empty( $s['admin_approve'] ), true, false ) . ' /> ' . esc_html__( 'New accounts stay pending until an administrator approves them', 'tso-login-organizer' ) . '</label>';
+		echo '<p class="description tsolo-option-help">' . esc_html__( 'This also overrides Core → “Log users in after registration”. The new person stays logged out until an administrator approves them on the Users screen, even if that Core box is checked. If both moderation boxes are off, the Core option signs them in as usual.', 'tso-login-organizer' ) . '</p></td></tr>';
 		echo '</table>';
 	} elseif ( 'restrictions' === $module ) {
 		$s = TSOLO_Mod_Restrictions::get_settings();
@@ -766,11 +859,17 @@ function tsolo_admin_render_module_tab( $module, $def = array() ) {
 		echo '<tr><th scope="row">' . esc_html__( 'Private site', 'tso-login-organizer' ) . '</th><td><label><input type="checkbox" name="mod[private_site]" value="1" ' . checked( ! empty( $s['private_site'] ), true, false ) . ' /> ' . esc_html__( 'Require login for all pages', 'tso-login-organizer' ) . '</label><p class="description tsolo-option-help">' . esc_html__( 'Guests are redirected to the login page. Login, register and password URLs stay public.', 'tso-login-organizer' ) . '</p></td></tr>';
 		echo '</table>';
 		echo '<h3>' . esc_html__( 'Shortcodes', 'tso-login-organizer' ) . '</h3>';
-		echo '<ul class="ul-disc tsolo-option-help">';
-		echo '<li><code>[tsolo-logged-in]</code> … <code>[/tsolo-logged-in]</code> — ' . esc_html__( 'visible only to logged-in users', 'tso-login-organizer' ) . '</li>';
-		echo '<li><code>[tsolo-logged-out]</code> … <code>[/tsolo-logged-out]</code> — ' . esc_html__( 'visible only to guests', 'tso-login-organizer' ) . '</li>';
-		echo '<li><code>[tsolo-role role="subscriber,customer"]</code> … <code>[/tsolo-role]</code> — ' . esc_html__( 'visible only to the listed roles', 'tso-login-organizer' ) . '</li>';
-		echo '</ul>';
+		echo '<p class="description tsolo-option-help">' . esc_html__( 'Paste a shortcode into the content of a post or a page. In the block editor, add a Shortcode block and paste the whole snippet, including the closing tag. In the classic editor, paste it in the text. The words between the opening tag and the closing tag are the part that is shown or hidden. Text outside the shortcode stays visible to everyone. These tags do nothing in a menu or in a widget unless that area runs shortcodes.', 'tso-login-organizer' ) . '</p>';
+		echo '<p class="description tsolo-option-help"><strong>' . esc_html__( 'Example: a note only members see', 'tso-login-organizer' ) . '</strong></p>';
+		echo '<code class="tsolo-shortcode-example">' . esc_html( "[tsolo-logged-in]\n" . __( 'Welcome back. Your downloads are on this page.', 'tso-login-organizer' ) . "\n[/tsolo-logged-in]" ) . '</code>';
+		echo '<p class="description tsolo-option-help">' . esc_html__( 'Guests see nothing from that block. Logged-in users see the sentence.', 'tso-login-organizer' ) . '</p>';
+		echo '<p class="description tsolo-option-help"><strong>' . esc_html__( 'Example: a login prompt only guests see', 'tso-login-organizer' ) . '</strong></p>';
+		$login_example = tsolo_get_action_url( 'login' );
+		echo '<code class="tsolo-shortcode-example">' . esc_html( "[tsolo-logged-out]\n" . sprintf( /* translators: %s: login URL */ __( 'Please log in at %s to read the rest of this page.', 'tso-login-organizer' ), $login_example ) . "\n[/tsolo-logged-out]" ) . '</code>';
+		echo '<p class="description tsolo-option-help">' . esc_html__( 'Logged-in users see nothing from that block. Guests see the sentence.', 'tso-login-organizer' ) . '</p>';
+		echo '<p class="description tsolo-option-help"><strong>' . esc_html__( 'Example: one role only', 'tso-login-organizer' ) . '</strong></p>';
+		echo '<code class="tsolo-shortcode-example">' . esc_html( "[tsolo-role role=\"subscriber\"]\n" . __( 'Subscriber offer: use the code WELCOME.', 'tso-login-organizer' ) . "\n[/tsolo-role]" ) . '</code>';
+		echo '<p class="description tsolo-option-help">' . esc_html__( 'Only users with the Subscriber role see that sentence. Use the role slug (subscriber, customer, editor), not the translated name. Several roles: role="subscriber,customer". Everyone else, including guests, sees nothing from that block.', 'tso-login-organizer' ) . '</p>';
 	} elseif ( 'profiles' === $module ) {
 		$s = TSOLO_Mod_Profiles::get_settings();
 		echo '<table class="form-table" role="presentation">';
@@ -806,14 +905,35 @@ function tsolo_admin_render_module_tab( $module, $def = array() ) {
 			'logout'   => __( 'After logout', 'tso-login-organizer' ),
 			'register' => __( 'After registration', 'tso-login-organizer' ),
 		);
-		echo '<p class="description tsolo-option-help">' . esc_html__( 'Leave a URL empty to keep WordPress defaults. Role-specific URLs override the default for that role.', 'tso-login-organizer' ) . '</p>';
+		$ex_home  = home_url( '/' );
+		$ex_shop  = home_url( '/shop/' );
+		$ex_admin = admin_url();
+		$ex_hello = home_url( '/welcome/' );
+		echo '<div class="tsolo-howto"><p><strong>' . esc_html__( 'What to type in the boxes', 'tso-login-organizer' ) . '</strong></p>';
+		echo '<p>' . esc_html__( 'Type a full address, including https:// and your domain. A path alone (/shop/) is rejected by the browser. Leave a box empty to keep the WordPress default for that case: usually the dashboard after login, the home page after logout, and the login page after registration.', 'tso-login-organizer' ) . '</p>';
+		echo '<p>' . esc_html(
+			sprintf(
+				/* translators: 1: home URL, 2: shop URL, 3: admin URL, 4: welcome URL */
+				__( 'Example. After login → Default: %1$s (everyone). Subscriber: %2$s (only subscribers; they ignore Default). Administrator: %3$s. After logout → Default: %1$s. After registration → Default: %4$s. Leave Administrator empty under After login if those users should follow Default.', 'tso-login-organizer' ),
+				$ex_home,
+				$ex_shop,
+				$ex_admin,
+				$ex_hello
+			)
+		) . '</p></div>';
+		$placeholders = array(
+			'login'    => $ex_shop,
+			'logout'   => $ex_home,
+			'register' => $ex_hello,
+		);
 		foreach ( $types as $type => $heading ) {
 			echo '<h2>' . esc_html( $heading ) . '</h2>';
 			echo '<div class="tsolo-redir-grid">';
-			echo '<p><label>' . esc_html__( 'Default (all roles)', 'tso-login-organizer' ) . '</label><input class="regular-text" type="url" name="redir_' . esc_attr( $type ) . '[_default]" value="' . esc_attr( isset( $s[ $type ]['_default'] ) ? $s[ $type ]['_default'] : '' ) . '" placeholder="https://" /></p>';
+			$placeholder = isset( $placeholders[ $type ] ) ? $placeholders[ $type ] : $ex_home;
+			echo '<p><label>' . esc_html__( 'Default (all roles)', 'tso-login-organizer' ) . '</label><input class="regular-text" type="url" name="redir_' . esc_attr( $type ) . '[_default]" value="' . esc_attr( isset( $s[ $type ]['_default'] ) ? $s[ $type ]['_default'] : '' ) . '" placeholder="' . esc_attr( $placeholder ) . '" /></p>';
 			foreach ( $roles as $role => $label ) {
 				$val = isset( $s[ $type ][ $role ] ) ? $s[ $type ][ $role ] : '';
-				echo '<p><label>' . esc_html( $label ) . '</label><input class="regular-text" type="url" name="redir_' . esc_attr( $type ) . '[' . esc_attr( $role ) . ']" value="' . esc_attr( $val ) . '" placeholder="https://" /></p>';
+				echo '<p><label>' . esc_html( $label ) . '</label><input class="regular-text" type="url" name="redir_' . esc_attr( $type ) . '[' . esc_attr( $role ) . ']" value="' . esc_attr( $val ) . '" placeholder="' . esc_attr( $placeholder ) . '" /></p>';
 			}
 			echo '</div>';
 		}

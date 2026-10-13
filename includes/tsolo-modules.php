@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once TSOLO_PATH . 'includes/tsolo-compat-scan.php';
+
 /**
  * Module definitions.
  *
@@ -30,11 +32,9 @@ function tsolo_get_module_definitions() {
 		'redirection'   => array(
 			'label'       => __( 'Redirection', 'tso-login-organizer' ),
 			'description' => __( 'Send users to different URLs after login, logout or registration, optionally per role.', 'tso-login-organizer' ),
-			'configure'   => __( 'After enabling: open the Redirection tab to set default and per-role URLs for login, logout and registration.', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Enable this module and click Save modules.', 'tso-login-organizer' ),
-				__( 'Open the Redirection tab. Set a default URL and, if needed, a different URL per role for After login, After logout and After registration.', 'tso-login-organizer' ),
-				__( 'Leave a field empty to keep the WordPress default for that case.', 'tso-login-organizer' ),
+				__( 'Each box wants a full address that starts with https:// (a path such as /shop/ is not enough). Empty means keep the WordPress default for that case.', 'tso-login-organizer' ),
+				__( 'Default applies to every role that does not have its own address. A role box overrides Default only for people with that role.', 'tso-login-organizer' ),
 			),
 			'compat'      => array(
 				__( 'Other login/redirect plugins (membership, LMS, WooCommerce “redirect after login”) may override these URLs depending on filter priority.', 'tso-login-organizer' ),
@@ -46,12 +46,10 @@ function tsolo_get_module_definitions() {
 		'moderation'    => array(
 			'label'       => __( 'Moderation', 'tso-login-organizer' ),
 			'description' => __( 'Require email confirmation and/or admin approval before new accounts can log in.', 'tso-login-organizer' ),
-			'configure'   => __( 'After enabling: open the Moderation tab to turn email confirmation and/or admin approval on or off.', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Enable this module and Save modules, then open the Moderation tab.', 'tso-login-organizer' ),
-				__( 'Turn on Email confirmation and/or Admin approval, then Save module settings.', 'tso-login-organizer' ),
-				__( 'New registrations receive a confirmation email and/or stay pending until an administrator approves them (Users screen).', 'tso-login-organizer' ),
-				__( 'Turn off Core → Auto login when using moderation, or new users may be signed in before they are approved.', 'tso-login-organizer' ),
+				__( 'Email confirmation sends a link. The new person cannot log in until they open it.', 'tso-login-organizer' ),
+				__( 'Admin approval leaves the account pending on the Users screen until an administrator approves it.', 'tso-login-organizer' ),
+				__( 'If either box is on, Core → “Log users in after registration” is ignored for that signup. The visitor stays logged out until the pending step is finished. If both boxes are off, the Core option applies as usual.', 'tso-login-organizer' ),
 			),
 			'test_links'  => array(
 				__( 'Open Users screen', 'tso-login-organizer' ) => admin_url( 'users.php' ),
@@ -67,12 +65,9 @@ function tsolo_get_module_definitions() {
 		'restrictions'  => array(
 			'label'       => __( 'Restrictions', 'tso-login-organizer' ),
 			'description' => __( 'Make the site private (login required) and restrict content with shortcodes.', 'tso-login-organizer' ),
-			'configure'   => __( 'After enabling: open the Restrictions tab for private site and shortcode examples.', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Enable this module and Save modules, then open the Restrictions tab.', 'tso-login-organizer' ),
-				__( 'Optional: tick Private site so guests must log in before seeing any page (login/register URLs stay reachable).', 'tso-login-organizer' ),
-				__( 'In posts/pages, wrap content with [tsolo-logged-in]…[/tsolo-logged-in] or [tsolo-logged-out]…[/tsolo-logged-out].', 'tso-login-organizer' ),
-				__( 'To allow only some roles: [tsolo-role role="subscriber,customer"]…[/tsolo-role].', 'tso-login-organizer' ),
+				__( 'Private site is optional and separate from shortcodes: guests are sent to the login page, while login and register stay public.', 'tso-login-organizer' ),
+				__( 'Shortcodes go inside a post or page (Shortcode block, or the text area in the classic editor). They hide only the text written between the opening tag and the closing tag. Examples are under Settings below.', 'tso-login-organizer' ),
 			),
 			'compat'      => array(
 				__( 'Private site redirects guests site-wide — do not combine with another “force login” / members-only plugin.', 'tso-login-organizer' ),
@@ -85,11 +80,9 @@ function tsolo_get_module_definitions() {
 		'security'      => array(
 			'label'       => __( 'Security', 'tso-login-organizer' ),
 			'description' => __( 'Lock accounts after failed logins, enforce password length, and optionally hide wp-login.php.', 'tso-login-organizer' ),
-			'configure'   => __( 'After enabling: open the Security tab for lockout attempts, duration, min password length and hide wp-login.php.', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Enable only if Swiss Knife Login Protect / Kadence Security are not already doing the same job.', 'tso-login-organizer' ),
-				__( 'Open the Security tab: enable lockouts, set max attempts and lockout minutes, optional min password length.', 'tso-login-organizer' ),
-				__( 'Hide wp-login.php returns 404 on the default login file — use only with this plugin’s frontend login URL and no other custom-login plugins.', 'tso-login-organizer' ),
+				__( 'Turn on lockouts, then set how many failures are allowed and how many minutes the lock lasts. Minimum password length 0 means no extra rule.', 'tso-login-organizer' ),
+				__( 'Hide wp-login.php returns 404 for the default login file. Use it only together with this plugin’s frontend login address.', 'tso-login-organizer' ),
 			),
 			'test_links'  => array(
 				__( 'Open login page', 'tso-login-organizer' ) => $login_url,
@@ -105,11 +98,9 @@ function tsolo_get_module_definitions() {
 		'captcha'       => array(
 			'label'       => __( 'reCAPTCHA', 'tso-login-organizer' ),
 			'description' => __( 'Protect login and registration forms with Google reCAPTCHA (needs site and secret keys).', 'tso-login-organizer' ),
-			'configure'   => __( 'After enabling: open the reCAPTCHA tab and paste your Google site key and secret key.', 'tso-login-organizer' ),
 			'howto'       => array(
 				__( 'Open https://www.google.com/recaptcha/admin and create a reCAPTCHA v2 "I\'m not a robot" key for your domain.', 'tso-login-organizer' ),
-				__( 'Enable this module, paste Site key and Secret key below, Save module settings.', 'tso-login-organizer' ),
-				__( 'The widget appears on this plugin’s login, register and lost-password forms. Leave keys empty to disable checks.', 'tso-login-organizer' ),
+				__( 'Paste the site key and the secret key below, then save. The checkbox appears on this plugin’s login, register and lost-password forms. Empty keys mean the check stays off.', 'tso-login-organizer' ),
 			),
 			'test_links'  => array(
 				__( 'Google reCAPTCHA admin', 'tso-login-organizer' ) => 'https://www.google.com/recaptcha/admin',
@@ -126,13 +117,11 @@ function tsolo_get_module_definitions() {
 		'profiles'      => array(
 			'label'       => __( 'Profiles', 'tso-login-organizer' ),
 			'description' => __( 'Frontend profile page so users can edit their account without using wp-admin.', 'tso-login-organizer' ),
-			'configure'   => __( 'After enabling: a /profile/ page is available. Open the Profiles tab to block wp-admin for users without edit_posts.', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Enable this module and Save modules. A virtual profile page is created (default slug /profile/ — change under Core → URL slugs).', 'tso-login-organizer' ),
 				/* translators: %s: profile URL */
-				sprintf( __( 'Logged-in users open %s to edit display name, email and password.', 'tso-login-organizer' ), $profile_url ),
-				__( 'Optional: Block wp-admin redirects subscribers (no edit_posts) away from /wp-admin/ to the profile page and hides the admin bar.', 'tso-login-organizer' ),
-				__( 'Enable Avatars as well if you want a profile-picture upload on that same page.', 'tso-login-organizer' ),
+				sprintf( __( 'Logged-in users open %s to edit display name, email and password. The path is the Profile slug under Core.', 'tso-login-organizer' ), $profile_url ),
+				__( 'Block wp-admin sends users who cannot edit posts away from /wp-admin/ to that profile page and hides the admin bar.', 'tso-login-organizer' ),
+				__( 'Turn on Avatars as well if the profile page should accept a photo upload.', 'tso-login-organizer' ),
 			),
 			'test_links'  => array(
 				__( 'Open profile page', 'tso-login-organizer' ) => $profile_url,
@@ -147,11 +136,9 @@ function tsolo_get_module_definitions() {
 		'notifications' => array(
 			'label'       => __( 'Notifications', 'tso-login-organizer' ),
 			'description' => __( 'Customize welcome and password-reset emails (subject, body, optional HTML).', 'tso-login-organizer' ),
-			'configure'   => __( 'After enabling: open the Notifications tab to edit email subjects, bodies and HTML mode.', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Enable this module, open the Notifications tab, edit subjects/bodies, Save module settings.', 'tso-login-organizer' ),
-				__( 'Use placeholders listed under each field (e.g. {user_login}, {reset_url}). Empty fields keep the WordPress default text.', 'tso-login-organizer' ),
-				__( 'HTML emails: tick the option only if your body contains HTML; otherwise leave plain text.', 'tso-login-organizer' ),
+				__( 'Use the placeholders listed under each field (for example {user_login}, {reset_url}). An empty field keeps the WordPress default text.', 'tso-login-organizer' ),
+				__( 'Tick HTML emails only when the body contains HTML tags. Otherwise leave it off and write plain text.', 'tso-login-organizer' ),
 			),
 			'compat'      => array(
 				__( 'SMTP / email-template plugins may still wrap or override outgoing mail after this filter runs.', 'tso-login-organizer' ),
@@ -163,12 +150,10 @@ function tsolo_get_module_definitions() {
 		'two_factor'    => array(
 			'label'       => __( 'Two-Factor Authentication', 'tso-login-organizer' ),
 			'description' => __( 'TOTP authenticator codes for selected roles after password login.', 'tso-login-organizer' ),
-			'configure'   => __( 'After enabling: open the Two-Factor tab to choose which roles must use 2FA. Users enable a secret on the frontend profile or in wp-admin.', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Enable this module (keep off if another 2FA plugin is active), Save modules, open the Two-Factor tab.', 'tso-login-organizer' ),
-				__( 'Tick the roles that must use 2FA, Save module settings.', 'tso-login-organizer' ),
-				__( 'Each user enables Authenticator on the frontend profile page (Profiles module) or under Users → Profile in wp-admin, then adds the secret to an app (Google Authenticator, etc.).', 'tso-login-organizer' ),
-				__( 'On login they enter the 6-digit code in the Authentication code field.', 'tso-login-organizer' ),
+				__( 'Tick the roles that must use a second code, then save. People in other roles keep password-only login.', 'tso-login-organizer' ),
+				__( 'Each person turns it on from their own profile page (Profiles) or from Users → Profile in wp-admin. Checking the box and saving creates a key the first time. They type that key into an app such as Google Authenticator.', 'tso-login-organizer' ),
+				__( 'After that, login asks for the password and for the 6-digit code shown in the app.', 'tso-login-organizer' ),
 			),
 			'test_links'  => array(
 				__( 'Open profile page', 'tso-login-organizer' ) => $profile_url,
@@ -185,11 +170,9 @@ function tsolo_get_module_definitions() {
 		'social'        => array(
 			'label'       => __( 'Social Login', 'tso-login-organizer' ),
 			'description' => __( 'Sign in with Google, Facebook or X using OAuth app credentials you provide.', 'tso-login-organizer' ),
-			'configure'   => __( 'After enabling: open the Social Login tab and fill Google / Facebook / X client IDs and secrets.', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Follow the provider steps on this tab (each has a direct console link). Copy the redirect URI shown for that provider into the console.', 'tso-login-organizer' ),
-				__( 'Paste Client ID / App ID and Secret below for each provider you want. Leave a provider empty to hide its button.', 'tso-login-organizer' ),
-				__( 'Save module settings, then open the login page and try the social button.', 'tso-login-organizer' ),
+				__( 'Follow the numbered steps on each provider card. Copy the redirect URI shown there into that provider’s console.', 'tso-login-organizer' ),
+				__( 'Paste the client ID (or app ID) and the secret for each provider you want. Leave a provider’s fields empty to hide its button.', 'tso-login-organizer' ),
 			),
 			'test_links'  => array(
 				__( 'Open login page', 'tso-login-organizer' )    => $login_url,
@@ -209,13 +192,10 @@ function tsolo_get_module_definitions() {
 		'avatars'       => array(
 			'label'       => __( 'Avatars', 'tso-login-organizer' ),
 			'description' => __( 'Let users upload a local profile picture instead of only using Gravatar.', 'tso-login-organizer' ),
-			'configure'   => __( 'Requires Profiles. After enabling both: open /profile/, upload under Profile picture. Optional max size on the Avatars tab.', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Enable Profiles and Avatars, then Save modules (Avatars alone has nowhere to upload).', 'tso-login-organizer' ),
-				__( 'Optional: set Max size (KB) below and Save module settings.', 'tso-login-organizer' ),
+				__( 'Avatars needs Profiles. The upload field is on the profile page, not on this screen. Max size (KB) below is the only setting here.', 'tso-login-organizer' ),
 				/* translators: %s: profile URL */
-				sprintf( __( 'While logged in, open the profile page: %s', 'tso-login-organizer' ), $profile_url ),
-				__( 'Choose an image (JPG, PNG, GIF or WebP) under Profile picture and save. The file is stored in uploads/tso-login-organizer/ and replaces Gravatar for that user site-wide.', 'tso-login-organizer' ),
+				sprintf( __( 'While logged in, open %s. The page says whether a photo is already saved. Choose a JPG, PNG, GIF or WebP to replace it. The file is stored in uploads/tso-login-organizer/ and replaces Gravatar for that user.', 'tso-login-organizer' ), $profile_url ),
 			),
 			'test_links'  => array(
 				__( 'Open profile page', 'tso-login-organizer' ) => $profile_url,
@@ -232,12 +212,10 @@ function tsolo_get_module_definitions() {
 		'favorites'     => array(
 			'label'       => __( 'Favorites', 'tso-login-organizer' ),
 			'description' => __( 'Logged-in users can save favorite posts and view them on a dedicated page.', 'tso-login-organizer' ),
-			'configure'   => __( 'After enabling: a /favorites/ page is available. Open the Favorites tab to show controls on single posts.', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Enable this module and Save modules. A virtual page is created (default /favorites/ — change under Core → URL slugs).', 'tso-login-organizer' ),
-				__( 'On the Favorites tab, keep “Show on posts” checked to display Add/Remove on single blog posts for logged-in users.', 'tso-login-organizer' ),
+				__( 'Keep “Show on posts” checked to put Add/Remove at the end of each single post for logged-in users.', 'tso-login-organizer' ),
 				/* translators: %s: favorites URL */
-				sprintf( __( 'Users manage the list at %s.', 'tso-login-organizer' ), $favorites_url ),
+				sprintf( __( 'The saved list is the Favorites slug from Core, currently %s.', 'tso-login-organizer' ), $favorites_url ),
 			),
 			'test_links'  => array(
 				__( 'Open favorites page', 'tso-login-organizer' ) => $favorites_url,
@@ -252,11 +230,9 @@ function tsolo_get_module_definitions() {
 		'mailchimp'     => array(
 			'label'       => __( 'Mailchimp', 'tso-login-organizer' ),
 			'description' => __( 'Optionally subscribe new registrants to a Mailchimp audience (API key + list ID).', 'tso-login-organizer' ),
-			'configure'   => __( 'After enabling: open the Mailchimp tab for API key, list ID and the registration consent checkbox.', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Create an API key at https://admin.mailchimp.com/account/api/ and copy your Audience (list) ID from Audience → Settings.', 'tso-login-organizer' ),
-				__( 'Enable this module, paste API key and List ID, optionally keep “Ask for newsletter consent” on, Save module settings.', 'tso-login-organizer' ),
-				__( 'On the registration form, users who tick the box are added to that audience after signup. No data is sent until keys are saved and the module is on.', 'tso-login-organizer' ),
+				__( 'Create an API key at https://admin.mailchimp.com/account/api/ and copy the Audience (list) ID from Audience → Settings.', 'tso-login-organizer' ),
+				__( 'Paste the API key and the list ID below. With “Ask for newsletter consent” on, only people who tick the box on the registration form are added. Nothing is sent while the key or the list ID is empty.', 'tso-login-organizer' ),
 			),
 			'test_links'  => array(
 				__( 'Mailchimp API keys', 'tso-login-organizer' ) => 'https://admin.mailchimp.com/account/api/',
@@ -270,35 +246,6 @@ function tsolo_get_module_definitions() {
 			'collide'     => false,
 		),
 	);
-}
-
-/**
- * Detect collision plugins.
- *
- * @return array List of human-readable names.
- */
-function tsolo_detect_collision_plugins() {
-	if ( ! function_exists( 'is_plugin_active' ) ) {
-		require_once ABSPATH . 'wp-admin/includes/plugin.php';
-	}
-	$found  = array();
-	$checks = array(
-		'tso-swiss-knife-advanced-maintenance-developer-toolkit/tso-swiss-knife-advanced-maintenance-developer-toolkit.php' => 'TSO Swiss Knife (Login Protect)',
-		'kadence-security/kadence-security.php'     => 'Kadence Security',
-		'kadence-security/kadence-security-pro.php' => 'Kadence Security',
-		'cleantalk-spam-protect/cleantalk.php'      => 'CleanTalk',
-		'security-malware-firewall/security-malware-firewall.php' => 'CleanTalk Security',
-	);
-	foreach ( $checks as $file => $label ) {
-		if ( is_plugin_active( $file ) ) {
-			$found[ $label ] = $label;
-		}
-	}
-	// Also detect Swiss by class / option presence.
-	if ( class_exists( 'TSOSK_Mod_Login_Protect', false ) || get_option( 'tsosk_login_protect' ) ) {
-		$found['TSO Swiss Knife (Login Protect)'] = 'TSO Swiss Knife (Login Protect)';
-	}
-	return array_values( $found );
 }
 
 /**

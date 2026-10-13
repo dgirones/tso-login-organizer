@@ -21,6 +21,31 @@ function tsolo_use_permalinks() {
 }
 
 /**
+ * Whether friendly URLs and this plugin's rewrite rules are in place.
+ *
+ * @return array{ok:bool,using:bool,structure:string,rule_ok:bool,login_slug:string}
+ */
+function tsolo_permalink_health() {
+	$structure = (string) get_option( 'permalink_structure' );
+	$using     = tsolo_use_permalinks();
+	$settings  = tsolo_get_settings();
+	$login     = 'login';
+	if ( isset( $settings['slugs']['login'] ) && is_string( $settings['slugs']['login'] ) && '' !== $settings['slugs']['login'] ) {
+		$login = trim( $settings['slugs']['login'], '/' );
+	}
+	$rules   = get_option( 'rewrite_rules' );
+	$pattern = $login . '/?$';
+	$rule_ok = is_array( $rules ) && isset( $rules[ $pattern ] );
+	return array(
+		'ok'         => ( $using && '' !== $structure && $rule_ok ),
+		'using'      => (bool) $using,
+		'structure'  => $structure,
+		'rule_ok'    => (bool) $rule_ok,
+		'login_slug' => $login,
+	);
+}
+
+/**
  * Add rewrite tag.
  */
 function tsolo_add_rewrite_tags() {
