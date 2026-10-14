@@ -103,6 +103,39 @@ html:has(body.settings_page_tso-login-organizer) {
 	font-weight: 700;
 }
 
+.tsolo-admin-wrap .tsolo-theme-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	color: #1d2327;
+	border-radius: 999px;
+	padding: 5px 12px;
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 1.3;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.tsolo-admin-wrap .tsolo-theme-btn:hover,
+.tsolo-admin-wrap .tsolo-theme-btn:focus {
+	border-color: #2271b1;
+	color: #2271b1;
+	background: #f6f7f7;
+	outline: none;
+}
+
+.tsolo-admin-wrap .description strong,
+.tsolo-admin-wrap .tsolo-slugs-howto strong,
+.tsolo-admin-wrap .tsolo-howto strong,
+.tsolo-admin-wrap .tsolo-compat strong,
+.tsolo-admin-wrap .tsolo-option-help strong {
+	font-weight: 700;
+	color: #1d2327;
+}
+
 .tsolo-admin-wrap .nav-tab-wrapper {
 	margin-bottom: 1.25rem;
 }
@@ -134,6 +167,10 @@ html:has(body.settings_page_tso-login-organizer) {
 		justify-content: center;
 		width: 100%;
 	}
+
+	.tsolo-admin-wrap .tsolo-theme-btn .tsolo-theme-label {
+		display: none;
+	}
 }
 
 .tsolo-admin-wrap .form-table input.regular-text,
@@ -149,8 +186,15 @@ html:has(body.settings_page_tso-login-organizer) {
 }
 
 .tsolo-admin-wrap .tsolo-slugs-panel {
-	max-width: none;
-	overflow-x: auto;
+	width: 100%;
+	max-width: 100%;
+	margin: 1.25rem auto 0;
+	box-sizing: border-box;
+}
+
+.tsolo-admin-wrap .tsolo-slugs-heading {
+	margin: 0 0 0.5rem;
+	font-size: 1.15rem;
 }
 
 .tsolo-admin-wrap .tsolo-virtual-pages-notice {
@@ -163,8 +207,7 @@ html:has(body.settings_page_tso-login-organizer) {
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-delivery {
-	width: 18%;
-	white-space: nowrap;
+	width: 16%;
 	color: #646970;
 }
 
@@ -173,9 +216,11 @@ html:has(body.settings_page_tso-login-organizer) {
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table {
+	width: 100%;
+	table-layout: fixed;
 	border: 1px solid #c3c4c7;
 	border-radius: 2px;
-	margin: 0.75rem 0 0;
+	margin: 0.75rem auto 0;
 	background: #fff;
 }
 
@@ -194,8 +239,7 @@ html:has(body.settings_page_tso-login-organizer) {
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-label {
-	width: auto;
-	min-width: 14rem;
+	width: 32%;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-label strong {
@@ -211,8 +255,7 @@ html:has(body.settings_page_tso-login-organizer) {
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-input {
-	width: 28%;
-	white-space: nowrap;
+	width: 18%;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-input input.regular-text {
@@ -222,16 +265,15 @@ html:has(body.settings_page_tso-login-organizer) {
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview {
-	width: 1%;
-	white-space: nowrap;
+	width: 34%;
 	color: #646970;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview a,
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview code {
-	white-space: nowrap;
-	word-break: keep-all;
-	overflow-wrap: normal;
+	white-space: normal;
+	overflow-wrap: anywhere;
+	word-break: break-word;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview code {
@@ -348,6 +390,12 @@ html:has(body.settings_page_tso-login-organizer) {
 }
 
 @media screen and (max-width: 782px) {
+	.tsolo-admin-wrap .tsolo-slugs-table {
+		table-layout: auto;
+		border: 0;
+		background: transparent;
+	}
+
 	.tsolo-admin-wrap .tsolo-slugs-table thead {
 		display: none;
 	}
@@ -357,25 +405,157 @@ html:has(body.settings_page_tso-login-organizer) {
 	.tsolo-admin-wrap .tsolo-slugs-table tr,
 	.tsolo-admin-wrap .tsolo-slugs-table td {
 		display: block;
-		width: 100%;
-	}
-
-	.tsolo-admin-wrap .tsolo-slugs-table td {
-		border-top: none;
-		padding: 0.35rem 0.85rem;
+		width: 100% !important;
+		box-sizing: border-box;
 	}
 
 	.tsolo-admin-wrap .tsolo-slugs-table tr {
-		border-top: 1px solid #dcdcde;
-		padding: 0.5rem 0;
+		margin: 0 0 0.75rem;
+		padding: 0.75rem 0.85rem;
+		border: 1px solid #c3c4c7;
+		background: #fff;
+	}
+
+	.tsolo-admin-wrap .tsolo-slugs-table td {
+		border: 0;
+		padding: 0.4rem 0;
+		white-space: normal;
+	}
+
+	.tsolo-admin-wrap .tsolo-slugs-table td::before {
+		content: attr(data-label);
+		display: block;
+		margin-bottom: 0.2rem;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		color: #646970;
 	}
 
 	.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-input input.regular-text {
 		width: 100%;
 	}
 
-	.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview {
-		overflow-x: auto;
-		white-space: nowrap;
+	.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview,
+	.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview a,
+	.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview code {
+		display: block;
+		width: 100%;
+		white-space: normal;
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+}
+
+html[data-tsolo-theme="night"] body.settings_page_tso-login-organizer #wpcontent,
+html[data-tsolo-theme="night"] body.settings_page_tso-login-organizer #wpbody,
+html[data-tsolo-theme="night"] body.settings_page_tso-login-organizer #wpbody-content {
+	background: #12141c;
+	color: #f3f4f6;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .form-table th,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap h1,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap h2,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap h3,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap label,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .description strong,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-option-help strong {
+	color: #f3f4f6;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .description,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-option-help,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-plugin-version,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slug-delivery,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slug-preview {
+	color: #d1d5db;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-theme-btn,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-lang-btn {
+	background: #232635;
+	color: #f3f4f6;
+	border-color: #2e3245;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-lang-btn.is-active {
+	background: #2271b1;
+	color: #fff;
+	border-color: #2271b1;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .nav-tab {
+	background: #1a1d27;
+	color: #f3f4f6;
+	border-color: #2e3245;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .nav-tab-active,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .nav-tab-active:hover {
+	background: #12141c;
+	color: #fff;
+	border-bottom-color: #12141c;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap input[type="text"],
+html[data-tsolo-theme="night"] .tsolo-admin-wrap input[type="number"],
+html[data-tsolo-theme="night"] .tsolo-admin-wrap input[type="url"],
+html[data-tsolo-theme="night"] .tsolo-admin-wrap input[type="password"],
+html[data-tsolo-theme="night"] .tsolo-admin-wrap textarea,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap select {
+	background: #232635;
+	color: #f3f4f6;
+	border-color: #2e3245;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slugs-table,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-provider-card,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-howto,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-compat,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .notice,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-shortcode-example {
+	background: #1a1d27;
+	color: #f3f4f6;
+	border-color: #2e3245;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slugs-table thead th {
+	background: #232635;
+	color: #f3f4f6;
+	border-color: #2e3245;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slugs-table td {
+	color: #f3f4f6;
+	border-color: #2e3245;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .widefat.striped > tbody > :nth-child(odd),
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .widefat.striped > tbody > :nth-child(odd) td {
+	background: #1f2330;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap a,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slug-preview a {
+	color: #72aee6;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap code,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-callback-uri {
+	background: #232635;
+	color: #f3f4f6;
+}
+
+@media screen and (max-width: 782px) {
+	html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slugs-table tr {
+		background: #1a1d27;
+		border-color: #2e3245;
+	}
+
+	html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slugs-table td::before {
+		color: #d1d5db;
 	}
 }

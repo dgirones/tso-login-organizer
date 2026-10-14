@@ -106,6 +106,7 @@ function tsolo_deactivate() {
 }
 
 if ( is_admin() ) {
+	require_once TSOLO_PATH . 'includes/tsolo-admin-theme.php';
 	require_once TSOLO_PATH . 'includes/tsolo-admin-assets.php';
 	require_once TSOLO_PATH . 'includes/tsolo-admin.php';
 }

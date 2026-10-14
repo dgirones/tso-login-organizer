@@ -20,8 +20,16 @@ function tsolo_admin_register_assets( $hook ) {
 	if ( false === strpos( $hook, 'tso-login-organizer' ) ) {
 		return;
 	}
-	$css = TSOLO_PATH . 'assets/css/tsolo-admin.css';
-	$js  = TSOLO_PATH . 'assets/js/tsolo-admin.js';
+	$css  = TSOLO_PATH . 'assets/css/tsolo-admin.css';
+	$js   = TSOLO_PATH . 'assets/js/tsolo-admin.js';
+	$boot = TSOLO_PATH . 'assets/js/tsolo-theme-boot.js';
+	wp_enqueue_script(
+		'tsolo-theme-boot',
+		TSOLO_URL . 'assets/js/tsolo-theme-boot.js',
+		array(),
+		file_exists( $boot ) ? (string) filemtime( $boot ) : TSOLO_VERSION,
+		false
+	);
 	wp_enqueue_style(
 		'tsolo-admin',
 		TSOLO_URL . 'assets/css/tsolo-admin.css',
@@ -40,12 +48,18 @@ function tsolo_admin_register_assets( $hook ) {
 		file_exists( $js ) ? (string) filemtime( $js ) : TSOLO_VERSION,
 		true
 	);
+	$lang   = function_exists( 'tsolo_get_ui_lang' ) ? tsolo_get_ui_lang() : 'en';
+	$coords = function_exists( 'tsolo_theme_coords' ) ? tsolo_theme_coords() : array( 'lat' => 41.39, 'lng' => 2.17 );
 	wp_localize_script(
 		'tsolo-admin',
 		'tsoloAdminConfig',
 		array(
 			'nonce'      => wp_create_nonce( TSOLO_NONCE_AJAX ),
 			'collisions' => tsolo_detect_collision_plugins(),
+			'timezone'   => function_exists( 'tsolo_theme_timezone_string' ) ? tsolo_theme_timezone_string() : '',
+			'lat'        => isset( $coords['lat'] ) ? $coords['lat'] : 41.39,
+			'lng'        => isset( $coords['lng'] ) ? $coords['lng'] : 2.17,
+			'themeI18n'  => function_exists( 'tsolo_theme_i18n' ) ? tsolo_theme_i18n( $lang ) : array(),
 			'i18n'       => array(
 				'collisionWarn' => __( 'Other security/spam plugins were detected. Enable colliding modules only if you know they will not conflict.', 'tso-login-organizer' ),
 			),
