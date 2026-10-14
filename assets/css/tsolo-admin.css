@@ -145,6 +145,7 @@ html:has(body.settings_page_tso-login-organizer) {
 	margin: 0;
 	padding-top: 0;
 	gap: 0;
+	overflow: visible;
 }
 
 .tsolo-admin-wrap .tsolo-nav-tabs::before,
