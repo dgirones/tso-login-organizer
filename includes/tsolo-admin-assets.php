@@ -39,7 +39,7 @@ function tsolo_admin_register_assets( $hook ) {
 	// Critical: hide inactive tab panels before the stylesheet finishes loading (avoids F5 FOUC).
 	wp_add_inline_style(
 		'tsolo-admin',
-		'.tsolo-admin-wrap .tsolo-tab-panel:not(.is-active){display:none!important}'
+		'.tsolo-admin-wrap .tsolo-tab-panel:not(.is-active){display:none!important}.tsolo-admin-wrap .tsolo-nav-tabs{display:flex;clear:both;float:none;width:100%}.tsolo-admin-wrap .tsolo-nav-tabs .nav-tab{float:none}.tsolo-admin-wrap .tsolo-nav-primary{flex-wrap:nowrap}.tsolo-admin-wrap .tsolo-nav-modules{flex-wrap:wrap}.tsolo-admin-wrap .tsolo-tab-panels{clear:both;display:block;width:100%}'
 	);
 	wp_enqueue_script(
 		'tsolo-admin',

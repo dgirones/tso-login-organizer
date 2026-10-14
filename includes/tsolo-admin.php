@@ -61,6 +61,15 @@ function tsolo_admin_emphasis_phrases() {
 		'Perfil i Preferits',
 		'Profile and Favorites',
 		'Theme My Login',
+		'does not delete them',
+		'No los borra',
+		'No els esborra',
+		'Leave it active',
+		'Déjalo activo',
+		'Deixa’l actiu',
+		'Deactivate Theme My Login',
+		'Desactiva Theme My Login',
+		'Desactiva Theme My Login.',
 		'Anyone can register',
 		'Cualquiera puede registrarse',
 		'Qualsevol es pot registrar',
@@ -335,11 +344,11 @@ function tsolo_admin_handle_post() {
 		if ( ! empty( $health['ok'] ) ) {
 			tsolo_admin_set_flash( __( 'Friendly URL check finished: permalinks are not Plain and the login rewrite rule is present.', 'tso-login-organizer' ), 'success' );
 		} elseif ( empty( $health['using'] ) ) {
-			tsolo_admin_set_flash( __( 'Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/) — see the note in URL slugs.', 'tso-login-organizer' ), 'warning' );
+			tsolo_admin_set_flash( __( 'Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/).', 'tso-login-organizer' ), 'warning' );
 		} else {
 			tsolo_admin_set_flash( __( 'Friendly URL check finished: rewrite rules were refreshed but the login rule is still missing. Open Settings → Permalinks and click Save Changes.', 'tso-login-organizer' ), 'warning' );
 		}
-		wp_safe_redirect( admin_url( 'options-general.php?page=tso-login-organizer&tab=core' ) );
+		wp_safe_redirect( admin_url( 'options-general.php?page=tso-login-organizer&tab=migrate' ) );
 		exit;
 	}
 
@@ -526,7 +535,7 @@ function tsolo_admin_render_page() {
 	);
 	?>
 	<div class="wrap tsolo-admin-wrap" id="tsolo-wrap" data-theme="day" data-theme-pref="auto">
-		<form id="tsolo-permalink-check" method="post" action="<?php echo esc_url( admin_url( 'options-general.php?page=tso-login-organizer&tab=core' ) ); ?>">
+		<form id="tsolo-permalink-check" method="post" action="<?php echo esc_url( admin_url( 'options-general.php?page=tso-login-organizer&tab=migrate' ) ); ?>">
 			<?php wp_nonce_field( TSOLO_NONCE_FORM ); ?>
 			<input type="hidden" name="tsolo_admin_action" value="check_permalinks" />
 		</form>
@@ -561,21 +570,28 @@ function tsolo_admin_render_page() {
 				?>
 			</p></div>
 		<?php endif; ?>
-		<nav class="nav-tab-wrapper tsolo-nav-tabs" aria-label="<?php esc_attr_e( 'Plugin sections', 'tso-login-organizer' ); ?>">
+		<nav class="nav-tab-wrapper tsolo-nav-tabs tsolo-nav-primary" style="display:flex;flex-wrap:nowrap;clear:both;width:100%;float:none;" aria-label="<?php esc_attr_e( 'Plugin sections', 'tso-login-organizer' ); ?>">
 			<a class="nav-tab <?php echo 'core' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'options-general.php?page=tso-login-organizer&tab=core' ) ); ?>" data-tsolo-tab="core"><?php esc_html_e( 'Core', 'tso-login-organizer' ); ?></a>
 			<a class="nav-tab <?php echo 'modules' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'options-general.php?page=tso-login-organizer&tab=modules' ) ); ?>" data-tsolo-tab="modules"><?php esc_html_e( 'Modules', 'tso-login-organizer' ); ?></a>
 			<a class="nav-tab <?php echo 'migrate' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'options-general.php?page=tso-login-organizer&tab=migrate' ) ); ?>" data-tsolo-tab="migrate"><?php esc_html_e( 'Migration', 'tso-login-organizer' ); ?></a>
-			<?php foreach ( $defs as $key => $def ) : ?>
-				<?php
-				if ( empty( $modules[ $key ] ) ) {
-					continue;
-				}
-				?>
+		</nav>
+		<?php
+		$tsolo_enabled_modules = array();
+		foreach ( $defs as $key => $def ) {
+			if ( ! empty( $modules[ $key ] ) ) {
+				$tsolo_enabled_modules[ $key ] = $def;
+			}
+		}
+		if ( $tsolo_enabled_modules ) :
+			?>
+		<nav class="nav-tab-wrapper tsolo-nav-tabs tsolo-nav-modules" style="display:flex;flex-wrap:wrap;clear:both;width:100%;float:none;" aria-label="<?php esc_attr_e( 'Enabled modules', 'tso-login-organizer' ); ?>">
+			<?php foreach ( $tsolo_enabled_modules as $key => $def ) : ?>
 				<a class="nav-tab <?php echo $tab === $key ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'options-general.php?page=tso-login-organizer&tab=' . rawurlencode( $key ) ) ); ?>" data-tsolo-tab="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $def['label'] ); ?></a>
 			<?php endforeach; ?>
 		</nav>
+			<?php endif; ?>
 
-		<div class="tsolo-tab-panels">
+		<div class="tsolo-tab-panels" style="clear:both;width:100%;">
 			<section class="tsolo-tab-panel<?php echo 'core' === $tab ? ' is-active' : ''; ?>" data-tsolo-panel="core"<?php echo 'core' === $tab ? '' : ' hidden'; ?><?php echo 'core' === $tab ? '' : ' style="display:none"'; ?>>
 			<form method="post">
 				<?php wp_nonce_field( TSOLO_NONCE_FORM ); ?>
@@ -640,11 +656,9 @@ function tsolo_admin_render_page() {
 				</table>
 				<div class="tsolo-slugs-panel">
 					<h2 class="tsolo-slugs-heading"><?php esc_html_e( 'URL slugs', 'tso-login-organizer' ); ?></h2>
-					<?php tsolo_admin_render_virtual_pages_notice(); ?>
-					<?php tsolo_admin_render_permalink_status(); ?>
 					<p class="description"><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'These values are the path after your site URL for each virtual form. With the default "login" slug, the form is at:', 'tso-login-organizer' ) ) ); ?> <code><?php echo esc_html( home_url( '/login/' ) ); ?></code></p>
 					<ol class="description tsolo-slugs-howto">
-						<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Use the check above. Friendly addresses work only when Permalinks is not Plain.', 'tso-login-organizer' ) ) ); ?></li>
+						<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Friendly addresses work only when Permalinks is not Plain. The check is on the Migration tab.', 'tso-login-organizer' ) ) ); ?></li>
 						<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Edit a slug below (letters, numbers, hyphens only), then click Save core settings (rewrites are flushed automatically).', 'tso-login-organizer' ) ) ); ?></li>
 						<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Open the new URL in the browser (e.g. /accedir/ if you changed login to accedir). Update menus/links that pointed to the old path.', 'tso-login-organizer' ) ) ); ?></li>
 						<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Do not create WordPress pages for these slugs — they are created virtually. You can delete Theme My Login pages with the same names. Profile and Favorites rewrite only when those modules are enabled.', 'tso-login-organizer' ) ) ); ?></li>
@@ -752,13 +766,36 @@ function tsolo_admin_render_page() {
 			</section>
 
 			<section class="tsolo-tab-panel<?php echo 'migrate' === $tab ? ' is-active' : ''; ?>" data-tsolo-panel="migrate"<?php echo 'migrate' === $tab ? '' : ' hidden'; ?><?php echo 'migrate' === $tab ? '' : ' style="display:none"'; ?>>
+			<div class="tsolo-migrate-guide">
+				<p><strong><?php esc_html_e( 'Your old Theme My Login setup is safe.', 'tso-login-organizer' ); ?></strong>
+					<?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Import only copies the free settings into this plugin. It does not delete them, it does not change Theme My Login, and it does not turn that plugin off. The original options stay in the database.', 'tso-login-organizer' ) ) ); ?></p>
+				<h3><?php esc_html_e( 'What is copied', 'tso-login-organizer' ); ?></h3>
+				<ul class="ul-disc">
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Whether login, registration and password forms update without reloading the page (AJAX).', 'tso-login-organizer' ) ) ); ?></li>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'What visitors may type to log in: username, email, or both.', 'tso-login-organizer' ) ) ); ?></li>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Whether registration asks for username and email, or email only.', 'tso-login-organizer' ) ) ); ?></li>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Whether new users choose their own password, or WordPress emails a generated one.', 'tso-login-organizer' ) ) ); ?></li>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Whether a new account is signed in immediately after registration.', 'tso-login-organizer' ) ) ); ?></li>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'The address slugs for login, logout, register, lost password, reset password, dashboard and confirm-action.', 'tso-login-organizer' ) ) ); ?></li>
+				</ul>
+				<p><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Extensions, email designs, widgets, menus and the WordPress pages Theme My Login created are not copied. Those pages can be moved to the trash; the addresses keep working here as virtual pages. The shortcode [theme-my-login] already works with this plugin.', 'tso-login-organizer' ) ) ); ?></p>
+				<h3><?php esc_html_e( 'When to deactivate Theme My Login', 'tso-login-organizer' ); ?></h3>
+				<p><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Either moment works for the copy. The saved options remain if Theme My Login is still active and also if you already deactivated it. Leave it active until you have opened the new addresses and they look right, then deactivate it. If both plugins stay active they can fight over the same login addresses.', 'tso-login-organizer' ) ) ); ?></p>
+				<h3><?php esc_html_e( 'After the import', 'tso-login-organizer' ); ?></h3>
+				<ol>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Keep friendly permalinks (not Plain). Use the check below.', 'tso-login-organizer' ) ) ); ?></li>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Move the old Theme My Login pages to the trash if they are listed below. This plugin already serves those addresses.', 'tso-login-organizer' ) ) ); ?></li>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Open each virtual URL from Core → URL slugs and confirm the form loads.', 'tso-login-organizer' ) ) ); ?></li>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Update menus and links that still point at the old pages.', 'tso-login-organizer' ) ) ); ?></li>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Deactivate Theme My Login.', 'tso-login-organizer' ) ) ); ?></li>
+				</ol>
+			</div>
+			<p><?php echo tsolo_tml_options_present() ? esc_html__( 'TML options detected on this site.', 'tso-login-organizer' ) : esc_html__( 'No TML options detected (you can still use this plugin with its own defaults).', 'tso-login-organizer' ); ?></p>
+			<?php tsolo_admin_render_virtual_pages_notice(); ?>
+			<?php tsolo_admin_render_permalink_status(); ?>
 			<form method="post">
 				<?php wp_nonce_field( TSOLO_NONCE_FORM ); ?>
 				<input type="hidden" name="tsolo_admin_action" value="import_tml" />
-				<p><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Import Theme My Login free settings (AJAX, login type, registration, passwords, auto-login, slugs). Shortcode [theme-my-login] is already aliased. Deactivate Theme My Login after verifying URLs.', 'tso-login-organizer' ) ) ); ?></p>
-				<p><?php echo tsolo_tml_options_present() ? esc_html__( 'TML options detected on this site.', 'tso-login-organizer' ) : esc_html__( 'No TML options detected (you can still use this plugin with its own defaults).', 'tso-login-organizer' ); ?></p>
-				<?php tsolo_admin_render_virtual_pages_notice(); ?>
-				<p class="description"><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'After import: trash the old Theme My Login WordPress pages, keep pretty permalinks, then open each virtual URL from Core → URL slugs to confirm forms load.', 'tso-login-organizer' ) ) ); ?></p>
 				<?php submit_button( __( 'Import Theme My Login settings', 'tso-login-organizer' ) ); ?>
 			</form>
 			</section>

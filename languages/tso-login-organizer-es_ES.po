@@ -1,14 +1,5 @@
-# TSO Login Organizer — es_ES
-# Copyright (C) 2026 Tu Soporte Online
-#
 msgid ""
-msgstr ""
-"Project-Id-Version: TSO Login Organizer 1.0.0\n"
-"Language: es_ES\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+msgstr "Project-Id-Version: TSO Login Organizer 1.0.0\nLanguage: es_ES\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "<strong>Error:</strong> Captcha verification failed."
 msgstr "<strong>Error:</strong> Falló la verificación del captcha."
@@ -366,9 +357,6 @@ msgstr "Sigue los pasos numerados de cada proveedor. Copia el URI de redirecció
 
 msgid "Forms"
 msgstr "Formularios"
-
-msgid "Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/) — see the note in URL slugs."
-msgstr "Comprobación de URL amigables terminada: WordPress usa enlaces Plain. Pon Nombre de la entrada (/%postname%/) — ver la nota en URL slugs."
 
 msgid "Friendly URL check finished: permalinks are not Plain and the login rewrite rule is present."
 msgstr "Comprobación de URL amigables terminada: los enlaces no son Plain y la regla de acceso está presente."
@@ -1030,9 +1018,6 @@ msgstr "Respuesta inesperada del servidor. Inténtalo de nuevo."
 msgid "Until a module is enabled, it does nothing and has no settings tab. Disable it again anytime to turn that feature off."
 msgstr "Hasta que no actives un módulo, no hace nada y no tiene pestaña de ajustes. Puedes desactivarlo en cualquier momento."
 
-msgid "Use the check above. Friendly addresses work only when Permalinks is not Plain."
-msgstr "Usa la comprobación de arriba. Las direcciones amigables solo funcionan si los enlaces no son Plain."
-
 msgid "Use the placeholders listed under each field (for example {user_login}, {reset_url}). An empty field keeps the WordPress default text."
 msgstr "Usa los marcadores bajo cada campo (p. ej. {user_login}, {reset_url}). Campo vacío = texto por defecto de WordPress."
 
@@ -1155,4 +1140,67 @@ msgstr "shortcode"
 
 msgid "slug"
 msgstr "slug"
+
+msgid "Enabled modules"
+msgstr "Módulos activados"
+
+msgid "Your old Theme My Login setup is safe."
+msgstr "Tu configuración anterior de Theme My Login está a salvo."
+
+msgid "Import only copies the free settings into this plugin. It does not delete them, it does not change Theme My Login, and it does not turn that plugin off. The original options stay in the database."
+msgstr "La importación solo copia los ajustes gratuitos a este plugin. No los borra, no modifica Theme My Login y no lo desactiva. Las opciones originales siguen en la base de datos."
+
+msgid "What is copied"
+msgstr "Qué se copia"
+
+msgid "Whether login, registration and password forms update without reloading the page (AJAX)."
+msgstr "Si los formularios de acceso, registro y contraseña se actualizan sin recargar la página (AJAX)."
+
+msgid "What visitors may type to log in: username, email, or both."
+msgstr "Qué puede escribir el visitante para entrar: usuario, correo o ambos."
+
+msgid "Whether registration asks for username and email, or email only."
+msgstr "Si el registro pide usuario y correo, o solo correo."
+
+msgid "Whether new users choose their own password, or WordPress emails a generated one."
+msgstr "Si los usuarios nuevos eligen su contraseña, o WordPress envía una generada."
+
+msgid "Whether a new account is signed in immediately after registration."
+msgstr "Si la cuenta nueva inicia sesión justo después del registro."
+
+msgid "The address slugs for login, logout, register, lost password, reset password, dashboard and confirm-action."
+msgstr "Los slugs de acceso, salida, registro, contraseña perdida, restablecer contraseña, escritorio y confirmar solicitud."
+
+msgid "Extensions, email designs, widgets, menus and the WordPress pages Theme My Login created are not copied. Those pages can be moved to the trash; the addresses keep working here as virtual pages. The shortcode [theme-my-login] already works with this plugin."
+msgstr "No se copian las extensiones, los diseños de correo, los widgets, los menús ni las páginas de WordPress que creó Theme My Login. Esas páginas se pueden enviar a la papelera; las direcciones siguen funcionando aquí como páginas virtuales. El shortcode [theme-my-login] ya funciona con este plugin."
+
+msgid "When to deactivate Theme My Login"
+msgstr "Cuándo desactivar Theme My Login"
+
+msgid "Either moment works for the copy. The saved options remain if Theme My Login is still active and also if you already deactivated it. Leave it active until you have opened the new addresses and they look right, then deactivate it. If both plugins stay active they can fight over the same login addresses."
+msgstr "Da igual el momento para la copia. Las opciones guardadas siguen ahí tanto si Theme My Login está activo como si ya lo has desactivado. Déjalo activo hasta que abras las direcciones nuevas y se vean bien, y entonces desactívalo. Si los dos plugins siguen activos pueden pelearse por las mismas direcciones de acceso."
+
+msgid "After the import"
+msgstr "Después de la importación"
+
+msgid "Keep friendly permalinks (not Plain). Use the check below."
+msgstr "Mantén los enlaces permanentes amigables (no Plain). Usa la comprobación de abajo."
+
+msgid "Move the old Theme My Login pages to the trash if they are listed below. This plugin already serves those addresses."
+msgstr "Envía a la papelera las páginas antiguas de Theme My Login si aparecen abajo. Este plugin ya sirve esas direcciones."
+
+msgid "Open each virtual URL from Core → URL slugs and confirm the form loads."
+msgstr "Abre cada URL virtual en Núcleo → Slugs de URL y comprueba que el formulario carga."
+
+msgid "Update menus and links that still point at the old pages."
+msgstr "Actualiza menús y enlaces que aún apunten a las páginas antiguas."
+
+msgid "Deactivate Theme My Login."
+msgstr "Desactiva Theme My Login."
+
+msgid "Friendly addresses work only when Permalinks is not Plain. The check is on the Migration tab."
+msgstr "Las direcciones amigables solo funcionan si los enlaces no son Plain. La comprobación está en la pestaña Migración."
+
+msgid "Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/)."
+msgstr "Comprobación de URL amigables terminada: WordPress usa enlaces Plain. Pon Enlaces permanentes en Nombre de la entrada (/%postname%/)."
 

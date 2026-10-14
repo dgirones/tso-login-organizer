@@ -1,13 +1,5 @@
-# Copyright (C) 2026 Tu Soporte Online
-# This file is distributed under the GPLv2 or later.
 msgid ""
-msgstr ""
-"Project-Id-Version: TSO Login Organizer 1.0.0\n"
-"Report-Msgid-Bugs-To: https://www.tusoporteonline.es/blog\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+msgstr "Project-Id-Version: TSO Login Organizer 1.0.0\nReport-Msgid-Bugs-To: https://www.tusoporteonline.es/blog\nLanguage-Team: LANGUAGE <LL@li.org>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 
 msgid "<strong>Error:</strong> Captcha verification failed."
 msgstr ""
@@ -364,9 +356,6 @@ msgid "Follow the numbered steps on each provider card. Copy the redirect URI sh
 msgstr ""
 
 msgid "Forms"
-msgstr ""
-
-msgid "Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/) — see the note in URL slugs."
 msgstr ""
 
 msgid "Friendly URL check finished: permalinks are not Plain and the login rewrite rule is present."
@@ -1029,9 +1018,6 @@ msgstr ""
 msgid "Until a module is enabled, it does nothing and has no settings tab. Disable it again anytime to turn that feature off."
 msgstr ""
 
-msgid "Use the check above. Friendly addresses work only when Permalinks is not Plain."
-msgstr ""
-
 msgid "Use the placeholders listed under each field (for example {user_login}, {reset_url}). An empty field keeps the WordPress default text."
 msgstr ""
 
@@ -1153,5 +1139,68 @@ msgid "shortcode"
 msgstr ""
 
 msgid "slug"
+msgstr ""
+
+msgid "Enabled modules"
+msgstr ""
+
+msgid "Your old Theme My Login setup is safe."
+msgstr ""
+
+msgid "Import only copies the free settings into this plugin. It does not delete them, it does not change Theme My Login, and it does not turn that plugin off. The original options stay in the database."
+msgstr ""
+
+msgid "What is copied"
+msgstr ""
+
+msgid "Whether login, registration and password forms update without reloading the page (AJAX)."
+msgstr ""
+
+msgid "What visitors may type to log in: username, email, or both."
+msgstr ""
+
+msgid "Whether registration asks for username and email, or email only."
+msgstr ""
+
+msgid "Whether new users choose their own password, or WordPress emails a generated one."
+msgstr ""
+
+msgid "Whether a new account is signed in immediately after registration."
+msgstr ""
+
+msgid "The address slugs for login, logout, register, lost password, reset password, dashboard and confirm-action."
+msgstr ""
+
+msgid "Extensions, email designs, widgets, menus and the WordPress pages Theme My Login created are not copied. Those pages can be moved to the trash; the addresses keep working here as virtual pages. The shortcode [theme-my-login] already works with this plugin."
+msgstr ""
+
+msgid "When to deactivate Theme My Login"
+msgstr ""
+
+msgid "Either moment works for the copy. The saved options remain if Theme My Login is still active and also if you already deactivated it. Leave it active until you have opened the new addresses and they look right, then deactivate it. If both plugins stay active they can fight over the same login addresses."
+msgstr ""
+
+msgid "After the import"
+msgstr ""
+
+msgid "Keep friendly permalinks (not Plain). Use the check below."
+msgstr ""
+
+msgid "Move the old Theme My Login pages to the trash if they are listed below. This plugin already serves those addresses."
+msgstr ""
+
+msgid "Open each virtual URL from Core → URL slugs and confirm the form loads."
+msgstr ""
+
+msgid "Update menus and links that still point at the old pages."
+msgstr ""
+
+msgid "Deactivate Theme My Login."
+msgstr ""
+
+msgid "Friendly addresses work only when Permalinks is not Plain. The check is on the Migration tab."
+msgstr ""
+
+msgid "Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/)."
 msgstr ""
 

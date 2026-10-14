@@ -136,11 +136,60 @@ html:has(body.settings_page_tso-login-organizer) {
 	color: #1d2327;
 }
 
-.tsolo-admin-wrap .nav-tab-wrapper {
+.tsolo-admin-wrap .tsolo-nav-tabs {
+	display: flex;
+	clear: both;
+	float: none;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	padding-top: 0;
+	gap: 0;
+}
+
+.tsolo-admin-wrap .tsolo-nav-tabs::before,
+.tsolo-admin-wrap .tsolo-nav-tabs::after {
+	content: none;
+	display: none;
+}
+
+.tsolo-admin-wrap .tsolo-nav-tabs .nav-tab {
+	float: none;
+	margin-left: 0.35rem;
+}
+
+.tsolo-admin-wrap .tsolo-nav-primary {
+	flex-wrap: nowrap;
+	border-bottom: 0;
+	margin-bottom: 0;
+}
+
+.tsolo-admin-wrap .tsolo-nav-modules {
+	flex-wrap: wrap;
 	margin-bottom: 1.25rem;
 }
 
+.tsolo-admin-wrap .tsolo-migrate-guide h3 {
+	margin: 1.25rem 0 0.4rem;
+}
+
+.tsolo-admin-wrap .tsolo-migrate-guide ul,
+.tsolo-admin-wrap .tsolo-migrate-guide ol {
+	margin: 0.35rem 0 0.75rem 1.25rem;
+}
+
+.tsolo-admin-wrap .tsolo-migrate-guide li {
+	margin: 0.3rem 0;
+}
+
+.tsolo-admin-wrap .tsolo-nav-modules:empty {
+	display: none;
+}
+
 .tsolo-admin-wrap .tsolo-tab-panels {
+	clear: both;
+	display: block;
+	width: 100%;
 	margin-top: 0.25rem;
 }
 
@@ -170,6 +219,10 @@ html:has(body.settings_page_tso-login-organizer) {
 
 	.tsolo-admin-wrap .tsolo-theme-btn .tsolo-theme-label {
 		display: none;
+	}
+
+	.tsolo-admin-wrap .tsolo-nav-primary {
+		flex-wrap: wrap;
 	}
 }
 
