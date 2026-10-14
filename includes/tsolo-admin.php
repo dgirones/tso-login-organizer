@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_action( 'admin_menu', 'tsolo_admin_menu' );
+add_action( 'admin_init', 'tsolo_admin_boot_ui_locale', 1 );
 add_action( 'admin_init', 'tsolo_admin_handle_post' );
 add_action( 'admin_init', 'tsolo_admin_handle_lang_switch' );
 add_filter( 'plugin_action_links_' . plugin_basename( TSOLO_FILE ), 'tsolo_plugin_action_links' );
@@ -269,6 +270,19 @@ function tsolo_admin_render_permalink_status() {
 		echo ' <a href="' . esc_url( $link ) . '">' . esc_html__( 'Open Permalinks settings', 'tso-login-organizer' ) . '</a>';
 	}
 	echo '</p><p><button type="submit" class="button" form="tsolo-permalink-check">' . esc_html__( 'Check friendly URLs', 'tso-login-organizer' ) . '</button></p></div>';
+}
+
+/**
+ * Apply the chosen UI language before the menu and the page are translated.
+ */
+function tsolo_admin_boot_ui_locale() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	if ( 'tso-login-organizer' !== tsolo_get_admin_query_arg( 'page' ) ) {
+		return;
+	}
+	tsolo_apply_admin_ui_locale( tsolo_get_ui_lang() );
 }
 
 /**

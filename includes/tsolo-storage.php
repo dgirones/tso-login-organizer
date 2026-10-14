@@ -347,24 +347,48 @@ function tsolo_get_admin_query_arg( $key, $default_value = '' ) {
  * @param string $lang ca|es|en.
  */
 function tsolo_apply_admin_ui_locale( $lang ) {
-	$map       = array(
+	static $applied = null;
+
+	$map  = array(
 		'ca' => 'ca',
 		'es' => 'es_ES',
 		'en' => 'en_US',
 	);
-	$lang      = in_array( $lang, array( 'ca', 'es', 'en' ), true ) ? $lang : 'en';
-	$ui_locale = $map[ $lang ];
-	if ( function_exists( 'switch_to_locale' ) ) {
-		switch_to_locale( $ui_locale );
-	}
-	// WP 6.5+: second arg true so the domain can be loaded again after unload.
-	unload_textdomain( 'tso-login-organizer', true );
-	if ( 'en' === $lang ) {
+	$lang = in_array( $lang, array( 'ca', 'es', 'en' ), true ) ? $lang : 'en';
+	if ( $applied === $lang ) {
 		return;
 	}
-	$mofile = TSOLO_PATH . 'languages/tso-login-organizer-' . $ui_locale . '.mo';
-	if ( is_readable( $mofile ) ) {
-		load_textdomain( 'tso-login-organizer', $mofile );
+	$applied = $lang;
+
+	$controller = class_exists( 'WP_Translation_Controller', false ) ? WP_Translation_Controller::get_instance() : null;
+	$lookup     = ( $controller && '' !== $controller->get_locale() ) ? $controller->get_locale() : '';
+	if ( '' === $lookup ) {
+		$lookup = function_exists( 'determine_locale' ) ? determine_locale() : 'en_US';
+	}
+
+	/*
+	 * WordPress 6.5+ keeps every locale in the translation controller and
+	 * returns the first file for the locale it is already using. A reloadable
+	 * unload leaves Spanish in front of Catalan, and switch_to_locale( 'ca' )
+	 * fails when that language pack is not installed. Attach this plugin's
+	 * catalog to the locale WordPress will actually query, then put the
+	 * controller locale back. load_textdomain() changes it as a side effect.
+	 */
+	unload_textdomain( 'tso-login-organizer' );
+
+	if ( 'en' !== $lang ) {
+		$ui_locale = $map[ $lang ];
+		$mofile    = TSOLO_PATH . 'languages/tso-login-organizer-' . $ui_locale . '.mo';
+		if ( is_readable( $mofile ) ) {
+			load_textdomain( 'tso-login-organizer', $mofile, $lookup );
+			if ( $lookup !== $ui_locale ) {
+				load_textdomain( 'tso-login-organizer', $mofile, $ui_locale );
+			}
+		}
+	}
+
+	if ( $controller ) {
+		$controller->set_locale( $lookup );
 	}
 }
 
