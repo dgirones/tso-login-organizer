@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       TSO Login Organizer
  * Description:       Frontend login, registration and account pages with optional premium modules. Drop-in replacement for Theme My Login.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Tu Soporte Online
  * Author URI:        https://www.tusoporteonline.es/blog
  * Requires at least: 6.1
@@ -25,7 +25,7 @@ if ( ! defined( 'TSOLO_FILE' ) ) {
 }
 
 if ( ! defined( 'TSOLO_VERSION' ) ) {
-	define( 'TSOLO_VERSION', '1.0.0' );
+	define( 'TSOLO_VERSION', '1.0.1' );
 }
 
 if ( ! defined( 'TSOLO_PATH' ) ) {

@@ -37,7 +37,8 @@ class TSOLO_Mod_Profiles {
 	 * Constructor.
 	 */
 	private function __construct() {
-		add_action( 'init', array( $this, 'handle_profile_save' ) );
+		// After parse_request so tsolo_is_action( 'profile' ) works with pretty permalinks.
+		add_action( 'template_redirect', array( $this, 'handle_profile_save' ), 1 );
 		$s = self::get_settings();
 		if ( ! empty( $s['block_admin'] ) ) {
 			add_action( 'admin_init', array( $this, 'block_admin' ) );
@@ -111,7 +112,11 @@ class TSOLO_Mod_Profiles {
 		);
 		$pass1    = tsolo_get_request_text( 'pass1', 'post' );
 		$pass2    = tsolo_get_request_text( 'pass2', 'post' );
-		if ( $pass1 && $pass1 === $pass2 ) {
+		if ( $pass1 || $pass2 ) {
+			if ( $pass1 !== $pass2 ) {
+				tsolo_set_errors( new WP_Error( 'pass', __( '<strong>Error:</strong> The passwords do not match.', 'tso-login-organizer' ) ) );
+				return;
+			}
 			$userdata['user_pass'] = $pass1;
 		}
 		$result = wp_update_user( $userdata );

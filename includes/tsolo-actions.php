@@ -467,6 +467,12 @@ function tsolo_login_handler() {
 	$errors             = new WP_Error();
 	$secure_cookie      = '';
 	$credentials_posted = tsolo_request_post_is_set( 'log' ) || tsolo_request_post_is_set( 'pwd' );
+	$reauth_early       = (bool) tsolo_get_request_text( 'reauth', 'request' );
+
+	// Already signed in: show account links via shortcode (no form) unless reauth is forced.
+	if ( is_user_logged_in() && ! $reauth_early && ! $credentials_posted ) {
+		return;
+	}
 
 	if ( tsolo_request_post_is_set( 'log' ) && ! force_ssl_admin() ) {
 		$user_name = sanitize_user( tsolo_get_request_text( 'log', 'post' ) );
@@ -487,7 +493,7 @@ function tsolo_login_handler() {
 		$redirect_to = preg_replace( '|^http://|', 'https://', $redirect_to );
 	}
 
-	$reauth = (bool) tsolo_get_request_text( 'reauth', 'request' );
+	$reauth = $reauth_early;
 	$user   = new WP_Error();
 
 	if ( $credentials_posted ) {
@@ -497,6 +503,19 @@ function tsolo_login_handler() {
 		$redirect_to = apply_filters( 'login_redirect', $redirect_to, tsolo_get_request_text( 'redirect_to', 'request' ), $user );
 
 		if ( ! is_wp_error( $user ) && ! $reauth ) {
+			if ( ( empty( $redirect_to ) || 'wp-admin/' === $redirect_to || admin_url() === $redirect_to ) ) {
+				if ( is_multisite() && ! get_active_blog_for_user( $user->ID ) && ! is_super_admin( $user->ID ) ) {
+					$redirect_to = user_admin_url();
+				} elseif ( is_multisite() && ! $user->has_cap( 'read' ) ) {
+					$redirect_to = get_dashboard_url( $user->ID );
+				} elseif ( ! $user->has_cap( 'edit_posts' ) ) {
+					if ( tsolo_action_exists( 'dashboard' ) ) {
+						$redirect_to = tsolo_get_action_url( 'dashboard' );
+					} else {
+						$redirect_to = $user->has_cap( 'read' ) ? admin_url( 'profile.php' ) : home_url( '/' );
+					}
+				}
+			}
 			if ( tsolo_is_ajax_request() ) {
 				tsolo_send_ajax_success( array( 'redirect' => tsolo_validate_redirect( $redirect_to ) ) );
 			}

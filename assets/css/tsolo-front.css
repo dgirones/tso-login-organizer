@@ -1,5 +1,20 @@
+/* TSO Login Organizer — front forms, dashboard, profile */
+
 .tsolo {
 	max-width: 28rem;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.tsolo *,
+.tsolo *::before,
+.tsolo *::after {
+	box-sizing: border-box;
+}
+
+/* Nested blocks (dashboard wraps links) keep full parent width */
+.tsolo .tsolo {
+	max-width: 100%;
 }
 
 .tsolo-form .tsolo-field {
@@ -10,22 +25,88 @@
 	display: block;
 	margin-bottom: 0.35rem;
 	font-weight: 600;
+	line-height: 1.35;
+	word-wrap: break-word;
+	overflow-wrap: anywhere;
 }
 
+/* 16px+ avoids iOS Safari auto-zoom on focus */
 .tsolo-form .input,
 .tsolo-form input[type="text"],
 .tsolo-form input[type="email"],
-.tsolo-form input[type="password"] {
+.tsolo-form input[type="password"],
+.tsolo-form input[type="search"],
+.tsolo-form input[type="tel"],
+.tsolo-form input:not([type]),
+.tsolo-form textarea,
+.tsolo-form select {
 	width: 100%;
 	max-width: 100%;
-	box-sizing: border-box;
-	padding: 0.5rem 0.65rem;
+	display: block;
+	padding: 0.65rem 0.75rem;
+	font-size: 1rem;
+	line-height: 1.4;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	background: #fff;
 }
 
-.tsolo-button {
+.tsolo-form input[type="checkbox"],
+.tsolo-form input[type="radio"] {
+	width: auto;
+	max-width: none;
 	display: inline-block;
-	padding: 0.55rem 1rem;
+	margin: 0 0.4rem 0 0;
+	vertical-align: middle;
+}
+
+.tsolo-form input[type="file"] {
+	width: 100%;
+	max-width: 100%;
+	display: block;
+	font-size: 0.95rem;
+	padding: 0.35rem 0;
+}
+
+.tsolo-field-rememberme label,
+.tsolo-field-2fa-enable > label {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.45rem;
+	font-weight: 500;
+}
+
+.tsolo-field-rememberme input,
+.tsolo-field-2fa-enable > label > input {
+	margin-top: 0.2rem;
+	flex-shrink: 0;
+}
+
+.tsolo-button,
+.tsolo-form button[type="submit"],
+.tsolo-form input[type="submit"] {
+	display: inline-block;
+	width: 100%;
+	max-width: 100%;
+	padding: 0.75rem 1rem;
+	margin: 0;
+	font-size: 1rem;
+	line-height: 1.3;
+	font-weight: 600;
 	cursor: pointer;
+	text-align: center;
+	border-radius: 4px;
+	border: 1px solid #2271b1;
+	background: #2271b1;
+	color: #fff;
+}
+
+.tsolo-button:hover,
+.tsolo-form button[type="submit"]:hover,
+.tsolo-form input[type="submit"]:hover {
+	background: #135e96;
+	border-color: #135e96;
+	color: #fff;
 }
 
 .tsolo-alert {
@@ -33,6 +114,8 @@
 	margin: 0 0 1rem;
 	border-left: 4px solid #b32d2e;
 	background: #fcf0f1;
+	word-wrap: break-word;
+	overflow-wrap: anywhere;
 }
 
 .tsolo-alert--message {
@@ -45,29 +128,77 @@
 	font-size: 0.95em;
 }
 
+.tsolo-links ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.tsolo-links li {
+	margin: 0;
+	padding: 0;
+}
+
+.tsolo-links a {
+	display: block;
+	padding: 0.7rem 0.85rem;
+	min-height: 2.75rem;
+	text-decoration: none;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	background: #f6f7f7;
+	color: inherit;
+	line-height: 1.35;
+	word-wrap: break-word;
+}
+
+.tsolo-links a:hover,
+.tsolo-links a:focus {
+	background: #fff;
+	border-color: #2271b1;
+	outline: none;
+}
+
 .tsolo-dashboard {
 	text-align: center;
+	padding-bottom: 0.5rem;
 }
 
-.tsolo-hide-menu-item {
-	display: none !important;
+.tsolo-dashboard-avatar {
+	margin: 0 0 0.75rem;
 }
 
-#pass-strength-result {
-	padding: 0.4rem 0.6rem;
-	margin: 0.5rem 0;
-	background: #f0f0f1;
+.tsolo-dashboard-avatar img {
+	border-radius: 50%;
+	max-width: 96px;
+	height: auto;
 }
 
-.tsolo-social {
-	margin-top: 1.25rem;
-	padding-top: 1rem;
-	border-top: 1px solid #dcdcde;
+.tsolo-dashboard-greeting {
+	margin: 0 0 1rem;
+	font-weight: 600;
+	font-size: 1.1rem;
+	word-wrap: break-word;
 }
 
+.tsolo-dashboard .tsolo-links {
+	text-align: left;
+	display: block;
+	width: 100%;
+	max-width: 100%;
+}
+
+.tsolo-profile .description,
 .tsolo-avatar-status,
 .tsolo-2fa-help {
 	margin: 0.35rem 0 0.5rem;
+	font-size: 0.9rem;
+	line-height: 1.45;
+	word-wrap: break-word;
+	overflow-wrap: anywhere;
 }
 
 .tsolo-avatar-preview {
@@ -78,4 +209,98 @@
 .tsolo-avatar-preview img {
 	display: block;
 	border-radius: 4px;
+	max-width: 96px;
+	height: auto;
+}
+
+.tsolo-favorites ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.tsolo-favorites li {
+	margin: 0 0 0.5rem;
+}
+
+.tsolo-favorites a {
+	display: block;
+	padding: 0.65rem 0.75rem;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	text-decoration: none;
+	word-wrap: break-word;
+}
+
+.tsolo-hide-menu-item {
+	display: none !important;
+}
+
+#pass-strength-result {
+	padding: 0.4rem 0.6rem;
+	margin: 0.5rem 0;
+	background: #f0f0f1;
+	word-wrap: break-word;
+}
+
+.tsolo-social {
+	margin-top: 1.25rem;
+	padding-top: 1rem;
+	border-top: 1px solid #dcdcde;
+}
+
+.tsolo-social a,
+.tsolo-social .tsolo-social-btn {
+	display: block;
+	width: 100%;
+	margin: 0 0 0.5rem;
+	padding: 0.7rem 0.85rem;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 6px;
+	border: 1px solid #dcdcde;
+}
+
+/* Room for theme floating “Menú” / cookie widgets on small screens */
+@media (max-width: 782px) {
+	.tsolo {
+		max-width: 100%;
+		padding-bottom: 4.5rem;
+	}
+
+	.tsolo-form .tsolo-field {
+		margin-bottom: 1.1rem;
+	}
+
+	.tsolo-links a,
+	.tsolo-favorites a,
+	.tsolo-button,
+	.tsolo-form button[type="submit"] {
+		min-height: 2.85rem;
+	}
+}
+
+@media (min-width: 783px) {
+	.tsolo-button,
+	.tsolo-form button[type="submit"],
+	.tsolo-form input[type="submit"] {
+		width: auto;
+		min-width: 10rem;
+	}
+
+	/* Compact link row under login/register forms only (not dashboard cards) */
+	.tsolo-form + .tsolo-links ul {
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 0.5rem 1rem;
+	}
+
+	.tsolo-form + .tsolo-links a {
+		display: inline-block;
+		padding: 0.35rem 0;
+		min-height: 0;
+		border: 0;
+		background: transparent;
+		text-decoration: underline;
+	}
 }

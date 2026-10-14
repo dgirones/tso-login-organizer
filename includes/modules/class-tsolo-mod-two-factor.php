@@ -105,7 +105,7 @@ class TSOLO_Mod_Two_Factor {
 	}
 
 	/**
-	 * Inject 2FA field on login form.
+	 * Inject 2FA field on login form only when a code is required.
 	 *
 	 * @param string $form Form name.
 	 */
@@ -113,8 +113,17 @@ class TSOLO_Mod_Two_Factor {
 		if ( 'login' !== $form ) {
 			return;
 		}
-		echo '<p class="tsolo-field tsolo-field-2fa"><label for="tsolo_2fa_code">' . esc_html__( 'Authentication code (if enabled)', 'tso-login-organizer' ) . '</label>';
-		echo '<input type="text" name="tsolo_2fa_code" id="tsolo_2fa_code" class="input" autocomplete="one-time-code" /></p>';
+		$errors = function_exists( 'tsolo_get_errors' ) ? tsolo_get_errors() : null;
+		$codes  = ( $errors instanceof WP_Error ) ? $errors->get_error_codes() : array();
+		$need   = in_array( 'tsolo_2fa_required', $codes, true ) || in_array( 'tsolo_2fa_invalid', $codes, true );
+		if ( ! $need && tsolo_request_post_is_set( 'tsolo_2fa_code' ) ) {
+			$need = true;
+		}
+		if ( ! $need ) {
+			return;
+		}
+		echo '<p class="tsolo-field tsolo-field-2fa"><label for="tsolo_2fa_code">' . esc_html__( 'Authentication code', 'tso-login-organizer' ) . '</label>';
+		echo '<input type="text" name="tsolo_2fa_code" id="tsolo_2fa_code" class="input" autocomplete="one-time-code" inputmode="numeric" /></p>';
 	}
 
 	/**

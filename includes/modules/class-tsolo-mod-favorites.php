@@ -90,14 +90,7 @@ class TSOLO_Mod_Favorites {
 			TSOLO_VERSION,
 			true
 		);
-		wp_localize_script(
-			'tsolo-front',
-			'tsoloFrontConfig',
-			array(
-				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( TSOLO_NONCE_AJAX ),
-			)
-		);
+		wp_localize_script( 'tsolo-front', 'tsoloFrontConfig', tsolo_get_front_script_config() );
 	}
 
 	/**

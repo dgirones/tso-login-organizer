@@ -133,7 +133,7 @@ class TSOLO_Mod_Captcha {
 	/**
 	 * Only forms that actually show this widget should be checked.
 	 *
-	 * wp-admin “Add user”, other plugins’ login forms, and cleanup tools must not be blocked.
+	 * Skips wp-admin Add User screens, other plugins login forms, and cleanup tools.
 	 *
 	 * @return bool
 	 */

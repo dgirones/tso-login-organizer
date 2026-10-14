@@ -595,5 +595,10 @@ function tsolo_render_form_links( $current ) {
 	if ( empty( $links ) ) {
 		return '';
 	}
-	return '<nav class="tsolo-links">' . implode( ' | ', $links ) . '</nav>';
+	$html = '<nav class="tsolo-links" aria-label="' . esc_attr__( 'Account', 'tso-login-organizer' ) . '"><ul>';
+	foreach ( $links as $link ) {
+		$html .= '<li>' . $link . '</li>';
+	}
+	$html .= '</ul></nav>';
+	return $html;
 }

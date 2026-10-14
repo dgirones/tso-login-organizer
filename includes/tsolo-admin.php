@@ -770,7 +770,7 @@ function tsolo_admin_render_module_intro( $module, $def ) {
 		}
 		echo '</ol></div>';
 	}
-	$rules   = function_exists( 'tsolo_get_incompatibility_rules' ) ? tsolo_get_incompatibility_rules() : array();
+	$rules    = function_exists( 'tsolo_get_incompatibility_rules' ) ? tsolo_get_incompatibility_rules() : array();
 	$has_scan = isset( $rules[ $module ] );
 	if ( ( ! empty( $def['compat'] ) && is_array( $def['compat'] ) ) || $has_scan ) {
 		echo '<div class="tsolo-compat">';
@@ -792,7 +792,7 @@ function tsolo_admin_render_module_intro( $module, $def ) {
 					if ( empty( $row['name'] ) ) {
 						continue;
 					}
-					$state = ! empty( $row['active'] )
+					$state       = ! empty( $row['active'] )
 						? __( 'active — likely clash', 'tso-login-organizer' )
 						: __( 'installed, not active', 'tso-login-organizer' );
 					$line_reason = ! empty( $row['reason'] ) ? (string) $row['reason'] : $reason;
@@ -899,9 +899,9 @@ function tsolo_admin_render_module_tab( $module, $def = array() ) {
 		echo '<tr><th scope="row">' . esc_html__( 'Show checkbox', 'tso-login-organizer' ) . '</th><td><label><input type="checkbox" name="mod[checkbox]" value="1" ' . checked( ! empty( $s['checkbox'] ), true, false ) . ' /> ' . esc_html__( 'Ask for newsletter consent on the registration form', 'tso-login-organizer' ) . '</label></td></tr>';
 		echo '</table>';
 	} elseif ( 'redirection' === $module ) {
-		$s     = TSOLO_Mod_Redirection::get_settings();
-		$roles = wp_roles()->get_names();
-		$types = array(
+		$s        = TSOLO_Mod_Redirection::get_settings();
+		$roles    = wp_roles()->get_names();
+		$types    = array(
 			'login'    => __( 'After login', 'tso-login-organizer' ),
 			'logout'   => __( 'After logout', 'tso-login-organizer' ),
 			'register' => __( 'After registration', 'tso-login-organizer' ),

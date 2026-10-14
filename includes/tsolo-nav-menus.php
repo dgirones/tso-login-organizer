@@ -71,6 +71,48 @@ function tsolo_nav_menu_meta_box() {
 }
 
 /**
+ * Resolve a TSOLO action from a menu item URL path.
+ *
+ * @param string $url Menu item URL.
+ * @return TSOLO_Action|false
+ */
+function tsolo_action_from_menu_url( $url ) {
+	$path = wp_parse_url( $url, PHP_URL_PATH );
+	if ( ! is_string( $path ) || '' === $path ) {
+		return false;
+	}
+	$path = untrailingslashit( $path );
+	foreach ( tsolo_get_actions() as $action ) {
+		$action_path = wp_parse_url( $action->get_url(), PHP_URL_PATH );
+		if ( ! is_string( $action_path ) || '' === $action_path ) {
+			continue;
+		}
+		if ( untrailingslashit( $action_path ) === $path ) {
+			return $action;
+		}
+	}
+	return false;
+}
+
+/**
+ * Apply show/hide + logout nonce for a matched action on a menu item.
+ *
+ * @param object       $menu_item Menu item.
+ * @param TSOLO_Action $action    Action.
+ * @return object
+ */
+function tsolo_apply_action_to_menu_item( $menu_item, $action ) {
+	$menu_item->url = $action->get_url();
+	if ( 'logout' === $action->get_name() ) {
+		$menu_item->url = wp_nonce_url( $menu_item->url, 'log-out' );
+	}
+	if ( ! is_admin() && ! $action->show_nav_menu_item ) {
+		$menu_item->_invalid = true;
+	}
+	return $menu_item;
+}
+
+/**
  * Setup nav menu item for TSOLO actions.
  *
  * @param object $menu_item Menu item.
@@ -81,13 +123,7 @@ function tsolo_setup_nav_menu_item( $menu_item ) {
 		$action = tsolo_get_action( $menu_item->object_id ? $menu_item->object_id : $menu_item->object );
 		if ( $action ) {
 			$menu_item->type_label = __( 'TSOLO Action', 'tso-login-organizer' );
-			$menu_item->url        = $action->get_url();
-			if ( 'logout' === $action->get_name() ) {
-				$menu_item->url = wp_nonce_url( $menu_item->url, 'log-out' );
-			}
-			if ( ! $action->show_nav_menu_item ) {
-				$menu_item->_invalid = true;
-			}
+			$menu_item             = tsolo_apply_action_to_menu_item( $menu_item, $action );
 		} else {
 			$menu_item->_invalid = true;
 		}
@@ -96,20 +132,57 @@ function tsolo_setup_nav_menu_item( $menu_item ) {
 	if ( isset( $menu_item->type ) && 'tml_action' === $menu_item->type ) {
 		$action = tsolo_get_action( $menu_item->object );
 		if ( $action ) {
-			$menu_item->url = $action->get_url();
-			if ( 'logout' === $action->get_name() ) {
-				$menu_item->url = wp_nonce_url( $menu_item->url, 'log-out' );
+			$menu_item = tsolo_apply_action_to_menu_item( $menu_item, $action );
+		}
+	}
+	// Legacy TML pages kept as Page menu items.
+	if ( isset( $menu_item->object ) && 'page' === $menu_item->object && ! empty( $menu_item->object_id ) ) {
+		$slug   = get_post_field( 'post_name', $menu_item->object_id );
+		$action = $slug ? tsolo_get_action( $slug ) : false;
+		if ( ! $action && $slug ) {
+			foreach ( tsolo_get_actions() as $candidate ) {
+				if ( $candidate->get_slug() === $slug ) {
+					$action = $candidate;
+					break;
+				}
 			}
-			if ( ! $action->show_nav_menu_item ) {
-				$menu_item->_invalid = true;
-			}
+		}
+		if ( $action ) {
+			$menu_item = tsolo_apply_action_to_menu_item( $menu_item, $action );
+		}
+	}
+	// Custom links pointing at a TSOLO action URL (e.g. menu label "LOGIN" → /login/).
+	if ( isset( $menu_item->type ) && 'custom' === $menu_item->type && ! empty( $menu_item->url ) ) {
+		$action = tsolo_action_from_menu_url( $menu_item->url );
+		if ( $action ) {
+			$menu_item = tsolo_apply_action_to_menu_item( $menu_item, $action );
 		}
 	}
 	return $menu_item;
 }
 
 /**
- * Hide invalid TSOLO items from front.
+ * Drop invalid TSOLO-mapped items on the front (do not rely on CSS alone).
+ *
+ * @param array $items Menu items.
+ * @return array
+ */
+function tsolo_filter_nav_menu_objects( $items ) {
+	if ( is_admin() ) {
+		return $items;
+	}
+	$out = array();
+	foreach ( (array) $items as $item ) {
+		if ( ! empty( $item->_invalid ) ) {
+			continue;
+		}
+		$out[] = $item;
+	}
+	return $out;
+}
+
+/**
+ * Hide invalid TSOLO items from front (CSS fallback).
  *
  * @param array  $classes Classes.
  * @param object $item    Item.

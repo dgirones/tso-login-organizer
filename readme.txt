@@ -4,7 +4,7 @@ Tags: login, registration, frontend login, theme my login, 2fa
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,10 @@ Yes. Theme My Login is GPL, so reusing that idea and importing its free settings
 Only the administrator’s interface language preference (Catalan, Spanish, or English) as user meta (`tso_login_organizer_ui_lang`). Nothing is sent to external servers for that setting. The “Support this plugin” link opens Ko-fi in a new tab.
 
 == Changelog ==
+
+= 1.0.1 =
+* Mobile-friendly front forms: larger inputs (no iOS zoom), full-width buttons, touch-sized account links.
+* Profile and 2FA help strings translated (CA/ES); dashboard links no longer nest a second `.tsolo` block.
 
 = 1.0.0 =
 * Initial release: Theme My Login free parity, TML import, premium modules with collision-aware defaults.

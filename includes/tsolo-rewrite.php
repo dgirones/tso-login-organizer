@@ -171,6 +171,34 @@ function tsolo_body_class( $classes ) {
 	if ( tsolo_is_action() ) {
 		$classes[] = 'tsolo-action';
 		$classes[] = 'tsolo-action-' . sanitize_html_class( tsolo_get_action()->get_name() );
+		$classes   = array_values( array_diff( $classes, array( 'page-id-0' ) ) );
 	}
 	return $classes;
+}
+
+/**
+ * Hide "Edit Page" for virtual action posts (ID 0).
+ *
+ * @param string $link    Edit link.
+ * @param int    $post_id Post ID.
+ * @return string
+ */
+function tsolo_filter_get_edit_post_link( $link, $post_id ) {
+	if ( tsolo_is_action() && 0 === (int) $post_id ) {
+		return '';
+	}
+	return $link;
+}
+
+/**
+ * No comments on virtual action pages.
+ *
+ * @param array $comments Comments.
+ * @return array
+ */
+function tsolo_filter_comments_array( $comments ) {
+	if ( tsolo_is_action() ) {
+		return array();
+	}
+	return $comments;
 }

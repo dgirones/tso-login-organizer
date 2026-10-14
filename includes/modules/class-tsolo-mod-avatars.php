@@ -45,7 +45,8 @@ class TSOLO_Mod_Avatars {
 	 */
 	private function __construct() {
 		add_filter( 'get_avatar_url', array( $this, 'filter_avatar_url' ), 10, 3 );
-		add_action( 'init', array( $this, 'handle_upload' ) );
+		// After parse_request so tsolo_is_action( 'profile' ) works with pretty permalinks.
+		add_action( 'template_redirect', array( $this, 'handle_upload' ), 1 );
 	}
 
 	/**

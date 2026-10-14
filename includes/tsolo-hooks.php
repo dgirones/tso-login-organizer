@@ -38,6 +38,8 @@ remove_action( 'edit_user_created_user', 'wp_send_new_user_notifications' );
 
 add_filter( 'the_posts', 'tsolo_the_posts', 10, 2 );
 add_filter( 'body_class', 'tsolo_body_class' );
+add_filter( 'get_edit_post_link', 'tsolo_filter_get_edit_post_link', 10, 2 );
+add_filter( 'comments_array', 'tsolo_filter_comments_array' );
 
 add_filter( 'site_url', 'tsolo_filter_site_url', 10, 3 );
 add_filter( 'network_site_url', 'tsolo_filter_site_url', 10, 3 );
@@ -52,6 +54,7 @@ add_shortcode( 'theme-my-login', 'tsolo_shortcode' );
 
 add_action( 'admin_head-nav-menus.php', 'tsolo_admin_nav_menu_meta_box' );
 add_filter( 'wp_setup_nav_menu_item', 'tsolo_setup_nav_menu_item', 0 );
+add_filter( 'wp_nav_menu_objects', 'tsolo_filter_nav_menu_objects', 10 );
 add_filter( 'nav_menu_css_class', 'tsolo_nav_menu_css_class', 10, 2 );
 add_filter( 'customize_nav_menu_available_item_types', 'tsolo_filter_customize_nav_menu_available_item_types' );
 add_filter( 'customize_nav_menu_available_items', 'tsolo_filter_customize_nav_menu_available_items', 10, 4 );

@@ -209,7 +209,7 @@ function tsolo_compat_plugin_catalog() {
 		if ( '.' === $slug ) {
 			$slug = basename( $file, '.php' );
 		}
-		$name = isset( $data['Name'] ) ? (string) $data['Name'] : $slug;
+		$name      = isset( $data['Name'] ) ? (string) $data['Name'] : $slug;
 		$catalog[] = array(
 			'file'   => $file,
 			'slug'   => $slug,
@@ -238,8 +238,8 @@ function tsolo_compat_skip_source_path( $path ) {
  * @return string[]
  */
 function tsolo_compat_plugin_php_files( $plugin_file ) {
-	$main = wp_normalize_path( WP_PLUGIN_DIR . '/' . $plugin_file );
-	$dir  = wp_normalize_path( dirname( $main ) );
+	$main  = wp_normalize_path( WP_PLUGIN_DIR . '/' . $plugin_file );
+	$dir   = wp_normalize_path( dirname( $main ) );
 	$paths = array();
 	if ( is_readable( $main ) && ! tsolo_compat_skip_source_path( $main ) ) {
 		$paths[] = $main;
@@ -251,7 +251,7 @@ function tsolo_compat_plugin_php_files( $plugin_file ) {
 		$iterator = new RecursiveIteratorIterator(
 			new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS )
 		);
-		$count = 0;
+		$count    = 0;
 		foreach ( $iterator as $fileinfo ) {
 			if ( $count >= 40 ) {
 				break;
@@ -353,11 +353,11 @@ function tsolo_compat_plugin_matches_rule( $plugin, $rule ) {
  * @return array<string,array<int,array<string,mixed>>>
  */
 function tsolo_compat_swiss_knife_rows( $catalog ) {
-	$rows = array(
+	$rows  = array(
 		'security'   => array(),
 		'two_factor' => array(),
 	);
-	$file = 'tso-swiss-knife-advanced-maintenance-developer-toolkit/tso-swiss-knife-advanced-maintenance-developer-toolkit.php';
+	$file  = 'tso-swiss-knife-advanced-maintenance-developer-toolkit/tso-swiss-knife-advanced-maintenance-developer-toolkit.php';
 	$found = null;
 	foreach ( $catalog as $plugin ) {
 		if ( isset( $plugin['slug'] ) && 'tso-swiss-knife-advanced-maintenance-developer-toolkit' === $plugin['slug'] ) {
@@ -372,20 +372,20 @@ function tsolo_compat_swiss_knife_rows( $catalog ) {
 	if ( ! is_array( $settings ) ) {
 		$settings = array();
 	}
-	$base = array(
+	$base  = array(
 		'name'   => isset( $found['name'] ) ? (string) $found['name'] : 'TSO Swiss Knife',
 		'active' => ! empty( $found['active'] ),
 		'file'   => isset( $found['file'] ) ? (string) $found['file'] : $file,
 	);
 	$locks = ! empty( $settings['custom_url'] ) || ! empty( $settings['brute_force'] ) || ! empty( $settings['login_maintenance'] );
 	if ( $locks ) {
-		$row           = $base;
-		$row['reason'] = __( 'Login Protect is hiding wp-login.php or locking failed logins. Leave hide-login and lockouts off in this plugin while that is on.', 'tso-login-organizer' );
+		$row                = $base;
+		$row['reason']      = __( 'Login Protect is hiding wp-login.php or locking failed logins. Leave hide-login and lockouts off in this plugin while that is on.', 'tso-login-organizer' );
 		$rows['security'][] = $row;
 	}
 	if ( ! empty( $settings['email_2fa'] ) ) {
-		$row           = $base;
-		$row['reason'] = __( 'Login Protect asks for an email code after the password. Do not also require an authenticator code on the same accounts.', 'tso-login-organizer' );
+		$row                  = $base;
+		$row['reason']        = __( 'Login Protect asks for an email code after the password. Do not also require an authenticator code on the same accounts.', 'tso-login-organizer' );
 		$rows['two_factor'][] = $row;
 	}
 	return $rows;

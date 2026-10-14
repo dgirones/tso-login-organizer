@@ -18,9 +18,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 function tsolo_shortcode( $atts ) {
 	$atts   = shortcode_atts(
 		array(
-			'action'     => '',
-			'show_links' => 1,
-			'show_form'  => 1,
+			'action'      => '',
+			'show_links'  => 1,
+			'show_form'   => 1,
+			'redirect_to' => '',
 		),
 		$atts,
 		'tso-login-organizer'
@@ -42,9 +43,31 @@ function tsolo_shortcode( $atts ) {
 	if ( 'dashboard' === $action ) {
 		return tsolo_render_dashboard();
 	}
+	if ( 'logout' === $action ) {
+		return '';
+	}
+	// Logged-in users see the account dashboard instead of login/register/lost-password forms.
+	if ( is_user_logged_in() && in_array( $action, array( 'login', 'register', 'lostpassword', '' ), true ) ) {
+		return tsolo_render_dashboard();
+	}
 	if ( $action && tsolo_action_exists( $action ) ) {
-		if ( in_array( $action, array( 'logout', 'resetpass', 'rp' ), true ) ) {
-			return '';
+		if ( 'rp' === $action ) {
+			$action = 'resetpass';
+		}
+		if ( '' !== $atts['redirect_to'] && 'login' === $action ) {
+			$form = tsolo_get_form( 'login' );
+			if ( $form && isset( $form['fields']['redirect_to'] ) ) {
+				tsolo_add_form_field(
+					'login',
+					'redirect_to',
+					array_merge(
+						$form['fields']['redirect_to'],
+						array(
+							'value' => esc_url_raw( $atts['redirect_to'] ),
+						)
+					)
+				);
+			}
 		}
 		return tsolo_render_form(
 			$action,
@@ -72,7 +95,15 @@ function tsolo_shortcode( $atts ) {
  * @return string
  */
 function tsolo_render_dashboard() {
-	return tsolo_render_logged_in_links();
+	$user  = wp_get_current_user();
+	$html  = '<div class="tsolo tsolo-dashboard">';
+	$html .= '<div class="tsolo-dashboard-avatar">' . get_avatar( $user->ID, 96 ) . '</div>';
+	/* translators: %s: current user's display name. */
+	$greeting = sprintf( __( 'Howdy, %s', 'tso-login-organizer' ), $user->display_name );
+	$html    .= '<p class="tsolo-dashboard-greeting">' . esc_html( $greeting ) . '</p>';
+	$html    .= tsolo_render_logged_in_links();
+	$html    .= '</div>';
+	return $html;
 }
 
 /**
@@ -82,8 +113,11 @@ function tsolo_render_dashboard() {
  */
 function tsolo_render_logged_in_links() {
 	$links = array();
-	if ( tsolo_action_exists( 'dashboard' ) ) {
+	if ( tsolo_action_exists( 'dashboard' ) && ! tsolo_is_action( 'dashboard' ) ) {
 		$links[] = '<a href="' . esc_url( tsolo_get_action_url( 'dashboard' ) ) . '">' . esc_html__( 'Dashboard', 'tso-login-organizer' ) . '</a>';
+	}
+	if ( current_user_can( 'edit_posts' ) ) {
+		$links[] = '<a href="' . esc_url( admin_url() ) . '">' . esc_html__( 'Site Admin', 'tso-login-organizer' ) . '</a>';
 	}
 	if ( tsolo_action_exists( 'profile' ) ) {
 		$links[] = '<a href="' . esc_url( tsolo_get_action_url( 'profile' ) ) . '">' . esc_html__( 'Profile', 'tso-login-organizer' ) . '</a>';
@@ -93,12 +127,13 @@ function tsolo_render_logged_in_links() {
 	if ( tsolo_action_exists( 'favorites' ) ) {
 		$links[] = '<a href="' . esc_url( tsolo_get_action_url( 'favorites' ) ) . '">' . esc_html__( 'Favorites', 'tso-login-organizer' ) . '</a>';
 	}
-	$links[] = '<a href="' . esc_url( tsolo_get_action_url( 'logout' ) ) . '">' . esc_html__( 'Log Out', 'tso-login-organizer' ) . '</a>';
-	$html    = '<div class="tsolo tsolo-links"><ul>';
+	// wp_logout_url() is filtered to the TSOLO logout slug and includes the log-out nonce.
+	$links[] = '<a href="' . esc_url( wp_logout_url() ) . '">' . esc_html__( 'Log Out', 'tso-login-organizer' ) . '</a>';
+	$html    = '<nav class="tsolo-links" aria-label="' . esc_attr__( 'Account', 'tso-login-organizer' ) . '"><ul>';
 	foreach ( $links as $link ) {
 		$html .= '<li>' . $link . '</li>';
 	}
-	$html .= '</ul></div>';
+	$html .= '</ul></nav>';
 	return $html;
 }
 
