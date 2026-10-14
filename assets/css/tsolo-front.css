@@ -1,5 +1,7 @@
 .tsolo {
 	max-width: 28rem;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .tsolo-form .tsolo-field {

@@ -430,11 +430,12 @@ function tsolo_admin_render_page() {
 		'☕ Support this plugin'
 	);
 	?>
-	<div class="wrap tsolo-admin-wrap">
+	<div class="wrap tsolo-admin-wrap" id="tso-wrap">
 		<form id="tsolo-permalink-check" method="post" action="<?php echo esc_url( admin_url( 'options-general.php?page=tso-login-organizer&tab=core' ) ); ?>">
 			<?php wp_nonce_field( TSOLO_NONCE_FORM ); ?>
 			<input type="hidden" name="tsolo_admin_action" value="check_permalinks" />
 		</form>
+		<div class="tso-nav-inner">
 		<div class="tsolo-nav-top">
 			<h1 class="tsolo-page-title">
 				<?php esc_html_e( 'TSO Login Organizer', 'tso-login-organizer' ); ?>
@@ -478,7 +479,9 @@ function tsolo_admin_render_page() {
 				<a class="nav-tab <?php echo $tab === $key ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'options-general.php?page=tso-login-organizer&tab=' . rawurlencode( $key ) ) ); ?>" data-tsolo-tab="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $def['label'] ); ?></a>
 			<?php endforeach; ?>
 		</nav>
+		</div>
 
+		<div class="tso-tab-inner">
 		<div class="tsolo-tab-panels">
 			<section class="tsolo-tab-panel<?php echo 'core' === $tab ? ' is-active' : ''; ?>" data-tsolo-panel="core"<?php echo 'core' === $tab ? '' : ' hidden'; ?><?php echo 'core' === $tab ? '' : ' style="display:none"'; ?>>
 			<form method="post">
@@ -675,6 +678,7 @@ function tsolo_admin_render_page() {
 					<?php tsolo_admin_render_module_tab( $key, $def ); ?>
 				</section>
 			<?php endforeach; ?>
+		</div>
 		</div>
 	</div>
 	<?php
