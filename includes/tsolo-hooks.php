@@ -16,6 +16,7 @@ add_action( 'init', 'tsolo_register_default_actions', 0 );
 add_action( 'init', 'tsolo_register_default_forms', 0 );
 add_action( 'init', 'tsolo_add_rewrite_tags' );
 add_action( 'init', 'tsolo_add_rewrite_rules' );
+add_action( 'init', 'tsolo_flush_scheduled_rewrites', 99 );
 add_action( 'init', 'tsolo_setup_login_type_filters', 5 );
 
 add_action( 'widgets_init', array( 'TSOLO_Widget', 'register' ) );

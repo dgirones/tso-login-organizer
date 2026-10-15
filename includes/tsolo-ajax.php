@@ -69,6 +69,18 @@ function tsolo_enqueue_styles() {
 		array(),
 		TSOLO_VERSION
 	);
+	$settings = tsolo_get_settings();
+	$branding = isset( $settings['branding'] ) && is_array( $settings['branding'] ) ? $settings['branding'] : array();
+	$css      = '';
+	if ( ! empty( $branding['form_max_width'] ) ) {
+		$css .= '.tsolo{max-width:' . absint( $branding['form_max_width'] ) . 'px;}';
+	}
+	if ( ! empty( $branding['logo_url'] ) ) {
+		$css .= '.tsolo-brand-logo{text-align:center;margin:0 0 1rem;}.tsolo-brand-logo img{max-width:180px;height:auto;}';
+	}
+	if ( $css ) {
+		wp_add_inline_style( 'tsolo-front', $css );
+	}
 }
 
 /**
@@ -84,7 +96,8 @@ function tsolo_get_front_script_config( $extra = array() ) {
 		'nonce'       => wp_create_nonce( TSOLO_NONCE_AJAX ),
 		'ajaxEnabled' => ! empty( $settings['ajax'] ),
 		'i18n'        => array(
-			'unexpected' => __( 'Unexpected server response. Please try again.', 'tso-login-organizer' ),
+			'unexpected'  => __( 'Unexpected server response. Please try again.', 'tso-login-organizer' ),
+			'noFavorites' => __( 'No favorites yet.', 'tso-login-organizer' ),
 		),
 	);
 	return array_merge( $base, $extra );
@@ -101,7 +114,7 @@ function tsolo_enqueue_scripts() {
 	$need_js = ! empty( $settings['ajax'] )
 		|| ! empty( $settings['user_passwords'] )
 		|| tsolo_is_action( 'resetpass' )
-		|| ( is_singular( 'post' ) && tsolo_is_module_enabled( 'favorites' ) );
+		|| ( tsolo_is_module_enabled( 'favorites' ) && ( is_singular( 'post' ) || tsolo_is_action( 'favorites' ) ) );
 	if ( $need_js ) {
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script(

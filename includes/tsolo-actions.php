@@ -231,11 +231,14 @@ function tsolo_get_wp_pages_matching_slugs() {
 		)
 	);
 	// Page builders often store the shortcode in postmeta instead of post_content.
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin detection via builder meta.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin detection via builder meta, limited to pages.
 	$meta_ids      = $wpdb->get_col(
 		$wpdb->prepare(
-			"SELECT DISTINCT post_id FROM {$wpdb->postmeta}
-			WHERE meta_value LIKE %s OR meta_value LIKE %s",
+			"SELECT DISTINCT pm.post_id FROM {$wpdb->postmeta} pm
+			INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+			WHERE p.post_type = 'page'
+			AND p.post_status IN ( 'publish', 'draft', 'private', 'pending' )
+			AND ( pm.meta_value LIKE %s OR pm.meta_value LIKE %s )",
 			$like_tml,
 			$like_tso
 		)
@@ -368,7 +371,16 @@ function tsolo_register_default_actions() {
 		)
 	);
 
-	if ( tsolo_is_module_enabled( 'profiles' ) ) {
+	tsolo_register_optional_module_actions();
+}
+
+/**
+ * Register profile and favorites when those modules are on.
+ *
+ * Safe to call again: an action that is already registered is left as-is.
+ */
+function tsolo_register_optional_module_actions() {
+	if ( tsolo_is_module_enabled( 'profiles' ) && ! tsolo_action_exists( 'profile' ) ) {
 		tsolo_register_action(
 			'profile',
 			array(
@@ -380,8 +392,7 @@ function tsolo_register_default_actions() {
 			)
 		);
 	}
-
-	if ( tsolo_is_module_enabled( 'favorites' ) ) {
+	if ( tsolo_is_module_enabled( 'favorites' ) && ! tsolo_action_exists( 'favorites' ) ) {
 		tsolo_register_action(
 			'favorites',
 			array(
@@ -573,12 +584,14 @@ function tsolo_logout_handler() {
 	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'log-out' ) ) {
 		wp_die( esc_html__( 'Invalid logout request.', 'tso-login-organizer' ), 403 );
 	}
+	// Capture the user before logout — role redirects need the pre-logout account.
+	$user = wp_get_current_user();
 	wp_logout();
 	if ( '' === $redirect_to ) {
 		$redirect_to = add_query_arg( 'loggedout', 'true', tsolo_get_action_url( 'login' ) );
 	}
 	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core logout_redirect filter.
-	$redirect_to = apply_filters( 'logout_redirect', $redirect_to, tsolo_get_request_text( 'redirect_to', 'request' ), wp_get_current_user() );
+	$redirect_to = apply_filters( 'logout_redirect', $redirect_to, tsolo_get_request_text( 'redirect_to', 'request' ), $user );
 	wp_safe_redirect( $redirect_to );
 	exit;
 }
@@ -750,10 +763,21 @@ function tsolo_errors_store( $set = null ) {
 /**
  * Store errors for rendering.
  *
+ * Merges into any errors already stored in this request (e.g. profile + avatar
+ * both post on the same page) instead of silently replacing them.
+ *
  * @param WP_Error $errors Errors.
  */
 function tsolo_set_errors( $errors ) {
-	tsolo_errors_store( $errors instanceof WP_Error ? $errors : new WP_Error() );
+	if ( ! ( $errors instanceof WP_Error ) ) {
+		$errors = new WP_Error();
+	}
+	$current = tsolo_errors_store();
+	if ( $current->has_errors() ) {
+		$current->merge_from( $errors );
+		return;
+	}
+	tsolo_errors_store( $errors );
 }
 
 /**

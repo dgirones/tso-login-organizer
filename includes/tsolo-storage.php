@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'TSOLO_DB_SCHEMA' ) ) {
-	define( 'TSOLO_DB_SCHEMA', 2 );
+	define( 'TSOLO_DB_SCHEMA', 4 );
 }
 
 define( 'TSOLO_OPT_DB_SCHEMA', 'tso_login_organizer_db_schema' );
@@ -28,9 +28,11 @@ define( 'TSOLO_OPT_SOCIAL', 'tso_login_organizer_social' );
 define( 'TSOLO_OPT_AVATARS', 'tso_login_organizer_avatars' );
 define( 'TSOLO_OPT_FAVORITES', 'tso_login_organizer_favorites' );
 define( 'TSOLO_OPT_MAILCHIMP', 'tso_login_organizer_mailchimp' );
+define( 'TSOLO_OPT_FIELDS', 'tso_login_organizer_fields' );
 define( 'TSOLO_OPT_LOCKOUTS', 'tso_login_organizer_lockouts' );
 define( 'TSOLO_OPT_ATTEMPTS', 'tso_login_organizer_attempts' );
 define( 'TSOLO_OPT_TML_IMPORTED', 'tso_login_organizer_tml_imported' );
+define( 'TSOLO_OPT_FLUSH_REWRITES', 'tso_login_organizer_flush_rewrites' );
 define( 'TSOLO_USER_META_UI_LANG', 'tso_login_organizer_ui_lang' );
 define( 'TSOLO_ADMIN_QUERY_SET_LANG', 'tsolo_set_lang' );
 
@@ -46,6 +48,21 @@ function tsolo_default_settings() {
 		'registration_type' => 'default',
 		'user_passwords'    => 0,
 		'auto_login'        => 0,
+		'texts'             => array(
+			'login_heading'        => '',
+			'login_button'         => '',
+			'register_heading'     => '',
+			'register_button'      => '',
+			'lostpassword_heading' => '',
+			'lostpassword_button'  => '',
+			'resetpass_button'     => '',
+			'reg_passmail'         => '',
+		),
+		'branding'          => array(
+			'logo_url'       => '',
+			'form_max_width' => 0,
+			'extra_class'    => '',
+		),
 		'slugs'             => array(
 			'login'         => 'login',
 			'logout'        => 'logout',
@@ -72,6 +89,7 @@ function tsolo_default_modules() {
 		'restrictions'  => 0,
 		'security'      => 0,
 		'captcha'       => 0,
+		'fields'        => 0,
 		'profiles'      => 0,
 		'notifications' => 0,
 		'two_factor'    => 0,
@@ -96,20 +114,67 @@ function tsolo_maybe_migrate_schema() {
 	if ( false === get_option( TSOLO_OPT_MODULES, false ) ) {
 		add_option( TSOLO_OPT_MODULES, tsolo_default_modules(), '', false );
 	}
-	// Schema 2: readable confirm-action slug (was misspelled "confirmaction").
-	if ( $current < 2 ) {
-		$settings = get_option( TSOLO_OPT_SETTINGS, array() );
-		if ( is_array( $settings ) && isset( $settings['slugs']['confirmaction'] ) && 'confirmaction' === $settings['slugs']['confirmaction'] ) {
-			$settings['slugs']['confirmaction'] = 'confirm-action';
-			update_option( TSOLO_OPT_SETTINGS, $settings, false );
-			flush_rewrite_rules( false );
-		}
-	}
+
+	/*
+	 * Do not rewrite stored slugs here. Theme My Login uses "confirmaction",
+	 * and flushing now (plugins_loaded) would save rules before they exist.
+	 * The flush runs on init, after rewrite rules are registered.
+	 */
+	update_option( TSOLO_OPT_FLUSH_REWRITES, 1, false );
 	update_option( TSOLO_OPT_DB_SCHEMA, TSOLO_DB_SCHEMA, false );
 }
 
 /**
- * Get core settings (merged with defaults).
+ * Paths that must never become action rewrite slugs (core WP / reserved).
+ *
+ * @return string[]
+ */
+function tsolo_reserved_action_slugs() {
+	return array(
+		'wp-admin',
+		'wp-content',
+		'wp-includes',
+		'wp-json',
+		'wp-login',
+		'wp-cron',
+		'xmlrpc',
+		'feed',
+		'comments',
+		'trackback',
+		'embed',
+		'index',
+		'page',
+		'attachment',
+		'category',
+		'tag',
+		'author',
+		'search',
+	);
+}
+
+/**
+ * Whether a slug is reserved or otherwise unsafe for a virtual action URL.
+ *
+ * @param string $slug Candidate slug.
+ * @return bool
+ */
+function tsolo_is_reserved_action_slug( $slug ) {
+	$slug = strtolower( trim( (string) $slug, '/' ) );
+	if ( '' === $slug ) {
+		return true;
+	}
+	if ( in_array( $slug, tsolo_reserved_action_slugs(), true ) ) {
+		return true;
+	}
+	// Purely numeric slugs collide with ?p= / pagination in some structures.
+	if ( ctype_digit( $slug ) ) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Get core settings (merged with defaults and enums re-validated).
  *
  * @return array
  */
@@ -118,23 +183,7 @@ function tsolo_get_settings() {
 	if ( ! is_array( $stored ) ) {
 		$stored = array();
 	}
-	$defaults = tsolo_default_settings();
-	$out      = array_merge( $defaults, $stored );
-	if ( empty( $out['slugs'] ) || ! is_array( $out['slugs'] ) ) {
-		$out['slugs'] = $defaults['slugs'];
-	} else {
-		$out['slugs'] = array_merge( $defaults['slugs'], $out['slugs'] );
-	}
-	// Normalize legacy misspelled slug if still stored.
-	if ( isset( $out['slugs']['confirmaction'] ) && 'confirmaction' === $out['slugs']['confirmaction'] ) {
-		$out['slugs']['confirmaction']   = 'confirm-action';
-		static $tsolo_confirm_slug_fixed = false;
-		if ( ! $tsolo_confirm_slug_fixed ) {
-			$tsolo_confirm_slug_fixed = true;
-			update_option( TSOLO_OPT_SETTINGS, tsolo_sanitize_settings( $out ), false );
-		}
-	}
-	return $out;
+	return tsolo_sanitize_settings( $stored );
 }
 
 /**
@@ -168,16 +217,143 @@ function tsolo_sanitize_settings( $settings ) {
 	$out['registration_type'] = in_array( $reg_type, array( 'default', 'email' ), true ) ? $reg_type : 'default';
 	$out['user_passwords']    = empty( $settings['user_passwords'] ) ? 0 : 1;
 	$out['auto_login']        = empty( $settings['auto_login'] ) ? 0 : 1;
+	$out['texts']             = tsolo_sanitize_form_texts( isset( $settings['texts'] ) ? $settings['texts'] : array() );
+	$out['branding']          = tsolo_sanitize_branding( isset( $settings['branding'] ) ? $settings['branding'] : array() );
 	$out['slugs']             = $defaults['slugs'];
 	if ( ! empty( $settings['slugs'] ) && is_array( $settings['slugs'] ) ) {
 		foreach ( $defaults['slugs'] as $key => $default_slug ) {
-			if ( isset( $settings['slugs'][ $key ] ) ) {
-				$slug                 = sanitize_title( $settings['slugs'][ $key ] );
-				$out['slugs'][ $key ] = '' !== $slug ? $slug : $default_slug;
+			if ( isset( $settings['slugs'][ $key ] ) && ( is_string( $settings['slugs'][ $key ] ) || is_numeric( $settings['slugs'][ $key ] ) ) ) {
+				$slug = sanitize_title( (string) $settings['slugs'][ $key ] );
+				if ( '' === $slug || tsolo_is_reserved_action_slug( $slug ) ) {
+					$slug = $default_slug;
+				}
+				$out['slugs'][ $key ] = $slug;
 			}
 		}
 	}
+	$out['slugs'] = tsolo_unique_action_slugs( $out['slugs'] );
 	return $out;
+}
+
+/**
+ * Sanitize custom form heading/button strings (empty = WordPress / plugin default).
+ *
+ * @param mixed $raw Raw.
+ * @return array
+ */
+function tsolo_sanitize_form_texts( $raw ) {
+	$defaults = tsolo_default_settings();
+	$defaults = $defaults['texts'];
+	$out      = $defaults;
+	if ( ! is_array( $raw ) ) {
+		return $out;
+	}
+	foreach ( $defaults as $key => $empty ) {
+		unset( $empty );
+		if ( ! isset( $raw[ $key ] ) ) {
+			continue;
+		}
+		$out[ $key ] = sanitize_text_field( (string) $raw[ $key ] );
+	}
+	return $out;
+}
+
+/**
+ * Sanitize branding (logo, width, extra class).
+ *
+ * @param mixed $raw Raw.
+ * @return array
+ */
+function tsolo_sanitize_branding( $raw ) {
+	$defaults = tsolo_default_settings();
+	$defaults = $defaults['branding'];
+	$out      = $defaults;
+	if ( ! is_array( $raw ) ) {
+		return $out;
+	}
+	$url = isset( $raw['logo_url'] ) ? esc_url_raw( trim( (string) $raw['logo_url'] ) ) : '';
+	if ( $url && ! preg_match( '#^https?://#i', $url ) ) {
+		$url = '';
+	}
+	$out['logo_url'] = $url;
+	$width           = isset( $raw['form_max_width'] ) ? absint( $raw['form_max_width'] ) : 0;
+	if ( $width > 0 && $width < 200 ) {
+		$width = 200;
+	}
+	if ( $width > 1200 ) {
+		$width = 1200;
+	}
+	$out['form_max_width'] = $width;
+	$class                 = isset( $raw['extra_class'] ) ? sanitize_html_class( (string) $raw['extra_class'] ) : '';
+	// Allow multiple classes separated by spaces.
+	if ( isset( $raw['extra_class'] ) && is_string( $raw['extra_class'] ) ) {
+		$parts = preg_split( '/\s+/', $raw['extra_class'] );
+		$clean = array();
+		if ( is_array( $parts ) ) {
+			foreach ( $parts as $part ) {
+				$part = sanitize_html_class( $part );
+				if ( '' !== $part ) {
+					$clean[] = $part;
+				}
+			}
+		}
+		$class = implode( ' ', array_slice( array_unique( $clean ), 0, 5 ) );
+	}
+	$out['extra_class'] = $class;
+	return $out;
+}
+
+/**
+ * Custom form text or fallback.
+ *
+ * @param string $key      texts key.
+ * @param string $fallback Default label.
+ * @return string
+ */
+function tsolo_get_form_text( $key, $fallback = '' ) {
+	$settings = tsolo_get_settings();
+	$texts    = isset( $settings['texts'] ) && is_array( $settings['texts'] ) ? $settings['texts'] : array();
+	$key      = sanitize_key( $key );
+	if ( isset( $texts[ $key ] ) && '' !== trim( (string) $texts[ $key ] ) ) {
+		return (string) $texts[ $key ];
+	}
+	return $fallback;
+}
+
+/**
+ * Keep one path per action. The first action keeps the slug.
+ *
+ * @param array $slugs Slug map.
+ * @return array
+ */
+function tsolo_unique_action_slugs( $slugs ) {
+	$defaults = tsolo_default_settings();
+	$defaults = $defaults['slugs'];
+	$used     = array();
+	if ( ! is_array( $slugs ) ) {
+		return $defaults;
+	}
+	foreach ( $slugs as $key => $slug ) {
+		$slug = is_string( $slug ) || is_numeric( $slug ) ? (string) $slug : '';
+		if ( '' === $slug || tsolo_is_reserved_action_slug( $slug ) ) {
+			$slug = isset( $defaults[ $key ] ) ? $defaults[ $key ] : sanitize_key( (string) $key );
+		}
+		if ( isset( $used[ $slug ] ) || tsolo_is_reserved_action_slug( $slug ) ) {
+			$fallback = isset( $defaults[ $key ] ) ? $defaults[ $key ] : sanitize_key( (string) $key );
+			if ( isset( $used[ $fallback ] ) || tsolo_is_reserved_action_slug( $fallback ) ) {
+				$fallback = $fallback . '-' . sanitize_key( (string) $key );
+			}
+			$slug = $fallback;
+			$n    = 2;
+			while ( isset( $used[ $slug ] ) || tsolo_is_reserved_action_slug( $slug ) ) {
+				$slug = $fallback . '-' . $n;
+				++$n;
+			}
+		}
+		$used[ $slug ] = $key;
+		$slugs[ $key ] = $slug;
+	}
+	return $slugs;
 }
 
 /**

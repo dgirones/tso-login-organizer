@@ -198,7 +198,7 @@ function tsolo_register_login_form() {
 		'submit',
 		array(
 			'type'     => 'submit',
-			'value'    => __( 'Log In', 'tso-login-organizer' ),
+			'value'    => tsolo_get_form_text( 'login_button', __( 'Log In', 'tso-login-organizer' ) ),
 			'priority' => 30,
 		)
 	);
@@ -318,12 +318,13 @@ function tsolo_register_registration_form() {
 			)
 		);
 	} else {
+		$passmail = tsolo_get_form_text( 'reg_passmail', __( 'Registration confirmation will be emailed to you.', 'tso-login-organizer' ) );
 		tsolo_add_form_field(
 			'register',
 			'reg_passmail',
 			array(
 				'type'     => 'custom',
-				'content'  => '<p class="tsolo-reg-passmail">' . esc_html__( 'Registration confirmation will be emailed to you.', 'tso-login-organizer' ) . '</p>',
+				'content'  => '<p class="tsolo-reg-passmail">' . esc_html( $passmail ) . '</p>',
 				'priority' => 20,
 			)
 		);
@@ -342,7 +343,7 @@ function tsolo_register_registration_form() {
 		'submit',
 		array(
 			'type'     => 'submit',
-			'value'    => __( 'Register', 'tso-login-organizer' ),
+			'value'    => tsolo_get_form_text( 'register_button', __( 'Register', 'tso-login-organizer' ) ),
 			'priority' => 30,
 		)
 	);
@@ -398,7 +399,7 @@ function tsolo_register_lost_password_form() {
 		'submit',
 		array(
 			'type'     => 'submit',
-			'value'    => __( 'Get New Password', 'tso-login-organizer' ),
+			'value'    => tsolo_get_form_text( 'lostpassword_button', __( 'Get New Password', 'tso-login-organizer' ) ),
 			'priority' => 30,
 		)
 	);
@@ -450,7 +451,7 @@ function tsolo_register_password_reset_form() {
 		'submit',
 		array(
 			'type'     => 'submit',
-			'value'    => __( 'Save Password', 'tso-login-organizer' ),
+			'value'    => tsolo_get_form_text( 'resetpass_button', __( 'Save Password', 'tso-login-organizer' ) ),
 			'priority' => 30,
 		)
 	);
@@ -479,8 +480,20 @@ function tsolo_render_form( $name, $args = array() ) {
 		)
 	);
 
+	$settings    = tsolo_get_settings();
+	$branding    = isset( $settings['branding'] ) && is_array( $settings['branding'] ) ? $settings['branding'] : array();
+	$extra       = ! empty( $branding['extra_class'] ) ? ' ' . $branding['extra_class'] : '';
+	$heading_key = $name . '_heading';
+	$heading     = tsolo_get_form_text( $heading_key, '' );
+
 	ob_start();
-	echo '<div class="tsolo tsolo-' . esc_attr( $name ) . '">';
+	echo '<div class="tsolo tsolo-' . esc_attr( $name ) . esc_attr( $extra ) . '">';
+	if ( ! empty( $branding['logo_url'] ) ) {
+		echo '<p class="tsolo-brand-logo"><img src="' . esc_url( $branding['logo_url'] ) . '" alt="' . esc_attr( get_bloginfo( 'name' ) ) . '" /></p>';
+	}
+	if ( '' !== $heading ) {
+		echo '<h2 class="tsolo-form-heading">' . esc_html( $heading ) . '</h2>';
+	}
 	echo tsolo_render_errors_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped inside helper.
 
 	if ( ! empty( $args['show_form'] ) ) {
@@ -494,7 +507,9 @@ function tsolo_render_form( $name, $args = array() ) {
 		echo '<form name="' . esc_attr( $name ) . '" class="tsolo-form" action="' . esc_url( $form['action'] ) . '" method="' . esc_attr( $form['method'] ) . '"' . $attrs . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attrs built with esc_attr.
 		do_action( 'tsolo_before_form', $name );
 
-		$fields = $form['fields'];
+		// Re-read after before_form so modules can inject fields.
+		$fresh  = tsolo_get_form( $name );
+		$fields = ( is_array( $fresh ) && isset( $fresh['fields'] ) ) ? $fresh['fields'] : $form['fields'];
 		uasort(
 			$fields,
 			function ( $a, $b ) {
@@ -564,11 +579,16 @@ function tsolo_render_form_field( $form_name, $field_name, $field ) {
 	} elseif ( 'hidden' === $type ) {
 		$html = '<input type="hidden" name="' . esc_attr( $name_attr ) . '" id="' . esc_attr( $id ) . '" value="' . esc_attr( $value ) . '" />';
 		return $html;
+	} elseif ( 'textarea' === $type ) {
+		if ( $field['label'] ) {
+			$html .= '<label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . '</label>';
+		}
+		$html .= '<textarea name="' . esc_attr( $name_attr ) . '" id="' . esc_attr( $id ) . '" class="input" rows="4"' . $extra . '>' . esc_textarea( $value ) . '</textarea>';
 	} else {
 		if ( $field['label'] ) {
 			$html .= '<label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . '</label>';
 		}
-		$input_type = in_array( $type, array( 'text', 'email', 'password' ), true ) ? $type : 'text';
+		$input_type = in_array( $type, array( 'text', 'email', 'password', 'url', 'tel' ), true ) ? $type : 'text';
 		$html      .= '<input type="' . esc_attr( $input_type ) . '" name="' . esc_attr( $name_attr ) . '" id="' . esc_attr( $id ) . '" value="' . esc_attr( $value ) . '" class="input"' . $extra . ' />';
 	}
 	$html .= '</p>';

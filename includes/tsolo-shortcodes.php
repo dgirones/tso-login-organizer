@@ -162,8 +162,15 @@ function tsolo_render_profile_form() {
 	$html   .= '<p class="tsolo-field"><label for="pass2">' . esc_html__( 'Confirm Password', 'tso-login-organizer' ) . '</label>';
 	$html   .= '<input type="password" name="pass2" id="pass2" class="input" autocomplete="new-password" /></p>';
 
+	ob_start();
+	/**
+	 * Extra profile fields (Custom Fields / Social modules).
+	 */
+	do_action( 'tsolo_profile_fields' );
+	$html .= (string) ob_get_clean();
+
 	if ( $avatars ) {
-		$current = get_user_meta( $user->ID, 'tsolo_avatar_url', true );
+		$current = get_user_meta( $user->ID, class_exists( 'TSOLO_Mod_Avatars' ) ? TSOLO_Mod_Avatars::META_URL : 'tsolo_avatar_url', true );
 		$html   .= '<input type="hidden" name="tsolo_avatar_nonce" value="' . esc_attr( wp_create_nonce( 'tsolo_upload_avatar' ) ) . '" />';
 		$html   .= '<div class="tsolo-field tsolo-field-avatar"><label for="tsolo_avatar">' . esc_html__( 'Profile picture', 'tso-login-organizer' ) . '</label>';
 		if ( $current ) {
@@ -177,13 +184,20 @@ function tsolo_render_profile_form() {
 	}
 
 	if ( tsolo_is_module_enabled( 'two_factor' ) && class_exists( 'TSOLO_Mod_Two_Factor' ) ) {
-		$secret  = get_user_meta( $user->ID, 'tsolo_2fa_secret', true );
+		$secret  = get_user_meta( $user->ID, TSOLO_Mod_Two_Factor::META_SECRET, true );
+		$backups = get_user_meta( $user->ID, TSOLO_Mod_Two_Factor::META_BACKUP, true );
 		$enabled = (bool) $secret;
 		$html   .= '<div class="tsolo-field tsolo-field-2fa-enable">';
 		$html   .= '<label><input type="checkbox" name="tsolo_2fa_enable" value="1" ' . checked( $enabled, true, false ) . ' /> ' . esc_html__( 'Require an app code at login (two-factor)', 'tso-login-organizer' ) . '</label>';
+		if ( class_exists( 'TSOLO_Mod_Two_Factor' ) && TSOLO_Mod_Two_Factor::user_must_enroll_2fa( $user ) ) {
+			$html .= '<p class="tsolo-notice tsolo-notice-warning">' . esc_html__( 'Two-factor authentication is required for your role. Enable it below before continuing.', 'tso-login-organizer' ) . '</p>';
+		}
 		if ( $secret ) {
 			$html .= '<p class="description tsolo-2fa-help">' . esc_html__( 'Two-factor is already on for this account. The key below is the one your authenticator app should contain. Saving again with the box checked does not create a new key. Uncheck the box and click Save Profile to turn two-factor off: the key is deleted and the app code stops working. Login then asks for the password only.', 'tso-login-organizer' ) . '</p>';
 			$html .= '<p class="description">' . esc_html__( 'Key to type into the app (Google Authenticator or similar):', 'tso-login-organizer' ) . ' <code>' . esc_html( $secret ) . '</code></p>';
+			if ( is_array( $backups ) && $backups ) {
+				$html .= '<p class="description">' . esc_html__( 'One-time backup codes (each works once):', 'tso-login-organizer' ) . ' <code>' . esc_html( implode( ' ', $backups ) ) . '</code></p>';
+			}
 		} else {
 			$html .= '<p class="description tsolo-2fa-help">' . esc_html__( 'Leave this unchecked if the password is enough. Check it and click Save Profile to turn two-factor on. The key is created only when you save, not when you tick the box. After saving you will see a key: type it into an authenticator app. From the next login, the password alone is not enough — the site also asks for the 6-digit code from that app.', 'tso-login-organizer' ) . '</p>';
 		}
@@ -207,18 +221,27 @@ function tsolo_render_favorites() {
 	if ( ! class_exists( 'TSOLO_Mod_Favorites' ) ) {
 		return '<p>' . esc_html__( 'Favorites module is not available.', 'tso-login-organizer' ) . '</p>';
 	}
-	$ids = TSOLO_Mod_Favorites::get_favorites( get_current_user_id() );
-	if ( empty( $ids ) ) {
-		return '<div class="tsolo tsolo-favorites"><p>' . esc_html__( 'No favorites yet.', 'tso-login-organizer' ) . '</p></div>';
-	}
-	$html = '<div class="tsolo tsolo-favorites"><ul>';
+	$user_id = get_current_user_id();
+	$ids     = TSOLO_Mod_Favorites::get_favorites( $user_id );
+	$items   = array();
+	$kept    = array();
 	foreach ( $ids as $post_id ) {
+		if ( ! TSOLO_Mod_Favorites::is_favoriteable_post( $post_id ) ) {
+			continue;
+		}
 		$title = get_the_title( $post_id );
 		if ( ! $title ) {
 			continue;
 		}
-		$html .= '<li><a href="' . esc_url( get_permalink( $post_id ) ) . '">' . esc_html( $title ) . '</a></li>';
+		$kept[]  = $post_id;
+		$items[] = '<li class="tsolo-favorite-item" data-post="' . esc_attr( (string) $post_id ) . '"><a href="' . esc_url( get_permalink( $post_id ) ) . '">' . esc_html( $title ) . '</a> ' . TSOLO_Mod_Favorites::render_toggle_button( $post_id, true ) . '</li>';
 	}
-	$html .= '</ul></div>';
-	return $html;
+	// Drop deleted / unreadable IDs so the list stays accurate.
+	if ( $kept !== $ids ) {
+		TSOLO_Mod_Favorites::set_favorites( $user_id, $kept );
+	}
+	if ( empty( $items ) ) {
+		return '<div class="tsolo tsolo-favorites"><p class="tsolo-favorites-empty">' . esc_html__( 'No favorites yet.', 'tso-login-organizer' ) . '</p></div>';
+	}
+	return '<div class="tsolo tsolo-favorites"><ul class="tsolo-favorites-list">' . implode( '', $items ) . '</ul></div>';
 }

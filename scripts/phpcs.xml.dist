@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<ruleset name="TSO Login Organizer">
+    <rule ref="WordPress"/>
+    <arg name="extensions" value="php"/>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+</ruleset>

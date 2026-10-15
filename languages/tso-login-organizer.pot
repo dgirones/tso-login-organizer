@@ -955,6 +955,9 @@ msgstr ""
 msgid "Theme My Login settings imported."
 msgstr ""
 
+msgid "No Theme My Login settings were found, so nothing was changed."
+msgstr ""
+
 msgid "These values are the path after your site URL for each virtual form. With the default \"login\" slug, the form is at:"
 msgstr ""
 
@@ -1202,5 +1205,224 @@ msgid "Friendly addresses work only when Permalinks is not Plain. The check is o
 msgstr ""
 
 msgid "Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/)."
+msgstr ""
+
+msgid "0 keeps the default (~448px). Allowed range 200–1200."
+msgstr ""
+
+msgid "<strong>Error:</strong> %s is required."
+msgstr ""
+
+msgid "<strong>Error:</strong> %s must be a valid email address."
+msgstr ""
+
+msgid "Add a row per field: a machine key (letters/numbers), a label, type, and whether it appears on register and/or profile."
+msgstr ""
+
+msgid "Add extra fields to registration and/or the frontend profile (name, phone, URL, custom meta)."
+msgstr ""
+
+msgid "Added to the outer .tsolo wrapper so your theme or custom CSS can target these forms. Up to five class names."
+msgstr ""
+
+msgid "An account with this email already exists. Log in with your password, then link this provider from your profile."
+msgstr ""
+
+msgid "Biographical info"
+msgstr ""
+
+msgid "Checkbox checked by default"
+msgstr ""
+
+msgid "Checkbox label"
+msgstr ""
+
+msgid "Choose a provider below. For Google, open https://www.google.com/recaptcha/admin and create a v2 checkbox or v3 key. For Turnstile, open the Cloudflare Turnstile dashboard."
+msgstr ""
+
+msgid "Cloudflare Turnstile"
+msgstr ""
+
+msgid "Connect %s"
+msgstr ""
+
+msgid "Create a Project and App with OAuth 2.0 (confidential client) enabled. PKCE is handled automatically."
+msgstr ""
+
+msgid "Custom Fields"
+msgstr ""
+
+msgid "Default role"
+msgstr ""
+
+msgid "Disconnect"
+msgstr ""
+
+msgid "Do not enable together with CleanTalk, Kadence captcha, or another captcha on the same forms (double challenges / failed verifies)."
+msgstr ""
+
+msgid "Empty key rows are ignored. Use map to write into WordPress user fields; leave map empty for custom meta."
+msgstr ""
+
+msgid "Extra CSS class"
+msgstr ""
+
+msgid "First name"
+msgstr ""
+
+msgid "Form branding"
+msgstr ""
+
+msgid "Form max width (px)"
+msgstr ""
+
+msgid "Form texts"
+msgstr ""
+
+msgid "Google reCAPTCHA"
+msgstr ""
+
+msgid "Google reCAPTCHA v2 (checkbox)"
+msgstr ""
+
+msgid "Google reCAPTCHA v3 (invisible score)"
+msgstr ""
+
+msgid "If the social email matches an existing user, sign into that account (do not create a duplicate)"
+msgstr ""
+
+msgid "Key"
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "Last name"
+msgstr ""
+
+msgid "Leave a field empty to keep the built-in label. These strings only change this plugin’s frontend forms."
+msgstr ""
+
+msgid "Link existing accounts"
+msgstr ""
+
+msgid "Linked to %s."
+msgstr ""
+
+msgid "Login button"
+msgstr ""
+
+msgid "Login heading"
+msgstr ""
+
+msgid "Logo URL"
+msgstr ""
+
+msgid "Lost password button"
+msgstr ""
+
+msgid "Lost password heading"
+msgstr ""
+
+msgid "Map"
+msgstr ""
+
+msgid "Map can store into WordPress first name, last name, biographical info or website. Leave map empty to store as user meta (tsolo_cf_…)."
+msgstr ""
+
+msgid "Only used with v3. 0.0 is permissive; 1.0 is strict. Default 0.5."
+msgstr ""
+
+msgid "Optional image shown above login, register and password forms. Use a full https:// URL (Media Library → copy file URL)."
+msgstr ""
+
+msgid "Other registration-form plugins that also inject fields may show duplicates."
+msgstr ""
+
+msgid "Paste the site key and the secret key, then save. Empty keys mean the check stays off. Do not enable more than one captcha plugin on the same forms."
+msgstr ""
+
+msgid "Pick a provider, create keys for your domain, then paste both values here."
+msgstr ""
+
+msgid "Pre-check the newsletter box (only when the checkbox is shown)"
+msgstr ""
+
+msgid "Private key used server-side to verify tokens. Leave empty and keep the module off if another captcha plugin already protects forms."
+msgstr ""
+
+msgid "Profile fields need the Profiles module enabled. Registration fields work on their own."
+msgstr ""
+
+msgid "Protect login and registration forms with Google reCAPTCHA v2/v3 or Cloudflare Turnstile (needs site and secret keys)."
+msgstr ""
+
+msgid "Provider"
+msgstr ""
+
+msgid "Public key from the provider console."
+msgstr ""
+
+msgid "Register button"
+msgstr ""
+
+msgid "Register heading"
+msgstr ""
+
+msgid "Registration “password by email” note"
+msgstr ""
+
+msgid "Required"
+msgstr ""
+
+msgid "Reset password button"
+msgstr ""
+
+msgid "Role assigned to new accounts on registration. Same as Settings → General → New User Default Role."
+msgstr ""
+
+msgid "Sends visitor IP and token to Google or Cloudflare for verification when forms are submitted (see readme External services)."
+msgstr ""
+
+msgid "Social account linked."
+msgstr ""
+
+msgid "Social accounts"
+msgstr ""
+
+msgid "Text shown next to the newsletter checkbox on the registration form."
+msgstr ""
+
+msgid "This site is protected by reCAPTCHA."
+msgstr ""
+
+msgid "This social account is already linked to another user."
+msgstr ""
+
+msgid "To add more fields, fill the empty rows and save, then reopen this tab for new blank rows."
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Website"
+msgstr ""
+
+msgid "When off, matching emails show an error asking the person to log in first and connect the provider from their profile. Google linking also requires a verified email from Google. New social sign-ups still respect “Anyone can register”. Accounts with two-factor enabled cannot complete social login (password + app code required)."
+msgstr ""
+
+msgid "When this is off, every new registrant is subscribed automatically (only if API key and list ID are set)."
+msgstr ""
+
+msgid "With “Link existing accounts” on (default), a returning social login that shares an email with an existing user signs into that account instead of creating a second one. Logged-in users can also connect or disconnect providers from their profile page."
+msgstr ""
+
+msgid "X usually does not return an email: a site-local account is created from the X user id and reused on later logins."
+msgstr ""
+
+msgid "reCAPTCHA v3 min score"
+msgstr ""
+
+msgid "— Custom meta —"
 msgstr ""
 

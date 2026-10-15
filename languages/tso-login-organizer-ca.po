@@ -955,6 +955,9 @@ msgstr "La llista desada és l’slug de Preferits del Nucli, actualment %s."
 msgid "Theme My Login settings imported."
 msgstr "S’ha importat la configuració de Theme My Login."
 
+msgid "No Theme My Login settings were found, so nothing was changed."
+msgstr "No s’ha trobat cap configuració de Theme My Login, així que no s’ha canviat res."
+
 msgid "These values are the path after your site URL for each virtual form. With the default \"login\" slug, the form is at:"
 msgstr "Aquests valors són el camí després de l’URL del lloc per a cada formulari virtual. Amb l’slug per defecte «login», el formulari és a:"
 
@@ -1203,4 +1206,223 @@ msgstr "Les adreces amigables només funcionen si els enllaços no són Plain. L
 
 msgid "Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/)."
 msgstr "Comprovació d’URL amigables acabada: WordPress fa servir enllaços Plain. Posa Enllaços permanents a Nom de l’entrada (/%postname%/)."
+
+msgid "0 keeps the default (~448px). Allowed range 200–1200."
+msgstr "0 manté el valor per defecte (~448px). Interval permès 200–1200."
+
+msgid "<strong>Error:</strong> %s is required."
+msgstr "<strong>Error:</strong> %s és obligatori."
+
+msgid "<strong>Error:</strong> %s must be a valid email address."
+msgstr "<strong>Error:</strong> %s ha de ser un correu electrònic vàlid."
+
+msgid "Add a row per field: a machine key (letters/numbers), a label, type, and whether it appears on register and/or profile."
+msgstr "Afegiu una fila per camp: clau tècnica (lletres/números), etiqueta, tipus i si surt al registre i/o al perfil."
+
+msgid "Add extra fields to registration and/or the frontend profile (name, phone, URL, custom meta)."
+msgstr "Afegeix camps extra al registre i/o al perfil frontend (nom, telèfon, URL, meta personalitzada)."
+
+msgid "Added to the outer .tsolo wrapper so your theme or custom CSS can target these forms. Up to five class names."
+msgstr "S’afegeix al contenidor .tsolo perquè el tema o el CSS personalitzat puguin apuntar a aquests formularis. Fins a cinc classes."
+
+msgid "An account with this email already exists. Log in with your password, then link this provider from your profile."
+msgstr "Ja existeix un compte amb aquest correu. Inicieu sessió amb la contrasenya i enllaceu aquest proveïdor des del perfil."
+
+msgid "Biographical info"
+msgstr "Informació biogràfica"
+
+msgid "Checkbox checked by default"
+msgstr "Casella marcada per defecte"
+
+msgid "Checkbox label"
+msgstr "Etiqueta de la casella"
+
+msgid "Choose a provider below. For Google, open https://www.google.com/recaptcha/admin and create a v2 checkbox or v3 key. For Turnstile, open the Cloudflare Turnstile dashboard."
+msgstr "Trieu un proveïdor a sota. Per a Google, obriu https://www.google.com/recaptcha/admin i creeu una clau v2 (casella) o v3. Per a Turnstile, obriu el panell de Cloudflare Turnstile."
+
+msgid "Cloudflare Turnstile"
+msgstr "Cloudflare Turnstile"
+
+msgid "Connect %s"
+msgstr "Connecta %s"
+
+msgid "Create a Project and App with OAuth 2.0 (confidential client) enabled. PKCE is handled automatically."
+msgstr "Creeu un Projecte i una App amb OAuth 2.0 (client confidencial) activat. El PKCE es gestiona automàticament."
+
+msgid "Custom Fields"
+msgstr "Camps personalitzats"
+
+msgid "Default role"
+msgstr "Rol per defecte"
+
+msgid "Disconnect"
+msgstr "Desconnecta"
+
+msgid "Do not enable together with CleanTalk, Kadence captcha, or another captcha on the same forms (double challenges / failed verifies)."
+msgstr "No l’activeu juntament amb CleanTalk, el captcha de Kadence o un altre captcha als mateixos formularis (dobles reptes / verificacions fallides)."
+
+msgid "Empty key rows are ignored. Use map to write into WordPress user fields; leave map empty for custom meta."
+msgstr "Les files amb clau buida s’ignoren. Useu map per escriure als camps d’usuari de WordPress; deixeu map buit per a meta personalitzada."
+
+msgid "Extra CSS class"
+msgstr "Classe CSS extra"
+
+msgid "First name"
+msgstr "Nom"
+
+msgid "Form branding"
+msgstr "Marca del formulari"
+
+msgid "Form max width (px)"
+msgstr "Amplada màxima del formulari (px)"
+
+msgid "Form texts"
+msgstr "Textos del formulari"
+
+msgid "Google reCAPTCHA"
+msgstr "Google reCAPTCHA"
+
+msgid "Google reCAPTCHA v2 (checkbox)"
+msgstr "Google reCAPTCHA v2 (casella)"
+
+msgid "Google reCAPTCHA v3 (invisible score)"
+msgstr "Google reCAPTCHA v3 (puntuació invisible)"
+
+msgid "If the social email matches an existing user, sign into that account (do not create a duplicate)"
+msgstr "Si el correu social coincideix amb un usuari existent, inicia sessió en aquell compte (no creïs un duplicat)"
+
+msgid "Key"
+msgstr "Clau"
+
+msgid "Label"
+msgstr "Etiqueta"
+
+msgid "Last name"
+msgstr "Cognoms"
+
+msgid "Leave a field empty to keep the built-in label. These strings only change this plugin’s frontend forms."
+msgstr "Deixeu un camp buit per mantenir l’etiqueta integrada. Aquests textos només canvien els formularis frontend d’aquest plugin."
+
+msgid "Link existing accounts"
+msgstr "Enllaçar comptes existents"
+
+msgid "Linked to %s."
+msgstr "Enllaçat a %s."
+
+msgid "Login button"
+msgstr "Botó d’accés"
+
+msgid "Login heading"
+msgstr "Títol d’accés"
+
+msgid "Logo URL"
+msgstr "URL del logotip"
+
+msgid "Lost password button"
+msgstr "Botó de contrasenya perduda"
+
+msgid "Lost password heading"
+msgstr "Títol de contrasenya perduda"
+
+msgid "Map"
+msgstr "Mapatge"
+
+msgid "Map can store into WordPress first name, last name, biographical info or website. Leave map empty to store as user meta (tsolo_cf_…)."
+msgstr "El mapatge pot desar al nom, cognoms, biografia o lloc web de WordPress. Deixeu-lo buit per desar com a meta d’usuari (tsolo_cf_…)."
+
+msgid "Only used with v3. 0.0 is permissive; 1.0 is strict. Default 0.5."
+msgstr "Només amb v3. 0.0 és permissiu; 1.0 és estricte. Per defecte 0.5."
+
+msgid "Optional image shown above login, register and password forms. Use a full https:// URL (Media Library → copy file URL)."
+msgstr "Imatge opcional sobre els formularis d’accés, registre i contrasenya. Useu una URL https:// completa (Mediateca → copiar URL del fitxer)."
+
+msgid "Other registration-form plugins that also inject fields may show duplicates."
+msgstr "Altres plugins de formulari de registre que també injectin camps poden mostrar duplicats."
+
+msgid "Paste the site key and the secret key, then save. Empty keys mean the check stays off. Do not enable more than one captcha plugin on the same forms."
+msgstr "Enganxeu la clau del lloc i la secreta, i deseu. Amb claus buides la comprovació resta desactivada. No activeu més d’un plugin de captcha als mateixos formularis."
+
+msgid "Pick a provider, create keys for your domain, then paste both values here."
+msgstr "Trieu un proveïdor, creeu claus per al vostre domini i enganxeu aquí els dos valors."
+
+msgid "Pre-check the newsletter box (only when the checkbox is shown)"
+msgstr "Marcar per defecte la casella del butlletí (només si es mostra la casella)"
+
+msgid "Private key used server-side to verify tokens. Leave empty and keep the module off if another captcha plugin already protects forms."
+msgstr "Clau privada per verificar tokens al servidor. Deixeu-la buida i el mòdul desactivat si un altre plugin de captcha ja protegeix els formularis."
+
+msgid "Profile fields need the Profiles module enabled. Registration fields work on their own."
+msgstr "Els camps de perfil necessiten el mòdul Perfils actiu. Els de registre funcionen sols."
+
+msgid "Protect login and registration forms with Google reCAPTCHA v2/v3 or Cloudflare Turnstile (needs site and secret keys)."
+msgstr "Protegeix els formularis d’accés i registre amb Google reCAPTCHA v2/v3 o Cloudflare Turnstile (calen claus pública i secreta)."
+
+msgid "Provider"
+msgstr "Proveïdor"
+
+msgid "Public key from the provider console."
+msgstr "Clau pública de la consola del proveïdor."
+
+msgid "Register button"
+msgstr "Botó de registre"
+
+msgid "Register heading"
+msgstr "Títol de registre"
+
+msgid "Registration “password by email” note"
+msgstr "Nota de registre «contrasenya per correu»"
+
+msgid "Required"
+msgstr "Obligatori"
+
+msgid "Reset password button"
+msgstr "Botó de restablir contrasenya"
+
+msgid "Role assigned to new accounts on registration. Same as Settings → General → New User Default Role."
+msgstr "Rol assignat als comptes nous en registrar-se. Igual que Configuració → General → Rol per defecte dels usuaris nous."
+
+msgid "Sends visitor IP and token to Google or Cloudflare for verification when forms are submitted (see readme External services)."
+msgstr "Envia la IP i el token del visitant a Google o Cloudflare per verificar quan s’envien els formularis (vegeu External services al readme)."
+
+msgid "Social account linked."
+msgstr "Compte social enllaçat."
+
+msgid "Social accounts"
+msgstr "Comptes socials"
+
+msgid "Text shown next to the newsletter checkbox on the registration form."
+msgstr "Text al costat de la casella del butlletí al formulari de registre."
+
+msgid "This site is protected by reCAPTCHA."
+msgstr "Aquest lloc està protegit amb reCAPTCHA."
+
+msgid "This social account is already linked to another user."
+msgstr "Aquest compte social ja està enllaçat a un altre usuari."
+
+msgid "To add more fields, fill the empty rows and save, then reopen this tab for new blank rows."
+msgstr "Per afegir més camps, ompliu les files buides i deseu; torneu a obrir aquesta pestanya per veure files en blanc noves."
+
+msgid "Type"
+msgstr "Tipus"
+
+msgid "Website"
+msgstr "Lloc web"
+
+msgid "When off, matching emails show an error asking the person to log in first and connect the provider from their profile. Google linking also requires a verified email from Google. New social sign-ups still respect “Anyone can register”. Accounts with two-factor enabled cannot complete social login (password + app code required)."
+msgstr "Si està desactivat, els correus coincidents mostren un error demanant iniciar sessió i connectar el proveïdor des del perfil. L’enllaç amb Google també exigeix un correu verificat. Els registres socials nous respecten «Qualsevol pot registrar-se». Els comptes amb doble factor no poden completar l’accés social (cal contrasenya + codi de l’app)."
+
+msgid "When this is off, every new registrant is subscribed automatically (only if API key and list ID are set)."
+msgstr "Si està desactivat, cada registre nou se subscriu automàticament (només si hi ha clau API i ID de llista)."
+
+msgid "With “Link existing accounts” on (default), a returning social login that shares an email with an existing user signs into that account instead of creating a second one. Logged-in users can also connect or disconnect providers from their profile page."
+msgstr "Amb «Enllaçar comptes existents» actiu (per defecte), un accés social que comparteix correu amb un usuari existent inicia sessió en aquell compte en lloc de crear-ne un altre. Els usuaris connectats també poden enllaçar o desconnectar proveïdors des del perfil."
+
+msgid "X usually does not return an email: a site-local account is created from the X user id and reused on later logins."
+msgstr "X normalment no retorna un correu: es crea un compte local a partir de l’ID d’usuari d’X i es reutilitza en accessos posteriors."
+
+msgid "reCAPTCHA v3 min score"
+msgstr "Puntuació mínima reCAPTCHA v3"
+
+msgid "— Custom meta —"
+msgstr "— Meta personalitzada —"
 

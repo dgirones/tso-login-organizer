@@ -8,6 +8,23 @@
 	box-sizing: border-box;
 }
 
+.tsolo-form-heading {
+	margin: 0 0 1rem;
+	font-size: 1.25rem;
+	line-height: 1.3;
+	text-align: center;
+}
+
+.tsolo-brand-logo {
+	text-align: center;
+	margin: 0 0 1rem;
+}
+
+.tsolo-brand-logo img {
+	max-width: 180px;
+	height: auto;
+}
+
 .tsolo *,
 .tsolo *::before,
 .tsolo *::after {

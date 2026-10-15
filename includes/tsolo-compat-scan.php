@@ -67,7 +67,7 @@ function tsolo_get_incompatibility_rules() {
 		'moderation'    => array(
 			'reason'       => __( 'Also blocks login until a registration is approved (wp_authenticate_user). Keep only one approval plugin active.', 'tso-login-organizer' ),
 			'slugs'        => $moderation_slugs,
-			'exclude'      => $two_factor_slugs,
+			'skip_slugs'   => $two_factor_slugs,
 			'patterns'     => array( '/add_filter\s*\(\s*[\'"]wp_authenticate_user[\'"]/' ),
 			'pattern_also' => array( '/pending_admin|awaiting approval|approve_user|user_approval|moderate_registration|unconfirmed/i' ),
 		),
@@ -135,7 +135,7 @@ function tsolo_get_incompatibility_rules() {
 		'two_factor'    => array(
 			'reason'       => __( 'Also asks for a second code at login. Two authenticators on the same account block sign-in.', 'tso-login-organizer' ),
 			'slugs'        => $two_factor_slugs,
-			'exclude'      => $moderation_slugs,
+			'skip_slugs'   => $moderation_slugs,
 			'patterns'     => array( '/add_filter\s*\(\s*[\'"]wp_authenticate_user[\'"]/' ),
 			'pattern_also' => array( '/\bTOTP\b|totp_secret|google_authenticator|two_factor_code|verify_totp/i' ),
 		),
@@ -334,8 +334,8 @@ function tsolo_compat_plugin_matches_rule( $plugin, $rule ) {
 	if ( 'tso-swiss-knife-advanced-maintenance-developer-toolkit' === $slug ) {
 		return false;
 	}
-	$exclude = isset( $rule['exclude'] ) && is_array( $rule['exclude'] ) ? $rule['exclude'] : array();
-	if ( in_array( $slug, $exclude, true ) ) {
+	$skip = isset( $rule['skip_slugs'] ) && is_array( $rule['skip_slugs'] ) ? $rule['skip_slugs'] : array();
+	if ( in_array( $slug, $skip, true ) ) {
 		return false;
 	}
 	$slugs = isset( $rule['slugs'] ) && is_array( $rule['slugs'] ) ? $rule['slugs'] : array();

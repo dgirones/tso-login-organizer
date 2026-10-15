@@ -955,6 +955,9 @@ msgstr "La lista guardada es el slug de Favoritos del Núcleo, actualmente %s."
 msgid "Theme My Login settings imported."
 msgstr "Se importaron los ajustes de Theme My Login."
 
+msgid "No Theme My Login settings were found, so nothing was changed."
+msgstr "No se encontró ninguna configuración de Theme My Login, así que no se cambió nada."
+
 msgid "These values are the path after your site URL for each virtual form. With the default \"login\" slug, the form is at:"
 msgstr "Estos valores son la ruta tras la URL del sitio para cada formulario virtual. Con el slug por defecto «login», el formulario está en:"
 
@@ -1203,4 +1206,223 @@ msgstr "Las direcciones amigables solo funcionan si los enlaces no son Plain. La
 
 msgid "Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/)."
 msgstr "Comprobación de URL amigables terminada: WordPress usa enlaces Plain. Pon Enlaces permanentes en Nombre de la entrada (/%postname%/)."
+
+msgid "0 keeps the default (~448px). Allowed range 200–1200."
+msgstr "0 mantiene el valor por defecto (~448px). Rango permitido 200–1200."
+
+msgid "<strong>Error:</strong> %s is required."
+msgstr "<strong>Error:</strong> %s es obligatorio."
+
+msgid "<strong>Error:</strong> %s must be a valid email address."
+msgstr "<strong>Error:</strong> %s debe ser un correo electrónico válido."
+
+msgid "Add a row per field: a machine key (letters/numbers), a label, type, and whether it appears on register and/or profile."
+msgstr "Añade una fila por campo: clave técnica (letras/números), etiqueta, tipo y si aparece en el registro y/o el perfil."
+
+msgid "Add extra fields to registration and/or the frontend profile (name, phone, URL, custom meta)."
+msgstr "Añade campos extra al registro y/o al perfil frontend (nombre, teléfono, URL, meta personalizada)."
+
+msgid "Added to the outer .tsolo wrapper so your theme or custom CSS can target these forms. Up to five class names."
+msgstr "Se añade al contenedor .tsolo para que el tema o el CSS personalizado puedan apuntar a estos formularios. Hasta cinco clases."
+
+msgid "An account with this email already exists. Log in with your password, then link this provider from your profile."
+msgstr "Ya existe una cuenta con este correo. Inicia sesión con la contraseña y vincula este proveedor desde el perfil."
+
+msgid "Biographical info"
+msgstr "Información biográfica"
+
+msgid "Checkbox checked by default"
+msgstr "Casilla marcada por defecto"
+
+msgid "Checkbox label"
+msgstr "Etiqueta de la casilla"
+
+msgid "Choose a provider below. For Google, open https://www.google.com/recaptcha/admin and create a v2 checkbox or v3 key. For Turnstile, open the Cloudflare Turnstile dashboard."
+msgstr "Elige un proveedor abajo. Para Google, abre https://www.google.com/recaptcha/admin y crea una clave v2 (casilla) o v3. Para Turnstile, abre el panel de Cloudflare Turnstile."
+
+msgid "Cloudflare Turnstile"
+msgstr "Cloudflare Turnstile"
+
+msgid "Connect %s"
+msgstr "Conectar %s"
+
+msgid "Create a Project and App with OAuth 2.0 (confidential client) enabled. PKCE is handled automatically."
+msgstr "Crea un Proyecto y una App con OAuth 2.0 (cliente confidencial) activado. El PKCE se gestiona automáticamente."
+
+msgid "Custom Fields"
+msgstr "Campos personalizados"
+
+msgid "Default role"
+msgstr "Rol por defecto"
+
+msgid "Disconnect"
+msgstr "Desconectar"
+
+msgid "Do not enable together with CleanTalk, Kadence captcha, or another captcha on the same forms (double challenges / failed verifies)."
+msgstr "No lo actives junto con CleanTalk, el captcha de Kadence u otro captcha en los mismos formularios (dobles retos / verificaciones fallidas)."
+
+msgid "Empty key rows are ignored. Use map to write into WordPress user fields; leave map empty for custom meta."
+msgstr "Las filas con clave vacía se ignoran. Usa map para escribir en los campos de usuario de WordPress; deja map vacío para meta personalizada."
+
+msgid "Extra CSS class"
+msgstr "Clase CSS extra"
+
+msgid "First name"
+msgstr "Nombre"
+
+msgid "Form branding"
+msgstr "Marca del formulario"
+
+msgid "Form max width (px)"
+msgstr "Ancho máximo del formulario (px)"
+
+msgid "Form texts"
+msgstr "Textos del formulario"
+
+msgid "Google reCAPTCHA"
+msgstr "Google reCAPTCHA"
+
+msgid "Google reCAPTCHA v2 (checkbox)"
+msgstr "Google reCAPTCHA v2 (casilla)"
+
+msgid "Google reCAPTCHA v3 (invisible score)"
+msgstr "Google reCAPTCHA v3 (puntuación invisible)"
+
+msgid "If the social email matches an existing user, sign into that account (do not create a duplicate)"
+msgstr "Si el correo social coincide con un usuario existente, inicia sesión en esa cuenta (no crear un duplicado)"
+
+msgid "Key"
+msgstr "Clave"
+
+msgid "Label"
+msgstr "Etiqueta"
+
+msgid "Last name"
+msgstr "Apellidos"
+
+msgid "Leave a field empty to keep the built-in label. These strings only change this plugin’s frontend forms."
+msgstr "Deja un campo vacío para mantener la etiqueta integrada. Estos textos solo cambian los formularios frontend de este plugin."
+
+msgid "Link existing accounts"
+msgstr "Vincular cuentas existentes"
+
+msgid "Linked to %s."
+msgstr "Vinculado a %s."
+
+msgid "Login button"
+msgstr "Botón de acceso"
+
+msgid "Login heading"
+msgstr "Título de acceso"
+
+msgid "Logo URL"
+msgstr "URL del logotipo"
+
+msgid "Lost password button"
+msgstr "Botón de contraseña perdida"
+
+msgid "Lost password heading"
+msgstr "Título de contraseña perdida"
+
+msgid "Map"
+msgstr "Mapeo"
+
+msgid "Map can store into WordPress first name, last name, biographical info or website. Leave map empty to store as user meta (tsolo_cf_…)."
+msgstr "El mapeo puede guardar en el nombre, apellidos, biografía o sitio web de WordPress. Déjalo vacío para guardar como meta de usuario (tsolo_cf_…)."
+
+msgid "Only used with v3. 0.0 is permissive; 1.0 is strict. Default 0.5."
+msgstr "Solo con v3. 0.0 es permisivo; 1.0 es estricto. Por defecto 0.5."
+
+msgid "Optional image shown above login, register and password forms. Use a full https:// URL (Media Library → copy file URL)."
+msgstr "Imagen opcional sobre los formularios de acceso, registro y contraseña. Usa una URL https:// completa (Medios → copiar URL del archivo)."
+
+msgid "Other registration-form plugins that also inject fields may show duplicates."
+msgstr "Otros plugins de formulario de registro que también inyecten campos pueden mostrar duplicados."
+
+msgid "Paste the site key and the secret key, then save. Empty keys mean the check stays off. Do not enable more than one captcha plugin on the same forms."
+msgstr "Pega la clave del sitio y la secreta, y guarda. Con claves vacías la comprobación permanece desactivada. No actives más de un plugin de captcha en los mismos formularios."
+
+msgid "Pick a provider, create keys for your domain, then paste both values here."
+msgstr "Elige un proveedor, crea claves para tu dominio y pega aquí ambos valores."
+
+msgid "Pre-check the newsletter box (only when the checkbox is shown)"
+msgstr "Marcar por defecto la casilla del boletín (solo si se muestra la casilla)"
+
+msgid "Private key used server-side to verify tokens. Leave empty and keep the module off if another captcha plugin already protects forms."
+msgstr "Clave privada para verificar tokens en el servidor. Déjala vacía y el módulo desactivado si otro plugin de captcha ya protege los formularios."
+
+msgid "Profile fields need the Profiles module enabled. Registration fields work on their own."
+msgstr "Los campos de perfil necesitan el módulo Perfiles activo. Los de registro funcionan solos."
+
+msgid "Protect login and registration forms with Google reCAPTCHA v2/v3 or Cloudflare Turnstile (needs site and secret keys)."
+msgstr "Protege los formularios de acceso y registro con Google reCAPTCHA v2/v3 o Cloudflare Turnstile (hacen falta claves pública y secreta)."
+
+msgid "Provider"
+msgstr "Proveedor"
+
+msgid "Public key from the provider console."
+msgstr "Clave pública de la consola del proveedor."
+
+msgid "Register button"
+msgstr "Botón de registro"
+
+msgid "Register heading"
+msgstr "Título de registro"
+
+msgid "Registration “password by email” note"
+msgstr "Nota de registro «contraseña por correo»"
+
+msgid "Required"
+msgstr "Obligatorio"
+
+msgid "Reset password button"
+msgstr "Botón de restablecer contraseña"
+
+msgid "Role assigned to new accounts on registration. Same as Settings → General → New User Default Role."
+msgstr "Rol asignado a las cuentas nuevas al registrarse. Igual que Ajustes → Generales → Rol por defecto de los nuevos usuarios."
+
+msgid "Sends visitor IP and token to Google or Cloudflare for verification when forms are submitted (see readme External services)."
+msgstr "Envía la IP y el token del visitante a Google o Cloudflare para verificar al enviar los formularios (véase External services en el readme)."
+
+msgid "Social account linked."
+msgstr "Cuenta social vinculada."
+
+msgid "Social accounts"
+msgstr "Cuentas sociales"
+
+msgid "Text shown next to the newsletter checkbox on the registration form."
+msgstr "Texto junto a la casilla del boletín en el formulario de registro."
+
+msgid "This site is protected by reCAPTCHA."
+msgstr "Este sitio está protegido con reCAPTCHA."
+
+msgid "This social account is already linked to another user."
+msgstr "Esta cuenta social ya está vinculada a otro usuario."
+
+msgid "To add more fields, fill the empty rows and save, then reopen this tab for new blank rows."
+msgstr "Para añadir más campos, rellena las filas vacías y guarda; vuelve a abrir esta pestaña para ver filas en blanco nuevas."
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Website"
+msgstr "Sitio web"
+
+msgid "When off, matching emails show an error asking the person to log in first and connect the provider from their profile. Google linking also requires a verified email from Google. New social sign-ups still respect “Anyone can register”. Accounts with two-factor enabled cannot complete social login (password + app code required)."
+msgstr "Si está desactivado, los correos coincidentes muestran un error pidiendo iniciar sesión y conectar el proveedor desde el perfil. La vinculación con Google también exige un correo verificado. Los registros sociales nuevos respetan «Cualquiera puede registrarse». Las cuentas con doble factor no pueden completar el acceso social (hace falta contraseña + código de la app)."
+
+msgid "When this is off, every new registrant is subscribed automatically (only if API key and list ID are set)."
+msgstr "Si está desactivado, cada registro nuevo se suscribe automáticamente (solo si hay clave API e ID de lista)."
+
+msgid "With “Link existing accounts” on (default), a returning social login that shares an email with an existing user signs into that account instead of creating a second one. Logged-in users can also connect or disconnect providers from their profile page."
+msgstr "Con «Vincular cuentas existentes» activo (por defecto), un acceso social que comparte correo con un usuario existente inicia sesión en esa cuenta en lugar de crear otra. Los usuarios conectados también pueden vincular o desconectar proveedores desde el perfil."
+
+msgid "X usually does not return an email: a site-local account is created from the X user id and reused on later logins."
+msgstr "X normalmente no devuelve un correo: se crea una cuenta local a partir del ID de usuario de X y se reutiliza en accesos posteriores."
+
+msgid "reCAPTCHA v3 min score"
+msgstr "Puntuación mínima reCAPTCHA v3"
+
+msgid "— Custom meta —"
+msgstr "— Meta personalizada —"
 

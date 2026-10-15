@@ -25,6 +25,16 @@
 			}
 		});
 
+		/* After a tall tab, keep scroll near the tabs so a short panel does not leave a blank gap below. */
+		try {
+			var anchor = $wrap.find('.tsolo-nav-primary').get(0) || $wrap.get(0);
+			if (anchor && typeof anchor.scrollIntoView === 'function') {
+				anchor.scrollIntoView({ block: 'start', behavior: 'auto' });
+			}
+		} catch (scrollErr) {
+			// Ignore.
+		}
+
 		if (window.history && window.history.replaceState) {
 			try {
 				var url = new URL(window.location.href);
@@ -53,11 +63,15 @@
 			var $input = $(this);
 			var raw = String($input.val() || '').replace(/^\/+|\/+$/g, '');
 			var preview = raw ? '/' + raw + '/' : '/';
-			var $link = $input.closest('tr').find('.tsolo-slug-preview a');
-			var origin = window.location.origin || '';
-			$link.find('code').text(preview);
-			if ($link.length && origin) {
-				$link.attr('href', origin + preview);
+			var $cell = $input.closest('tr').find('.tsolo-slug-preview');
+			var $link = $cell.find('a');
+			var $code = $cell.find('code');
+			var cfg = window.tsoloAdminConfig || {};
+			var home = String(cfg.homeUrl || window.location.origin || '').replace(/\/+$/, '');
+			var full = home ? home + preview : preview;
+			$code.text(full);
+			if ($link.length && home) {
+				$link.attr('href', full);
 			}
 		});
 
@@ -69,6 +83,59 @@
 			if (tsoloSwitchTab(tab)) {
 				e.preventDefault();
 			}
+		});
+
+		$('.tsolo-admin-wrap').on('click', '.tsolo-check-permalinks', function (e) {
+			e.preventDefault();
+			var $btn = $(this);
+			var cfg = window.tsoloAdminConfig || {};
+			if (!cfg.ajaxUrl || !cfg.nonce || $btn.prop('disabled')) {
+				return;
+			}
+			var label = $btn.text();
+			$btn.prop('disabled', true).text((cfg.i18n && cfg.i18n.permalinkBusy) || 'Checking…');
+			$.ajax({
+				url: cfg.ajaxUrl,
+				type: 'POST',
+				dataType: 'json',
+				data: {
+					action: 'tsolo_check_permalinks',
+					_ajax_nonce: cfg.nonce
+				}
+			}).done(function (res) {
+				if (!res || !res.success || !res.data || !res.data.html) {
+					window.alert((cfg.i18n && cfg.i18n.permalinkFailed) || 'Failed');
+					return;
+				}
+				var $box = $('.tsolo-admin-wrap .tsolo-permalink-status').first();
+				if ($box.length) {
+					$box.replaceWith(res.data.html);
+				}
+				if (res.data.message) {
+					var noticeClass = res.data.type === 'success' ? 'notice-success' : 'notice-warning';
+					var $flash = $('<div class="notice inline ' + noticeClass + ' is-dismissible tsolo-ajax-flash tsolo-admin-flash" data-tsoan-keep="1"><p></p></div>');
+					$flash.find('p').text(res.data.message);
+					$('.tsolo-admin-wrap .tsolo-ajax-flash').remove();
+					var $anchor = $('.tsolo-admin-wrap .tsolo-nav-modules').last();
+					if (!$anchor.length) {
+						$anchor = $('.tsolo-admin-wrap .tsolo-nav-primary').last();
+					}
+					if ($anchor.length) {
+						$anchor.after($flash);
+					} else {
+						$('.tsolo-admin-wrap .tsolo-nav-top').after($flash);
+					}
+				}
+			}).fail(function () {
+				window.alert((cfg.i18n && cfg.i18n.permalinkFailed) || 'Failed');
+			}).always(function () {
+				var $fresh = $('.tsolo-admin-wrap .tsolo-check-permalinks');
+				if ($fresh.length) {
+					$fresh.prop('disabled', false);
+				} else {
+					$btn.prop('disabled', false).text(label);
+				}
+			});
 		});
 	});
 

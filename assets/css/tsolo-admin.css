@@ -1,10 +1,15 @@
-/* Same centered column as the other TSO admin screens (Swiss Knife, Link Inspector). */
-html:has(body.settings_page_tso-login-organizer) {
-	overflow-y: scroll;
-	scrollbar-gutter: stable;
-}
+/* Same centered column as the other TSO admin screens (Swiss Knife, Link Inspector).
+ * Match any parent menu (Tools / Settings) via the plugin wrap — CSS only loads here.
+ * Do not force html overflow-y/scrollbar-gutter here: WP already scrolls the document,
+ * and those rules left a side/bottom empty strip when wheel-scrolling tall tabs. */
 
 .wrap.tsolo-admin-wrap {
+	/* Follow WordPress admin colour scheme (Sunrise, Ocean, Ectoplasm, …) — OTC pattern. */
+	--tsolo-accent: var(--wp-admin-theme-color, #2271b1);
+	--tsolo-accent-rgb: var(--wp-admin-theme-color--rgb, 34, 113, 177);
+	--tsolo-accent-dark: var(--wp-admin-theme-color-darker-10, #135e96);
+	--tsolo-accent-darker: var(--wp-admin-theme-color-darker-20, #0a4b78);
+	--tsolo-compat-bar: #dba617;
 	max-width: min(1400px, 100%);
 	margin-left: auto;
 	margin-right: auto;
@@ -48,10 +53,10 @@ html:has(body.settings_page_tso-login-organizer) {
 	align-items: center;
 	gap: 6px;
 	white-space: nowrap;
-	background: #2271b1;
-	border: 1px solid #135e96;
+	background: var(--tsolo-accent, #2271b1);
+	border: 1px solid var(--tsolo-accent-dark, #135e96);
 	color: #fff;
-	border-radius: 999px;
+	border-radius: 8px;
 	padding: 5px 12px;
 	font-size: 11px;
 	font-weight: 700;
@@ -61,9 +66,9 @@ html:has(body.settings_page_tso-login-organizer) {
 
 .tsolo-admin-wrap .tsolo-donate-btn:hover,
 .tsolo-admin-wrap .tsolo-donate-btn:focus {
-	background: #135e96;
+	background: var(--tsolo-accent-dark, #135e96);
 	color: #fff;
-	border-color: #0a4b78;
+	border-color: var(--tsolo-accent-darker, #0a4b78);
 }
 
 .tsolo-admin-wrap .tsolo-lang-switch {
@@ -83,7 +88,7 @@ html:has(body.settings_page_tso-login-organizer) {
 	display: inline-block;
 	padding: 2px 10px;
 	border: 1px solid #ccc;
-	border-radius: 3px;
+	border-radius: 8px;
 	font-size: 11px;
 	font-weight: 600;
 	text-decoration: none;
@@ -92,14 +97,14 @@ html:has(body.settings_page_tso-login-organizer) {
 }
 
 .tsolo-admin-wrap .tsolo-lang-btn:hover {
-	color: #1d2327;
-	border-color: #999;
+	color: var(--tsolo-accent-darker, #0a4b78);
+	border-color: var(--tsolo-accent, #2271b1);
 }
 
 .tsolo-admin-wrap .tsolo-lang-btn.is-active {
-	background: #2271b1;
+	background: var(--tsolo-accent, #2271b1);
 	color: #fff;
-	border-color: #2271b1;
+	border-color: var(--tsolo-accent, #2271b1);
 	font-weight: 700;
 }
 
@@ -110,7 +115,7 @@ html:has(body.settings_page_tso-login-organizer) {
 	background: #fff;
 	border: 1px solid #dcdcde;
 	color: #1d2327;
-	border-radius: 999px;
+	border-radius: 8px;
 	padding: 5px 12px;
 	font-size: 11px;
 	font-weight: 700;
@@ -121,8 +126,8 @@ html:has(body.settings_page_tso-login-organizer) {
 
 .tsolo-admin-wrap .tsolo-theme-btn:hover,
 .tsolo-admin-wrap .tsolo-theme-btn:focus {
-	border-color: #2271b1;
-	color: #2271b1;
+	border-color: var(--tsolo-accent, #2271b1);
+	color: var(--tsolo-accent, #2271b1);
 	background: #f6f7f7;
 	outline: none;
 }
@@ -157,6 +162,7 @@ html:has(body.settings_page_tso-login-organizer) {
 .tsolo-admin-wrap .tsolo-nav-tabs .nav-tab {
 	float: none;
 	margin-left: 0.35rem;
+	border-radius: 8px 8px 0 0;
 }
 
 .tsolo-admin-wrap .tsolo-nav-primary {
@@ -165,30 +171,40 @@ html:has(body.settings_page_tso-login-organizer) {
 	margin-bottom: 0;
 }
 
+.tsolo-admin-wrap .tsolo-nav-primary .nav-tab-active,
+.tsolo-admin-wrap .tsolo-nav-primary .nav-tab-active:hover,
+.tsolo-admin-wrap .tsolo-nav-primary .nav-tab-active:focus {
+	background: var(--tsolo-accent, #2271b1);
+	color: #fff;
+	border-color: var(--tsolo-accent, #2271b1);
+	border-bottom-color: var(--tsolo-accent, #2271b1);
+}
+
 .tsolo-admin-wrap .tsolo-nav-modules {
 	flex-wrap: wrap;
 	margin-bottom: 1.25rem;
 }
 
 .tsolo-admin-wrap .tsolo-nav-modules .nav-tab {
-	background: #e5f4f8;
-	color: #0f3d4a;
-	border-color: #9ed0dc;
+	background: rgba(var(--tsolo-accent-rgb, 34, 113, 177), 0.1);
+	color: var(--tsolo-accent-darker, #0a4b78);
+	border-color: rgba(var(--tsolo-accent-rgb, 34, 113, 177), 0.35);
+	border-radius: 8px;
 }
 
 .tsolo-admin-wrap .tsolo-nav-modules .nav-tab:hover,
 .tsolo-admin-wrap .tsolo-nav-modules .nav-tab:focus {
-	background: #d3eef5;
-	color: #0b303a;
-	border-color: #6eb4c6;
+	background: rgba(var(--tsolo-accent-rgb, 34, 113, 177), 0.18);
+	color: var(--tsolo-accent-darker, #0a4b78);
+	border-color: var(--tsolo-accent, #2271b1);
 }
 
 .tsolo-admin-wrap .tsolo-nav-modules .nav-tab-active,
 .tsolo-admin-wrap .tsolo-nav-modules .nav-tab-active:hover,
 .tsolo-admin-wrap .tsolo-nav-modules .nav-tab-active:focus {
-	background: #0f6e86;
+	background: var(--tsolo-accent, #2271b1);
 	color: #fff;
-	border-color: #0f6e86;
+	border-color: var(--tsolo-accent, #2271b1);
 }
 
 .tsolo-admin-wrap .tsolo-migrate-guide h3 {
@@ -281,67 +297,135 @@ html:has(body.settings_page_tso-login-organizer) {
 	margin: 0.5rem 0 0.75rem 1.25rem;
 }
 
-.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-delivery {
-	width: 16%;
-	color: #646970;
-}
-
 .tsolo-admin-wrap .tsolo-slugs-howto {
 	margin: 0.5rem 0 1rem 1.25rem;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table {
 	width: 100%;
-	table-layout: fixed;
+	table-layout: auto;
+	border-collapse: collapse;
 	border: 1px solid #c3c4c7;
 	border-radius: 2px;
-	margin: 0.75rem auto 0;
+	margin: 0.75rem 0 0;
 	background: #fff;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table thead th {
-	padding: 0.65rem 0.85rem;
+	padding: 0.55rem 0.65rem;
 	font-weight: 600;
 	text-align: left;
 	background: #f6f7f7;
 	border-bottom: 1px solid #c3c4c7;
+	white-space: nowrap;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table td {
-	padding: 0.7rem 0.85rem;
-	vertical-align: middle;
+	padding: 0.55rem 0.65rem;
+	vertical-align: top;
 	border-top: 1px solid #dcdcde;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-label {
-	width: 32%;
+	width: 42%;
+	min-width: 14rem;
+	max-width: 28rem;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-label strong {
 	display: block;
-	margin-bottom: 0.2rem;
+	margin: 0 0 0.25rem;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-label .description {
 	display: block;
 	margin: 0;
-	line-height: 1.4;
+	line-height: 1.45;
 	color: #646970;
+	white-space: normal;
+	overflow-wrap: break-word;
+	word-break: normal;
+	hyphens: auto;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-input {
-	width: 18%;
+	width: 1%;
+	white-space: nowrap;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-input input.regular-text {
-	width: 12rem;
+	width: 10rem;
 	max-width: 100%;
 	margin: 0;
 }
 
-.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview {
-	width: 34%;
+.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-delivery {
+	width: 1%;
+	white-space: nowrap;
 	color: #646970;
+	font-size: 12px;
+}
+
+.tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview {
+	width: auto;
+	min-width: 10rem;
+	color: #646970;
+}
+
+.tsolo-admin-wrap .tsolo-fields-table {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+	margin: 0.75rem 0 0;
+}
+
+.tsolo-admin-wrap .tsolo-fields-table thead th {
+	padding: 0.55rem 0.65rem;
+	font-weight: 600;
+	text-align: left;
+	vertical-align: bottom;
+	white-space: nowrap;
+	background: #f6f7f7;
+	border-bottom: 1px solid #c3c4c7;
+}
+
+.tsolo-admin-wrap .tsolo-fields-table td {
+	padding: 0.55rem 0.65rem;
+	vertical-align: middle;
+	border-top: 1px solid #dcdcde;
+}
+
+.tsolo-admin-wrap .tsolo-fields-table .tsolo-fields-col-key {
+	width: 16%;
+}
+
+.tsolo-admin-wrap .tsolo-fields-table .tsolo-fields-col-label {
+	width: 22%;
+}
+
+.tsolo-admin-wrap .tsolo-fields-table .tsolo-fields-col-type {
+	width: 12%;
+}
+
+.tsolo-admin-wrap .tsolo-fields-table .tsolo-fields-col-map {
+	width: 22%;
+}
+
+.tsolo-admin-wrap .tsolo-fields-table .tsolo-fields-col-check {
+	width: 9%;
+	text-align: center;
+}
+
+.tsolo-admin-wrap .tsolo-fields-table .tsolo-fields-col-check th {
+	text-align: center;
+}
+
+.tsolo-admin-wrap .tsolo-fields-table input.regular-text,
+.tsolo-admin-wrap .tsolo-fields-table select {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	margin: 0;
 }
 
 .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-preview a,
@@ -392,7 +476,7 @@ html:has(body.settings_page_tso-login-organizer) {
 
 .tsolo-admin-wrap .tsolo-ext-link:hover code,
 .tsolo-admin-wrap .tsolo-slug-preview a:hover code {
-	color: #135e96;
+	color: var(--tsolo-accent-dark, #135e96);
 }
 
 .tsolo-admin-wrap .tsolo-provider-card {
@@ -431,11 +515,55 @@ html:has(body.settings_page_tso-login-organizer) {
 }
 
 .tsolo-admin-wrap .tsolo-howto {
-	border-left-color: #2271b1;
+	border-left-color: var(--tsolo-accent, #2271b1);
 }
 
 .tsolo-admin-wrap .tsolo-compat {
-	border-left-color: #dba617;
+	border-left-color: var(--tsolo-compat-bar, #dba617);
+}
+
+/* Rounded WP-scheme buttons (OTC pattern). */
+.tsolo-admin-wrap .button,
+.tsolo-admin-wrap .button-primary,
+.tsolo-admin-wrap .button-secondary,
+.tsolo-admin-wrap a.button {
+	border-radius: 8px !important;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.05);
+	transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.tsolo-admin-wrap .button:hover,
+.tsolo-admin-wrap a.button:hover {
+	transform: translateY(-1px);
+}
+
+.tsolo-admin-wrap .button-primary,
+.tsolo-admin-wrap .button.button-primary,
+.tsolo-admin-wrap a.button-primary {
+	background: var(--tsolo-accent, #2271b1) !important;
+	border-color: var(--tsolo-accent-dark, #135e96) !important;
+	color: #fff !important;
+	text-shadow: none !important;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(var(--tsolo-accent-rgb, 34, 113, 177), 0.35);
+}
+
+.tsolo-admin-wrap .button-primary:hover,
+.tsolo-admin-wrap .button.button-primary:hover,
+.tsolo-admin-wrap a.button-primary:hover {
+	background: var(--tsolo-accent-dark, #135e96) !important;
+	border-color: var(--tsolo-accent-darker, #0a4b78) !important;
+	color: #fff !important;
+}
+
+.tsolo-admin-wrap .button:not(.button-primary):hover,
+.tsolo-admin-wrap .button:not(.button-primary):focus {
+	border-color: var(--tsolo-accent, #2271b1);
+	color: var(--tsolo-accent-darker, #0a4b78);
+}
+
+.tsolo-admin-wrap input[type="checkbox"],
+.tsolo-admin-wrap input[type="radio"] {
+	accent-color: var(--tsolo-accent, #2271b1);
 }
 
 .tsolo-admin-wrap .tsolo-howto ol,
@@ -537,19 +665,34 @@ html[data-tsolo-theme="night"] {
 	--tsolo-text: #f4f7fb;
 	--tsolo-muted: #c5cedd;
 	--tsolo-link: #9ecbff;
-	--tsolo-accent: #2f6fad;
 	--tsolo-code: #2a3348;
-}
-
-html[data-tsolo-theme="night"] body.settings_page_tso-login-organizer,
-html[data-tsolo-theme="night"] body.settings_page_tso-login-organizer #wpcontent,
-html[data-tsolo-theme="night"] body.settings_page_tso-login-organizer #wpbody,
-html[data-tsolo-theme="night"] body.settings_page_tso-login-organizer #wpbody-content {
+	/* Paint the root so any scrollbar/gutter strip is not a light gap. */
 	background: var(--tsolo-bg);
 	color: var(--tsolo-text);
 }
 
-html[data-tsolo-theme="night"] .tsolo-admin-wrap,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap {
+	/* Keep WP admin scheme accents; only shift howto/compat bars for night contrast. */
+	--tsolo-compat-bar: #e0b341;
+}
+
+/* CSS enqueues only on this plugin screen — no menu-slug body class required.
+ * Paint wrap + footer too so wheel-scroll to the bottom does not flash a light strip. */
+html[data-tsolo-theme="night"] body,
+html[data-tsolo-theme="night"] #wpwrap,
+html[data-tsolo-theme="night"] #wpcontent,
+html[data-tsolo-theme="night"] #wpbody,
+html[data-tsolo-theme="night"] #wpbody-content,
+html[data-tsolo-theme="night"] #wpfooter {
+	background: var(--tsolo-bg);
+	color: var(--tsolo-text);
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap {
+	background: transparent;
+	color: var(--tsolo-text);
+}
+
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .form-table th,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap h1,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap h2,
@@ -596,9 +739,9 @@ html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-lang-btn:hover {
 }
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-lang-btn.is-active {
-	background: var(--tsolo-accent);
+	background: var(--tsolo-accent, #2271b1);
 	color: #ffffff;
-	border-color: var(--tsolo-accent);
+	border-color: var(--tsolo-accent, #2271b1);
 }
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-nav-tabs {
@@ -620,32 +763,32 @@ html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-nav-primary .nav-tab:foc
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-nav-primary .nav-tab-active,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-nav-primary .nav-tab-active:hover,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-nav-primary .nav-tab-active:focus {
-	background: var(--tsolo-accent);
+	background: var(--tsolo-accent, #2271b1);
 	color: #ffffff;
-	border-color: var(--tsolo-accent);
-	border-bottom-color: var(--tsolo-accent);
+	border-color: var(--tsolo-accent, #2271b1);
+	border-bottom-color: var(--tsolo-accent, #2271b1);
 }
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-nav-modules .nav-tab {
-	background: #1a3c49;
-	color: #d7f0f8;
-	border-color: #3d8498;
+	background: rgba(var(--tsolo-accent-rgb, 34, 113, 177), 0.22);
+	color: #d7e8fa;
+	border-color: rgba(var(--tsolo-accent-rgb, 34, 113, 177), 0.45);
 }
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-nav-modules .nav-tab:hover,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-nav-modules .nav-tab:focus {
-	background: #1e6478;
+	background: rgba(var(--tsolo-accent-rgb, 34, 113, 177), 0.35);
 	color: #ffffff;
-	border-color: #5aa8c4;
+	border-color: var(--tsolo-accent, #2271b1);
 }
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-nav-modules .nav-tab-active,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-nav-modules .nav-tab-active:hover,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-nav-modules .nav-tab-active:focus {
-	background: #0f6e86;
+	background: var(--tsolo-accent, #2271b1);
 	color: #ffffff;
-	border-color: #0f6e86;
-	border-bottom-color: #0f6e86;
+	border-color: var(--tsolo-accent, #2271b1);
+	border-bottom-color: var(--tsolo-accent, #2271b1);
 }
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap input[type="text"],
@@ -671,9 +814,18 @@ html[data-tsolo-theme="night"] .tsolo-admin-wrap .notice {
 	border-color: var(--tsolo-border);
 }
 
+/* Distinct left bars in night (same roles as day: howto = accent, compat = amber). */
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-howto {
+	border-left-color: var(--tsolo-accent, #5aa7e6);
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-compat {
+	border-left-color: var(--tsolo-compat-bar, #e0b341);
+}
+
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .notice-info {
 	background: #1a2c42;
-	border-left-color: #4c8dce;
+	border-left-color: var(--tsolo-accent, #4c8dce);
 }
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .notice-success {
@@ -683,7 +835,7 @@ html[data-tsolo-theme="night"] .tsolo-admin-wrap .notice-success {
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .notice-warning {
 	background: #3a2e14;
-	border-left-color: #e0b341;
+	border-left-color: var(--tsolo-compat-bar, #e0b341);
 	color: var(--tsolo-text);
 }
 
@@ -692,13 +844,22 @@ html[data-tsolo-theme="night"] .tsolo-admin-wrap .notice-warning p {
 	color: var(--tsolo-text);
 }
 
-html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slugs-table thead th {
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slugs-table thead th,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-fields-table thead th,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .widefat thead th {
 	background: #2a3348;
 	color: var(--tsolo-text);
 	border-color: var(--tsolo-border);
 }
 
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .widefat,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-fields-table {
+	background: #1a2030;
+	border-color: var(--tsolo-border);
+}
+
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slugs-table td,
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-fields-table td,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .widefat td,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .widefat th {
 	color: var(--tsolo-text);
@@ -709,6 +870,11 @@ html[data-tsolo-theme="night"] .tsolo-admin-wrap .widefat th {
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .widefat.striped > tbody > :nth-child(odd),
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .widefat.striped > tbody > :nth-child(odd) td {
 	background: #222a3c;
+}
+
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .widefat.striped > tbody > :nth-child(even),
+html[data-tsolo-theme="night"] .tsolo-admin-wrap .widefat.striped > tbody > :nth-child(even) td {
+	background: #1a2030;
 }
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap code,
@@ -734,9 +900,9 @@ html[data-tsolo-theme="night"] .tsolo-admin-wrap .button-secondary {
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .button-primary,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-donate-btn {
-	background: var(--tsolo-accent);
-	border-color: #1d4f82;
-	color: #ffffff;
+	background: var(--tsolo-accent, #2271b1) !important;
+	border-color: var(--tsolo-accent-dark, #135e96) !important;
+	color: #ffffff !important;
 }
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .button:hover,
@@ -752,9 +918,9 @@ html[data-tsolo-theme="night"] .tsolo-admin-wrap .button-primary:hover,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .button-primary:focus,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-donate-btn:hover,
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-donate-btn:focus {
-	background: #2668a0;
-	border-color: #2668a0;
-	color: #ffffff;
+	background: var(--tsolo-accent-dark, #135e96) !important;
+	border-color: var(--tsolo-accent-darker, #0a4b78) !important;
+	color: #ffffff !important;
 }
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-lang-globe {
@@ -785,7 +951,7 @@ html[data-tsolo-theme="night"] .tsolo-admin-wrap hr {
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap input[type="checkbox"],
 html[data-tsolo-theme="night"] .tsolo-admin-wrap input[type="radio"] {
-	accent-color: #5aa7e6;
+	accent-color: var(--tsolo-accent, #5aa7e6);
 }
 
 html[data-tsolo-theme="night"] .tsolo-admin-wrap .notice-error {
@@ -801,17 +967,17 @@ html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slugs-table .tsolo-slug-
 	color: var(--tsolo-link);
 }
 
-html[data-tsolo-theme="night"] body.settings_page_tso-login-organizer #wpfooter {
+html[data-tsolo-theme="night"] #wpfooter {
 	color: var(--tsolo-muted);
 	background: transparent;
 }
 
-html[data-tsolo-theme="night"] body.settings_page_tso-login-organizer #wpfooter a,
-html[data-tsolo-theme="night"] body.settings_page_tso-login-organizer #screen-meta-links a {
+html[data-tsolo-theme="night"] #wpfooter a,
+html[data-tsolo-theme="night"] #screen-meta-links a {
 	color: var(--tsolo-link);
 }
 
-html[data-tsolo-theme="night"] body.settings_page_tso-login-organizer #screen-meta-links .show-settings {
+html[data-tsolo-theme="night"] #screen-meta-links .show-settings {
 	background: var(--tsolo-surface);
 	color: var(--tsolo-text);
 	border-color: var(--tsolo-border);

@@ -18,6 +18,7 @@ $tsolo_options = array(
 	'tso_login_organizer_restrictions',
 	'tso_login_organizer_security',
 	'tso_login_organizer_captcha',
+	'tso_login_organizer_fields',
 	'tso_login_organizer_profiles',
 	'tso_login_organizer_notifications',
 	'tso_login_organizer_two_factor',
@@ -28,6 +29,7 @@ $tsolo_options = array(
 	'tso_login_organizer_lockouts',
 	'tso_login_organizer_attempts',
 	'tso_login_organizer_tml_imported',
+	'tso_login_organizer_flush_rewrites',
 );
 
 foreach ( $tsolo_options as $tsolo_option ) {

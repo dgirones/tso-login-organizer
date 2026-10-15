@@ -96,23 +96,43 @@ function tsolo_get_module_definitions() {
 			'collide'     => true,
 		),
 		'captcha'       => array(
-			'label'       => __( 'reCAPTCHA', 'tso-login-organizer' ),
-			'description' => __( 'Protect login and registration forms with Google reCAPTCHA (needs site and secret keys).', 'tso-login-organizer' ),
+			'label'       => __( 'Captcha', 'tso-login-organizer' ),
+			'description' => __( 'Protect login and registration forms with Google reCAPTCHA v2/v3 or Cloudflare Turnstile (needs site and secret keys).', 'tso-login-organizer' ),
 			'howto'       => array(
-				__( 'Open https://www.google.com/recaptcha/admin and create a reCAPTCHA v2 "I\'m not a robot" key for your domain.', 'tso-login-organizer' ),
-				__( 'Paste the site key and the secret key below, then save. The checkbox appears on this plugin’s login, register and lost-password forms. Empty keys mean the check stays off.', 'tso-login-organizer' ),
+				__( 'Choose a provider below. For Google, open https://www.google.com/recaptcha/admin and create a v2 checkbox or v3 key. For Turnstile, open the Cloudflare Turnstile dashboard.', 'tso-login-organizer' ),
+				__( 'Paste the site key and the secret key, then save. Empty keys mean the check stays off. Do not enable more than one captcha plugin on the same forms.', 'tso-login-organizer' ),
 			),
 			'test_links'  => array(
 				__( 'Google reCAPTCHA admin', 'tso-login-organizer' ) => 'https://www.google.com/recaptcha/admin',
+				__( 'Cloudflare Turnstile', 'tso-login-organizer' )   => 'https://dash.cloudflare.com/?to=/:account/turnstile',
 				__( 'Open login page', 'tso-login-organizer' )        => $login_url,
 			),
 			'compat'      => array(
-				__( 'Do not enable together with CleanTalk, Kadence captcha, or another reCAPTCHA on the same forms (double challenges / failed verifies).', 'tso-login-organizer' ),
-				__( 'Sends visitor IP and token to Google for verification when forms are submitted (see readme External services).', 'tso-login-organizer' ),
+				__( 'Do not enable together with CleanTalk, Kadence captcha, or another captcha on the same forms (double challenges / failed verifies).', 'tso-login-organizer' ),
+				__( 'Sends visitor IP and token to Google or Cloudflare for verification when forms are submitted (see readme External services).', 'tso-login-organizer' ),
 			),
 			'file'        => 'class-tsolo-mod-captcha.php',
 			'class'       => 'TSOLO_Mod_Captcha',
 			'collide'     => true,
+		),
+		'fields'        => array(
+			'label'       => __( 'Custom Fields', 'tso-login-organizer' ),
+			'description' => __( 'Add extra fields to registration and/or the frontend profile (name, phone, URL, custom meta).', 'tso-login-organizer' ),
+			'howto'       => array(
+				__( 'Add a row per field: a machine key (letters/numbers), a label, type, and whether it appears on register and/or profile.', 'tso-login-organizer' ),
+				__( 'Map can store into WordPress first name, last name, biographical info or website. Leave map empty to store as user meta (tsolo_cf_…).', 'tso-login-organizer' ),
+				__( 'Profile fields need the Profiles module enabled. Registration fields work on their own.', 'tso-login-organizer' ),
+			),
+			'test_links'  => array(
+				__( 'Open register page', 'tso-login-organizer' ) => $register_url,
+				__( 'Open profile page', 'tso-login-organizer' )  => $profile_url,
+			),
+			'compat'      => array(
+				__( 'Other registration-form plugins that also inject fields may show duplicates.', 'tso-login-organizer' ),
+			),
+			'file'        => 'class-tsolo-mod-fields.php',
+			'class'       => 'TSOLO_Mod_Fields',
+			'collide'     => false,
 		),
 		'profiles'      => array(
 			'label'       => __( 'Profiles', 'tso-login-organizer' ),
@@ -173,6 +193,7 @@ function tsolo_get_module_definitions() {
 			'howto'       => array(
 				__( 'Follow the numbered steps on each provider card. Copy the redirect URI shown there into that provider’s console.', 'tso-login-organizer' ),
 				__( 'Paste the client ID (or app ID) and the secret for each provider you want. Leave a provider’s fields empty to hide its button.', 'tso-login-organizer' ),
+				__( 'With “Link existing accounts” on (default), a returning social login that shares an email with an existing user signs into that account instead of creating a second one. Logged-in users can also connect or disconnect providers from their profile page.', 'tso-login-organizer' ),
 			),
 			'test_links'  => array(
 				__( 'Open login page', 'tso-login-organizer' )    => $login_url,
@@ -232,7 +253,7 @@ function tsolo_get_module_definitions() {
 			'description' => __( 'Optionally subscribe new registrants to a Mailchimp audience (API key + list ID).', 'tso-login-organizer' ),
 			'howto'       => array(
 				__( 'Create an API key at https://admin.mailchimp.com/account/api/ and copy the Audience (list) ID from Audience → Settings.', 'tso-login-organizer' ),
-				__( 'Paste the API key and the list ID below. With “Ask for newsletter consent” on, only people who tick the box on the registration form are added. Nothing is sent while the key or the list ID is empty.', 'tso-login-organizer' ),
+				__( 'Paste the API key (it must end with your data center, e.g. -us21) and the list ID below. With “Ask for newsletter consent” on, only people who tick the box are added; you can also pre-check that box. When the checkbox is off, every new registrant is subscribed automatically. Nothing is sent while the key or the list ID is empty, and registration never waits on Mailchimp errors.', 'tso-login-organizer' ),
 			),
 			'test_links'  => array(
 				__( 'Mailchimp API keys', 'tso-login-organizer' ) => 'https://admin.mailchimp.com/account/api/',

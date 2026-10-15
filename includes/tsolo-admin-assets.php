@@ -49,11 +49,16 @@ function tsolo_admin_register_assets( $hook ) {
 		true
 	);
 	$lang   = function_exists( 'tsolo_get_ui_lang' ) ? tsolo_get_ui_lang() : 'en';
-	$coords = function_exists( 'tsolo_theme_coords' ) ? tsolo_theme_coords() : array( 'lat' => 41.39, 'lng' => 2.17 );
+	$coords = function_exists( 'tsolo_theme_coords' ) ? tsolo_theme_coords() : array(
+		'lat' => 41.39,
+		'lng' => 2.17,
+	);
 	wp_localize_script(
 		'tsolo-admin',
 		'tsoloAdminConfig',
 		array(
+			'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
+			'homeUrl'    => home_url( '/' ),
 			'nonce'      => wp_create_nonce( TSOLO_NONCE_AJAX ),
 			'collisions' => tsolo_detect_collision_plugins(),
 			'timezone'   => function_exists( 'tsolo_theme_timezone_string' ) ? tsolo_theme_timezone_string() : '',
@@ -61,7 +66,9 @@ function tsolo_admin_register_assets( $hook ) {
 			'lng'        => isset( $coords['lng'] ) ? $coords['lng'] : 2.17,
 			'themeI18n'  => function_exists( 'tsolo_theme_i18n' ) ? tsolo_theme_i18n( $lang ) : array(),
 			'i18n'       => array(
-				'collisionWarn' => __( 'Other security/spam plugins were detected. Enable colliding modules only if you know they will not conflict.', 'tso-login-organizer' ),
+				'collisionWarn'   => __( 'Other security/spam plugins were detected. Enable colliding modules only if you know they will not conflict.', 'tso-login-organizer' ),
+				'permalinkBusy'   => __( 'Checking friendly URLs…', 'tso-login-organizer' ),
+				'permalinkFailed' => __( 'Could not check friendly URLs. Please try again.', 'tso-login-organizer' ),
 			),
 		)
 	);

@@ -61,12 +61,21 @@ function tsolo_theme_coords() {
 		);
 	}
 	if ( 0 === strpos( $tz, 'Europe/' ) ) {
-		return array( 'lat' => 41.39, 'lng' => 2.17 );
+		return array(
+			'lat' => 41.39,
+			'lng' => 2.17,
+		);
 	}
 	if ( 0 === strpos( $tz, 'America/' ) ) {
-		return array( 'lat' => 19.43, 'lng' => -99.13 );
+		return array(
+			'lat' => 19.43,
+			'lng' => -99.13,
+		);
 	}
-	return array( 'lat' => 41.39, 'lng' => 2.17 );
+	return array(
+		'lat' => 41.39,
+		'lng' => 2.17,
+	);
 }
 
 /**

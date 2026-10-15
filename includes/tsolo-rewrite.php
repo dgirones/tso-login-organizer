@@ -59,13 +59,81 @@ function tsolo_add_rewrite_rules() {
 	if ( ! tsolo_use_permalinks() ) {
 		return;
 	}
+	$taken = array();
 	foreach ( tsolo_get_actions() as $action ) {
 		$slug = $action->get_slug();
 		if ( '' === $slug ) {
 			continue;
 		}
 		add_rewrite_rule( $slug . '/?$', 'index.php?action=' . $action->get_name(), 'top' );
+		$taken[ $slug ] = true;
 	}
+	foreach ( tsolo_legacy_slug_aliases() as $alias => $action_name ) {
+		if ( isset( $taken[ $alias ] ) || ! tsolo_action_exists( $action_name ) ) {
+			continue;
+		}
+		add_rewrite_rule( $alias . '/?$', 'index.php?action=' . $action_name, 'top' );
+		$taken[ $alias ] = true;
+	}
+}
+
+/**
+ * Old Theme My Login and WordPress paths that must keep opening the same form.
+ *
+ * Password aliases are added only after a Theme My Login import, so a normal
+ * page at /lost-password/ is left alone until that import.
+ *
+ * @return array<string,string> Slug => action name.
+ */
+function tsolo_legacy_slug_aliases() {
+	$aliases = array(
+		'confirmaction'  => 'confirmaction',
+		'confirm-action' => 'confirmaction',
+	);
+	if ( get_option( TSOLO_OPT_TML_IMPORTED ) ) {
+		$aliases['lost-password']     = 'lostpassword';
+		$aliases['retrievepassword']  = 'lostpassword';
+		$aliases['retrieve-password'] = 'lostpassword';
+		$aliases['reset-password']    = 'resetpass';
+	}
+	return $aliases;
+}
+
+/**
+ * Ask for a rewrite rebuild after slugs or modules change.
+ *
+ * If init has not run yet, the flush happens at init priority 99.
+ * If called later (admin save), refresh live action slugs and flush on shutdown.
+ */
+function tsolo_request_rewrite_flush() {
+	update_option( TSOLO_OPT_FLUSH_REWRITES, 1, false );
+	if ( function_exists( 'did_action' ) && did_action( 'init' ) ) {
+		add_action( 'shutdown', 'tsolo_flush_scheduled_rewrites', 0 );
+	}
+}
+
+/**
+ * Flush rewrite rules once current action slugs are in place.
+ */
+function tsolo_flush_scheduled_rewrites() {
+	if ( ! get_option( TSOLO_OPT_FLUSH_REWRITES ) ) {
+		return;
+	}
+	delete_option( TSOLO_OPT_FLUSH_REWRITES );
+	if ( ! tsolo_use_permalinks() ) {
+		return;
+	}
+	$settings = tsolo_get_settings();
+	foreach ( tsolo_get_actions() as $name => $action ) {
+		if ( ! empty( $settings['slugs'][ $name ] ) && ( is_string( $settings['slugs'][ $name ] ) || is_numeric( $settings['slugs'][ $name ] ) ) ) {
+			$action->set_slug( (string) $settings['slugs'][ $name ] );
+		}
+	}
+	if ( function_exists( 'tsolo_register_optional_module_actions' ) ) {
+		tsolo_register_optional_module_actions();
+	}
+	tsolo_add_rewrite_rules();
+	flush_rewrite_rules( false );
 }
 
 /**

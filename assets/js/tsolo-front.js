@@ -45,17 +45,31 @@
 
 		$(document).on('click', '.tsolo-favorite-toggle', function () {
 			var $btn = $(this);
-			if (!window.tsoloFrontConfig || !tsoloFrontConfig.ajaxUrl) {
+			var postId = parseInt($btn.attr('data-post'), 10) || 0;
+			if (!window.tsoloFrontConfig || !tsoloFrontConfig.ajaxUrl || !postId || $btn.prop('disabled')) {
 				return;
 			}
+			$btn.prop('disabled', true);
 			$.post(tsoloFrontConfig.ajaxUrl, {
 				action: 'tsolo_toggle_favorite',
 				_ajax_nonce: tsoloFrontConfig.nonce,
-				post_id: $btn.data('post')
+				post_id: postId
 			}).done(function (res) {
 				if (res && res.success && res.data && res.data.label) {
+					var active = !!res.data.active;
 					$btn.text(res.data.label);
+					$btn.attr('aria-pressed', active ? 'true' : 'false');
+					var $item = $btn.closest('.tsolo-favorite-item');
+					if ($item.length && !active) {
+						$item.remove();
+						var $list = $('.tsolo-favorites-list');
+						if ($list.length && !$list.children().length) {
+							$list.replaceWith('<p class="tsolo-favorites-empty">' + (tsoloFrontConfig.i18n && tsoloFrontConfig.i18n.noFavorites ? tsoloFrontConfig.i18n.noFavorites : 'No favorites yet.') + '</p>');
+						}
+					}
 				}
+			}).always(function () {
+				$btn.prop('disabled', false);
 			});
 		});
 	});
