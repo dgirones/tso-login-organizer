@@ -41,7 +41,7 @@ class TSOLO_Mod_Security {
 	private function __construct() {
 		$s = self::get_settings();
 		if ( ! empty( $s['brute_force'] ) ) {
-			add_filter( 'authenticate', array( $this, 'check_lockout' ), 1, 3 );
+			add_filter( 'authenticate', array( $this, 'check_lockout' ), 21, 3 );
 			add_action( 'wp_login_failed', array( $this, 'record_failure' ) );
 			add_action( 'wp_login', array( $this, 'clear_attempts' ), 10, 2 );
 		}
@@ -66,6 +66,8 @@ class TSOLO_Mod_Security {
 			'lockout_minutes'     => 30,
 			'password_min_length' => 0,
 			'hide_wp_login'       => 0,
+			'ip_header'           => 'remote_addr',
+			'ip_whitelist'        => '',
 		);
 	}
 
@@ -81,6 +83,8 @@ class TSOLO_Mod_Security {
 		$s['max_attempts']        = max( 1, (int) ( isset( $s['max_attempts'] ) ? $s['max_attempts'] : 5 ) );
 		$s['lockout_minutes']     = max( 1, (int) ( isset( $s['lockout_minutes'] ) ? $s['lockout_minutes'] : 30 ) );
 		$s['password_min_length'] = max( 0, (int) ( isset( $s['password_min_length'] ) ? $s['password_min_length'] : 0 ) );
+		$s['ip_header']           = self::sanitize_ip_header( isset( $s['ip_header'] ) ? $s['ip_header'] : '' );
+		$s['ip_whitelist']        = isset( $s['ip_whitelist'] ) ? sanitize_textarea_field( (string) $s['ip_whitelist'] ) : '';
 		return $s;
 	}
 
@@ -100,7 +104,87 @@ class TSOLO_Mod_Security {
 			'max_attempts'        => max( 1, (int) ( isset( $raw['max_attempts'] ) ? $raw['max_attempts'] : 5 ) ),
 			'lockout_minutes'     => max( 1, (int) ( isset( $raw['lockout_minutes'] ) ? $raw['lockout_minutes'] : 30 ) ),
 			'password_min_length' => max( 0, (int) ( isset( $raw['password_min_length'] ) ? $raw['password_min_length'] : 0 ) ),
+			'ip_header'           => self::sanitize_ip_header( isset( $raw['ip_header'] ) ? $raw['ip_header'] : '' ),
+			'ip_whitelist'        => isset( $raw['ip_whitelist'] ) ? sanitize_textarea_field( (string) $raw['ip_whitelist'] ) : '',
 		);
+	}
+
+	/**
+	 * Allowed sources for the visitor IP.
+	 *
+	 * @return string[]
+	 */
+	public static function ip_headers() {
+		return array( 'remote_addr', 'cf', 'xff', 'real' );
+	}
+
+	/**
+	 * Sanitize the IP source choice.
+	 *
+	 * @param mixed $value Raw.
+	 * @return string
+	 */
+	public static function sanitize_ip_header( $value ) {
+		$value = sanitize_key( (string) $value );
+		return in_array( $value, self::ip_headers(), true ) ? $value : 'remote_addr';
+	}
+
+	/**
+	 * Pick the visitor IP from server values for the chosen source (falls back to REMOTE_ADDR).
+	 *
+	 * @param string $header Source: remote_addr|cf|xff|real.
+	 * @param array  $server Server values.
+	 * @return string
+	 */
+	public static function pick_ip( $header, $server ) {
+		$map = array(
+			'cf'   => 'HTTP_CF_CONNECTING_IP',
+			'xff'  => 'HTTP_X_FORWARDED_FOR',
+			'real' => 'HTTP_X_REAL_IP',
+		);
+		if ( isset( $map[ $header ] ) && ! empty( $server[ $map[ $header ] ] ) && is_string( $server[ $map[ $header ] ] ) ) {
+			foreach ( explode( ',', $server[ $map[ $header ] ] ) as $candidate ) {
+				$candidate = trim( $candidate );
+				if ( false !== filter_var( $candidate, FILTER_VALIDATE_IP ) ) {
+					return $candidate;
+				}
+			}
+		}
+		$remote = ( isset( $server['REMOTE_ADDR'] ) && is_string( $server['REMOTE_ADDR'] ) ) ? trim( $server['REMOTE_ADDR'] ) : '';
+		return '' !== $remote ? $remote : '0.0.0.0';
+	}
+
+	/**
+	 * Whether an IP is in a list of IPs / IPv4 CIDR ranges (separated by spaces, commas or new lines).
+	 *
+	 * @param string $ip   IP.
+	 * @param string $list List.
+	 * @return bool
+	 */
+	public static function ip_in_list( $ip, $list ) {
+		$ip      = (string) $ip;
+		$entries = preg_split( '/[\s,]+/', (string) $list, -1, PREG_SPLIT_NO_EMPTY );
+		if ( ! is_array( $entries ) || '' === $ip ) {
+			return false;
+		}
+		foreach ( $entries as $entry ) {
+			if ( false === strpos( $entry, '/' ) ) {
+				if ( $entry === $ip ) {
+					return true;
+				}
+				continue;
+			}
+			list( $net, $bits ) = array_pad( explode( '/', $entry, 2 ), 2, '' );
+			$bits               = (int) $bits;
+			if ( false === filter_var( $net, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) || false === filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) || $bits < 0 || $bits > 32 ) {
+				continue;
+			}
+			$mask = 0 === $bits ? 0 : ( ~( ( 1 << ( 32 - $bits ) ) - 1 ) & 0xFFFFFFFF );
+			if ( ( ip2long( $ip ) & $mask ) === ( ip2long( $net ) & $mask ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -109,8 +193,14 @@ class TSOLO_Mod_Security {
 	 * @return string
 	 */
 	public static function client_ip() {
-		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
-		$ip = $ip ? $ip : '0.0.0.0';
+		$server = array();
+		foreach ( array( 'REMOTE_ADDR', 'HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP' ) as $key ) {
+			if ( isset( $_SERVER[ $key ] ) && is_string( $_SERVER[ $key ] ) ) {
+				$server[ $key ] = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
+			}
+		}
+		$settings = self::get_settings();
+		$ip       = self::pick_ip( $settings['ip_header'], $server );
 		/**
 		 * Filter the IP used for brute-force tracking.
 		 *
@@ -208,6 +298,33 @@ class TSOLO_Mod_Security {
 	}
 
 	/**
+	 * Drop attempt rows older than the window and keep the map from growing without limit.
+	 *
+	 * @param mixed $attempts Attempts map (ip => count/first).
+	 * @param int   $window   Window seconds.
+	 * @param int   $now      Unix time.
+	 * @param int   $max_rows Most rows kept.
+	 * @return array
+	 */
+	public static function purge_stale_attempts( $attempts, $window, $now, $max_rows = 500 ) {
+		if ( ! is_array( $attempts ) ) {
+			return array();
+		}
+		$window = max( 1, (int) $window );
+		$now    = (int) $now;
+		foreach ( $attempts as $ip => $row ) {
+			$first = ( is_array( $row ) && isset( $row['first'] ) ) ? (int) $row['first'] : 0;
+			if ( $first < 1 || ( $now - $first ) > $window ) {
+				unset( $attempts[ $ip ] );
+			}
+		}
+		if ( count( $attempts ) > $max_rows ) {
+			$attempts = array_slice( $attempts, -1 * (int) $max_rows, null, true );
+		}
+		return $attempts;
+	}
+
+	/**
 	 * Whether a password meets the configured minimum length.
 	 *
 	 * @param string $password Password.
@@ -253,6 +370,10 @@ class TSOLO_Mod_Security {
 	public function check_lockout( $user, $username, $password ) {
 		unset( $username, $password );
 		$ip       = self::client_ip();
+		$settings = self::get_settings();
+		if ( self::ip_in_list( $ip, $settings['ip_whitelist'] ) ) {
+			return $user;
+		}
 		$lockouts = get_option( TSOLO_OPT_LOCKOUTS, array() );
 		if ( ! is_array( $lockouts ) ) {
 			$lockouts = array();
@@ -277,8 +398,12 @@ class TSOLO_Mod_Security {
 		unset( $username );
 		$s        = self::get_settings();
 		$ip       = self::client_ip();
+		if ( self::ip_in_list( $ip, $s['ip_whitelist'] ) ) {
+			return;
+		}
 		$attempts = get_option( TSOLO_OPT_ATTEMPTS, array() );
 		$window   = max( 1, absint( $s['lockout_minutes'] ) ) * MINUTE_IN_SECONDS;
+		$attempts = self::purge_stale_attempts( $attempts, $window, time() );
 		$result   = self::apply_failure( $attempts, $ip, $s['max_attempts'], $window, time() );
 		if ( ! empty( $result['locked'] ) ) {
 			$lockouts        = self::purge_expired_lockouts( get_option( TSOLO_OPT_LOCKOUTS, array() ) );
@@ -326,7 +451,7 @@ class TSOLO_Mod_Security {
 		if ( $min < 1 ) {
 			return;
 		}
-		$pass = tsolo_get_request_text( 'pass1', 'post' );
+		$pass = tsolo_get_request_password( 'pass1' );
 		if ( ! self::password_meets_min_length( $pass, $min ) ) {
 			$errors->add(
 				'tsolo_password_short',
@@ -351,7 +476,7 @@ class TSOLO_Mod_Security {
 		if ( $min < 1 ) {
 			return $errors;
 		}
-		$pass = tsolo_get_request_text( 'pass1', 'post' );
+		$pass = tsolo_get_request_password( 'pass1' );
 		if ( '' === $pass ) {
 			$pass = tsolo_get_request_text( 'user_pass', 'post' );
 		}
@@ -379,8 +504,22 @@ class TSOLO_Mod_Security {
 	 * reset/lost-password links do not need wp-login.php. Logout and postpass stay.
 	 */
 	public function block_wp_login() {
+		// login_init is also fired by the frontend TSO pages: only block the real wp-login.php.
+		if ( ! tsolo_is_wp_login() ) {
+			return;
+		}
 		if ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
 			return;
+		}
+		// Safety valve: never hide wp-login.php when the plugin login page is not reachable (admin would be locked out).
+		if ( defined( 'TSOLO_ALLOW_WP_LOGIN' ) && TSOLO_ALLOW_WP_LOGIN ) {
+			return;
+		}
+		if ( function_exists( 'tsolo_permalink_health' ) ) {
+			$health = tsolo_permalink_health();
+			if ( empty( $health['ok'] ) ) {
+				return;
+			}
 		}
 		$action = tsolo_get_request_text( 'action', 'get' );
 		if ( '' === $action ) {

@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 add_action( 'plugins_loaded', 'tsolo_maybe_migrate_schema', 5 );
 add_action( 'plugins_loaded', 'tsolo_load_modules', 20 );
+add_action( 'save_post_page', 'tsolo_flush_pages_cache' );
+add_action( 'deleted_post', 'tsolo_flush_pages_cache' );
 
 add_action( 'init', 'tsolo_register_default_actions', 0 );
 add_action( 'init', 'tsolo_register_default_forms', 0 );
@@ -30,12 +32,20 @@ add_action( 'wp_enqueue_scripts', 'tsolo_enqueue_styles', 10 );
 add_action( 'wp_enqueue_scripts', 'tsolo_enqueue_scripts', 10 );
 
 add_action( 'pre_user_login', 'tsolo_set_user_login' );
-add_action( 'register_new_user', 'tsolo_set_new_user_password' );
-add_action( 'register_new_user', 'tsolo_handle_auto_login' );
 add_action( 'register_new_user', 'tsolo_send_new_user_notifications', 10, 1 );
 add_action( 'edit_user_created_user', 'tsolo_send_new_user_notifications', 10, 2 );
 remove_action( 'register_new_user', 'wp_send_new_user_notifications' );
 remove_action( 'edit_user_created_user', 'wp_send_new_user_notifications' );
+
+// Branded HTML emails (TSO layout) for every email this plugin sends or triggers.
+add_filter( 'wp_mail_content_type', 'tsolo_email_filter_content_type', 99 );
+add_filter( 'wp_mail_from_name', 'tsolo_email_filter_from_name', 99 );
+add_filter( 'wp_new_user_notification_email', 'tsolo_email_filter_new_user', 20 );
+add_filter( 'wp_new_user_notification_email_admin', 'tsolo_email_filter_new_user_admin', 20 );
+add_filter( 'retrieve_password_notification_email', 'tsolo_email_filter_reset', 20 );
+add_filter( 'password_change_email', 'tsolo_email_filter_password_change', 20 );
+add_filter( 'email_change_email', 'tsolo_email_filter_email_change', 20 );
+add_filter( 'wp_password_change_notification_email', 'tsolo_email_filter_password_change_admin', 20 );
 
 add_filter( 'the_posts', 'tsolo_the_posts', 10, 2 );
 add_filter( 'body_class', 'tsolo_body_class' );
@@ -44,8 +54,14 @@ add_filter( 'comments_array', 'tsolo_filter_comments_array' );
 
 add_filter( 'site_url', 'tsolo_filter_site_url', 10, 3 );
 add_filter( 'network_site_url', 'tsolo_filter_site_url', 10, 3 );
+add_filter( 'login_url', 'tsolo_filter_login_url', 20, 3 );
 add_filter( 'logout_url', 'tsolo_filter_logout_url', 10, 2 );
 add_filter( 'lostpassword_url', 'tsolo_filter_lostpassword_url', 10, 2 );
+add_filter( 'query_vars', 'tsolo_register_login_query_vars' );
+add_filter( 'Yoast\\WP\\SEO\\allowlist_permalink_vars', 'tsolo_yoast_allowlist_login_query_vars' );
+add_filter( 'option_wpseo', 'tsolo_filter_wpseo_clean_permalink_extras' );
+add_action( 'template_redirect', 'tsolo_disable_yoast_clean_on_actions', 0 );
+add_filter( 'wp_redirect', 'tsolo_abort_action_self_redirect', 0, 2 );
 
 add_filter( 'authenticate', 'tsolo_enforce_login_type', 20, 3 );
 add_filter( 'registration_errors', 'tsolo_validate_new_user_password', 10 );

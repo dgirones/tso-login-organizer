@@ -63,11 +63,12 @@ function tsolo_enqueue_styles() {
 	if ( ! tsolo_needs_front_assets() ) {
 		return;
 	}
+	$css_file = TSOLO_PATH . 'assets/css/tsolo-front.css';
 	wp_enqueue_style(
 		'tsolo-front',
 		TSOLO_URL . 'assets/css/tsolo-front.css',
 		array(),
-		TSOLO_VERSION
+		file_exists( $css_file ) ? (string) filemtime( $css_file ) : TSOLO_VERSION
 	);
 	$settings = tsolo_get_settings();
 	$branding = isset( $settings['branding'] ) && is_array( $settings['branding'] ) ? $settings['branding'] : array();

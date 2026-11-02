@@ -43,6 +43,7 @@ class TSOLO_Mod_Mailchimp {
 		}
 		add_action( 'register_form', array( $this, 'render_checkbox' ) );
 		add_action( 'user_register', array( $this, 'subscribe' ), 20 );
+		add_action( 'tsolo_mailchimp_subscribe_event', array( $this, 'run_scheduled_subscribe' ), 10, 2 );
 	}
 
 	/**
@@ -231,7 +232,22 @@ class TSOLO_Mod_Mailchimp {
 		} elseif ( ! empty( $user->display_name ) ) {
 			$fname = (string) $user->display_name;
 		}
+		// Defer the API call so a slow Mailchimp never delays registration.
+		if ( apply_filters( 'tsolo_mailchimp_async', true ) && function_exists( 'wp_schedule_single_event' ) ) {
+			wp_schedule_single_event( time() + 5, 'tsolo_mailchimp_subscribe_event', array( $user->user_email, $fname ) );
+			return;
+		}
 		self::put_member( $s, $user->user_email, $fname );
+	}
+
+	/**
+	 * Cron callback: send the queued subscription.
+	 *
+	 * @param string $email Email.
+	 * @param string $fname First name.
+	 */
+	public function run_scheduled_subscribe( $email, $fname = '' ) {
+		self::put_member( self::get_settings(), (string) $email, (string) $fname );
 	}
 
 	/**

@@ -86,15 +86,10 @@ function tsolo_theme_coords() {
  */
 function tsolo_theme_i18n( $lang ) {
 	return array(
-		'themeDay'      => tsolo_ui_triple_text( $lang, 'Mode dia', 'Modo día', 'Day mode' ),
-		'themeNight'    => tsolo_ui_triple_text( $lang, 'Mode nit', 'Modo noche', 'Night mode' ),
-		'themeAuto'     => tsolo_ui_triple_text( $lang, 'Mode auto', 'Modo auto', 'Auto mode' ),
-		'themeAutoHint' => tsolo_ui_triple_text(
-			$lang,
-			'Segueix la sortida i la posta de sol (canvia amb les estacions)',
-			'Sigue la salida y la puesta de sol (cambia con las estaciones)',
-			'Follows sunrise and sunset (changes with the seasons)'
-		),
+		'themeDay'      => __( 'Day mode', 'tso-login-organizer' ),
+		'themeNight'    => __( 'Night mode', 'tso-login-organizer' ),
+		'themeAuto'     => __( 'Auto mode', 'tso-login-organizer' ),
+		'themeAutoHint' => __( 'Follows sunrise and sunset (changes with the seasons)', 'tso-login-organizer' ),
 	);
 }
 

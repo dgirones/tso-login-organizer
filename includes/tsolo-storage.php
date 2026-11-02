@@ -32,6 +32,7 @@ define( 'TSOLO_OPT_FIELDS', 'tso_login_organizer_fields' );
 define( 'TSOLO_OPT_LOCKOUTS', 'tso_login_organizer_lockouts' );
 define( 'TSOLO_OPT_ATTEMPTS', 'tso_login_organizer_attempts' );
 define( 'TSOLO_OPT_TML_IMPORTED', 'tso_login_organizer_tml_imported' );
+define( 'TSOLO_OPT_TML_MODULE_HINTS', 'tso_login_organizer_tml_module_hints' );
 define( 'TSOLO_OPT_FLUSH_REWRITES', 'tso_login_organizer_flush_rewrites' );
 define( 'TSOLO_USER_META_UI_LANG', 'tso_login_organizer_ui_lang' );
 define( 'TSOLO_ADMIN_QUERY_SET_LANG', 'tsolo_set_lang' );
@@ -48,6 +49,7 @@ function tsolo_default_settings() {
 		'registration_type' => 'default',
 		'user_passwords'    => 0,
 		'auto_login'        => 0,
+		'delete_data'       => 0,
 		'texts'             => array(
 			'login_heading'        => '',
 			'login_button'         => '',
@@ -149,6 +151,12 @@ function tsolo_reserved_action_slugs() {
 		'tag',
 		'author',
 		'search',
+		'wp-sitemap',
+		'sitemap',
+		'wp-signup',
+		'wp-activate',
+		'wp-comments-post',
+		'robots',
 	);
 }
 
@@ -195,6 +203,7 @@ function tsolo_get_settings() {
 function tsolo_update_settings( $settings ) {
 	$clean = tsolo_sanitize_settings( $settings );
 	wp_cache_delete( 'pages', 'tso-login-organizer' );
+	delete_transient( 'tsolo_pages_cache' );
 	return update_option( TSOLO_OPT_SETTINGS, $clean, false );
 }
 
@@ -217,6 +226,7 @@ function tsolo_sanitize_settings( $settings ) {
 	$out['registration_type'] = in_array( $reg_type, array( 'default', 'email' ), true ) ? $reg_type : 'default';
 	$out['user_passwords']    = empty( $settings['user_passwords'] ) ? 0 : 1;
 	$out['auto_login']        = empty( $settings['auto_login'] ) ? 0 : 1;
+	$out['delete_data']       = empty( $settings['delete_data'] ) ? 0 : 1;
 	$out['texts']             = tsolo_sanitize_form_texts( isset( $settings['texts'] ) ? $settings['texts'] : array() );
 	$out['branding']          = tsolo_sanitize_branding( isset( $settings['branding'] ) ? $settings['branding'] : array() );
 	$out['slugs']             = $defaults['slugs'];
@@ -414,7 +424,17 @@ function tsolo_get_option_array( $option_name, $defaults = array() ) {
 }
 
 /**
- * Update a named option blob after map_deep sanitize_text_field.
+ * Sanitize one stored option value (strings keep their line breaks; other types pass through).
+ *
+ * @param mixed $value Value.
+ * @return mixed
+ */
+function tsolo_sanitize_option_text( $value ) {
+	return is_string( $value ) ? sanitize_textarea_field( $value ) : $value;
+}
+
+/**
+ * Update a named option blob after map_deep text sanitizing.
  *
  * @param string $option_name Option name.
  * @param array  $value       Value.
@@ -424,7 +444,8 @@ function tsolo_update_option_array( $option_name, $value ) {
 	if ( ! is_array( $value ) ) {
 		$value = array();
 	}
-	$value = map_deep( $value, 'sanitize_text_field' );
+	// Textarea sanitizer: strips tags and control characters but keeps the line breaks of email bodies.
+	$value = map_deep( $value, 'tsolo_sanitize_option_text' );
 	return update_option( $option_name, $value, false );
 }
 
@@ -470,25 +491,6 @@ function tsolo_set_ui_lang( $lang, $user_id = 0 ) {
 }
 
 /**
- * Pick CA / ES / EN string for admin chrome (donate, etc.).
- *
- * @param string $lang UI lang.
- * @param string $ca   Catalan.
- * @param string $es   Spanish.
- * @param string $en   English.
- * @return string
- */
-function tsolo_ui_triple_text( $lang, $ca, $es, $en ) {
-	if ( 'es' === $lang ) {
-		return $es;
-	}
-	if ( 'en' === $lang ) {
-		return $en;
-	}
-	return $ca;
-}
-
-/**
  * Ko-fi donation URL.
  *
  * @return string
@@ -515,6 +517,26 @@ function tsolo_get_admin_query_arg( $key, $default_value = '' ) {
 		return $default_value;
 	}
 	return sanitize_text_field( (string) wp_unslash( $_GET[ $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Caller verifies nonce when mutating.
+}
+
+/**
+ * Translation file for a locale: a WordPress.org language pack when one is
+ * installed (translate.wordpress.org updates), otherwise the bundled fallback.
+ *
+ * @param string $locale Locale such as ca or es_ES.
+ * @return string Path to the .mo file, or '' when none exists.
+ */
+function tsolo_get_translation_file( $locale ) {
+	$locale = sanitize_file_name( (string) $locale );
+	if ( '' === $locale ) {
+		return '';
+	}
+	$pack = WP_LANG_DIR . '/plugins/tso-login-organizer-' . $locale;
+	if ( is_readable( $pack . '.mo' ) || is_readable( $pack . '.l10n.php' ) ) {
+		return $pack . '.mo';
+	}
+	$bundled = TSOLO_PATH . 'languages/tso-login-organizer-' . $locale . '.mo';
+	return is_readable( $bundled ) ? $bundled : '';
 }
 
 /**
@@ -554,8 +576,8 @@ function tsolo_apply_admin_ui_locale( $lang ) {
 
 	if ( 'en' !== $lang ) {
 		$ui_locale = $map[ $lang ];
-		$mofile    = TSOLO_PATH . 'languages/tso-login-organizer-' . $ui_locale . '.mo';
-		if ( is_readable( $mofile ) ) {
+		$mofile    = tsolo_get_translation_file( $ui_locale );
+		if ( '' !== $mofile ) {
 			load_textdomain( 'tso-login-organizer', $mofile, $lookup );
 			if ( $lookup !== $ui_locale ) {
 				load_textdomain( 'tso-login-organizer', $mofile, $ui_locale );
@@ -676,6 +698,61 @@ function tsolo_get_request_text( $key, $method = 'request', $default_value = '' 
 }
 
 /**
+ * Read a cookie as plain text (arrays and non-strings are ignored).
+ *
+ * @param string $name          Cookie name.
+ * @param string $default_value Default.
+ * @return string
+ */
+function tsolo_get_cookie_text( $name, $default_value = '' ) {
+	$name = (string) $name;
+	if ( '' === $name || ! isset( $_COOKIE[ $name ] ) ) {
+		return $default_value;
+	}
+	$raw = wp_unslash( $_COOKIE[ $name ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized below; central cookie input helper.
+	if ( ! is_string( $raw ) ) {
+		return $default_value;
+	}
+	return sanitize_text_field( $raw );
+}
+
+/**
+ * Read a password from POST without sanitize_text_field().
+ *
+ * Passwords must keep punctuation WordPress accepts; only wp_unslash.
+ * Call only after nonce / reset-key / capability checks appropriate to the form.
+ *
+ * @param string $key           POST key (e.g. pass1).
+ * @param string $default_value Default.
+ * @return string
+ */
+function tsolo_get_request_password( $key, $default_value = '' ) {
+	$key = (string) $key;
+	if ( '' === $key || ! isset( $_POST[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Caller verified form/reset/capability.
+		return $default_value;
+	}
+	$raw = wp_unslash( $_POST[ $key ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing -- Password must not pass through sanitize_text_field; caller verified context.
+	if ( is_array( $raw ) ) {
+		return $default_value;
+	}
+	return (string) $raw;
+}
+
+/**
+ * Read a POST array of text fields (after caller verified nonce).
+ *
+ * @param string $key POST key.
+ * @return array
+ */
+function tsolo_get_request_post_array( $key ) {
+	$key = (string) $key;
+	if ( '' === $key || ! isset( $_POST[ $key ] ) || ! is_array( $_POST[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Caller verified nonce.
+		return array();
+	}
+	return map_deep( wp_unslash( $_POST[ $key ] ), 'sanitize_text_field' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Caller verified nonce.
+}
+
+/**
  * Whether a frontend POST key is set.
  *
  * @param string $key Key.
@@ -699,10 +776,10 @@ function tsolo_get_uploads_dir() {
 	$url = trailingslashit( $upload['baseurl'] ) . 'tso-login-organizer';
 	if ( ! is_dir( $dir ) ) {
 		wp_mkdir_p( $dir );
-		$index = trailingslashit( $dir ) . 'index.php';
+		$index = trailingslashit( $dir ) . 'index.html';
 		if ( ! file_exists( $index ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Non-executable guard file in plugin uploads tree.
-			file_put_contents( $index, "<?php\n// Silence is golden.\n" );
+			file_put_contents( $index, '' );
 		}
 	}
 	return array(

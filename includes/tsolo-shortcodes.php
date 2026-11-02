@@ -97,7 +97,7 @@ function tsolo_shortcode( $atts ) {
 function tsolo_render_dashboard() {
 	$user  = wp_get_current_user();
 	$html  = '<div class="tsolo tsolo-dashboard">';
-	$html .= '<div class="tsolo-dashboard-avatar">' . get_avatar( $user->ID, 96 ) . '</div>';
+	$html .= '<div class="tsolo-dashboard-avatar">' . get_avatar( $user->ID, 64 ) . '</div>';
 	/* translators: %s: current user's display name. */
 	$greeting = sprintf( __( 'Howdy, %s', 'tso-login-organizer' ), $user->display_name );
 	$html    .= '<p class="tsolo-dashboard-greeting">' . esc_html( $greeting ) . '</p>';
@@ -107,7 +107,7 @@ function tsolo_render_dashboard() {
 }
 
 /**
- * Logged-in quick links.
+ * Logged-in quick links (flat anchors — no ul/li so theme list styles cannot pad each row).
  *
  * @return string
  */
@@ -129,12 +129,7 @@ function tsolo_render_logged_in_links() {
 	}
 	// wp_logout_url() is filtered to the TSOLO logout slug and includes the log-out nonce.
 	$links[] = '<a href="' . esc_url( wp_logout_url() ) . '">' . esc_html__( 'Log Out', 'tso-login-organizer' ) . '</a>';
-	$html    = '<nav class="tsolo-links" aria-label="' . esc_attr__( 'Account', 'tso-login-organizer' ) . '"><ul>';
-	foreach ( $links as $link ) {
-		$html .= '<li>' . $link . '</li>';
-	}
-	$html .= '</ul></nav>';
-	return $html;
+	return '<nav class="tsolo-links tsolo-links--stack" aria-label="' . esc_attr__( 'Account', 'tso-login-organizer' ) . '">' . implode( '', $links ) . '</nav>';
 }
 
 /**
@@ -161,6 +156,9 @@ function tsolo_render_profile_form() {
 	$html   .= '<input type="password" name="pass1" id="pass1" class="input" autocomplete="new-password" /></p>';
 	$html   .= '<p class="tsolo-field"><label for="pass2">' . esc_html__( 'Confirm Password', 'tso-login-organizer' ) . '</label>';
 	$html   .= '<input type="password" name="pass2" id="pass2" class="input" autocomplete="new-password" /></p>';
+	$html   .= '<p class="tsolo-field"><label for="current_pass">' . esc_html__( 'Current password', 'tso-login-organizer' ) . '</label>';
+	$html   .= '<input type="password" name="current_pass" id="current_pass" class="input" autocomplete="current-password" />';
+	$html   .= '<span class="description">' . esc_html__( 'Needed only to change your email or password, or to turn two-factor off.', 'tso-login-organizer' ) . '</span></p>';
 
 	ob_start();
 	/**
@@ -170,14 +168,17 @@ function tsolo_render_profile_form() {
 	$html .= (string) ob_get_clean();
 
 	if ( $avatars ) {
-		$current = get_user_meta( $user->ID, class_exists( 'TSOLO_Mod_Avatars' ) ? TSOLO_Mod_Avatars::META_URL : 'tsolo_avatar_url', true );
-		$html   .= '<input type="hidden" name="tsolo_avatar_nonce" value="' . esc_attr( wp_create_nonce( 'tsolo_upload_avatar' ) ) . '" />';
-		$html   .= '<div class="tsolo-field tsolo-field-avatar"><label for="tsolo_avatar">' . esc_html__( 'Profile picture', 'tso-login-organizer' ) . '</label>';
-		if ( $current ) {
-			$html .= '<p class="tsolo-avatar-status">' . esc_html__( 'You already have a profile picture. It is shown below. Choose a new file only if you want to replace it. Leave the file field empty to keep this one.', 'tso-login-organizer' ) . '</p>';
-			$html .= '<span class="tsolo-avatar-preview"><img src="' . esc_url( $current ) . '" alt="' . esc_attr__( 'Current profile picture', 'tso-login-organizer' ) . '" width="64" height="64" /></span>';
+		$meta_key   = class_exists( 'TSOLO_Mod_Avatars' ) ? TSOLO_Mod_Avatars::META_URL : 'tsolo_avatar_url';
+		$current    = get_user_meta( $user->ID, $meta_key, true );
+		$current    = is_string( $current ) ? trim( $current ) : '';
+		$has_custom = ( '' !== $current && (bool) esc_url_raw( $current ) );
+		$html      .= '<input type="hidden" name="tsolo_avatar_nonce" value="' . esc_attr( wp_create_nonce( 'tsolo_upload_avatar' ) ) . '" />';
+		$html      .= '<div class="tsolo-field tsolo-field-avatar"><label for="tsolo_avatar">' . esc_html__( 'Profile picture', 'tso-login-organizer' ) . '</label>';
+		$html      .= '<span class="tsolo-avatar-preview">' . get_avatar( $user->ID, 64, '', __( 'Current profile picture', 'tso-login-organizer' ) ) . '</span>';
+		if ( $has_custom ) {
+			$html .= '<p class="tsolo-avatar-status">' . esc_html__( 'Custom picture uploaded (shown above). Choose a new file only to replace it. Leave the file field empty to keep this one.', 'tso-login-organizer' ) . '</p>';
 		} else {
-			$html .= '<p class="tsolo-avatar-status">' . esc_html__( 'You do not have a profile picture yet. Until you upload one, the site uses Gravatar or the default avatar.', 'tso-login-organizer' ) . '</p>';
+			$html .= '<p class="tsolo-avatar-status">' . esc_html__( 'No custom picture uploaded yet. The preview above is Gravatar or the site default. Upload a file below to replace it on this site.', 'tso-login-organizer' ) . '</p>';
 		}
 		$html .= '<input type="file" name="tsolo_avatar" id="tsolo_avatar" accept="image/jpeg,image/png,image/gif,image/webp" />';
 		$html .= '<p class="description">' . esc_html__( 'JPG, PNG, GIF or WebP.', 'tso-login-organizer' ) . '</p></div>';
@@ -196,7 +197,11 @@ function tsolo_render_profile_form() {
 			$html .= '<p class="description tsolo-2fa-help">' . esc_html__( 'Two-factor is already on for this account. The key below is the one your authenticator app should contain. Saving again with the box checked does not create a new key. Uncheck the box and click Save Profile to turn two-factor off: the key is deleted and the app code stops working. Login then asks for the password only.', 'tso-login-organizer' ) . '</p>';
 			$html .= '<p class="description">' . esc_html__( 'Key to type into the app (Google Authenticator or similar):', 'tso-login-organizer' ) . ' <code>' . esc_html( $secret ) . '</code></p>';
 			if ( is_array( $backups ) && $backups ) {
-				$html .= '<p class="description">' . esc_html__( 'One-time backup codes (each works once):', 'tso-login-organizer' ) . ' <code>' . esc_html( implode( ' ', $backups ) ) . '</code></p>';
+				$html .= '<p class="description">' . esc_html__( 'One-time backup codes (each works once):', 'tso-login-organizer' ) . '</p><ul class="tsolo-backup-codes">';
+				foreach ( $backups as $tsolo_backup ) {
+					$html .= '<li><code>' . esc_html( TSOLO_Mod_Two_Factor::format_backup_code( $tsolo_backup ) ) . '</code></li>';
+				}
+				$html .= '</ul>';
 			}
 		} else {
 			$html .= '<p class="description tsolo-2fa-help">' . esc_html__( 'Leave this unchecked if the password is enough. Check it and click Save Profile to turn two-factor on. The key is created only when you save, not when you tick the box. After saving you will see a key: type it into an authenticator app. From the next login, the password alone is not enough — the site also asks for the 6-digit code from that app.', 'tso-login-organizer' ) . '</p>';

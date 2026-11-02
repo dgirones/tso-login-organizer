@@ -174,7 +174,9 @@ class TSOLO_Action {
 			$url = home_url( user_trailingslashit( $this->get_slug() ), $scheme );
 		} else {
 			$url = home_url( '/', $scheme );
-			$url = add_query_arg( 'action', $this->get_name(), $url );
+			$url = function_exists( 'tsolo_add_query_arg' )
+				? tsolo_add_query_arg( 'action', $this->get_name(), $url )
+				: add_query_arg( 'action', $this->get_name(), $url );
 		}
 		return apply_filters( 'tsolo_get_action_url', $url, $this->get_name(), $scheme );
 	}

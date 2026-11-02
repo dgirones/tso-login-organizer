@@ -55,6 +55,33 @@ class TSOLO_Mod_Avatars {
 		// After parse_request so tsolo_is_action( 'profile' ) works with pretty permalinks.
 		// Priority 2 so Profiles (1) can save first; tsolo_set_errors merges both messages.
 		add_action( 'template_redirect', array( $this, 'handle_upload' ), 2 );
+		add_action( 'delete_user', array( $this, 'delete_user_avatar' ) );
+	}
+
+	/**
+	 * Remove the uploaded avatar file when its user is deleted.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	public function delete_user_avatar( $user_id ) {
+		$url     = get_user_meta( absint( $user_id ), self::META_URL, true );
+		$uploads = tsolo_get_uploads_dir();
+		if ( is_string( $url ) && '' !== $url && ! is_wp_error( $uploads ) ) {
+			self::delete_avatar_file( $url, $uploads );
+		}
+	}
+
+	/**
+	 * Random file name for an uploaded avatar (not guessable from the original name).
+	 *
+	 * @param string $dir  Upload dir.
+	 * @param string $name Original file name.
+	 * @param string $ext  Extension with dot.
+	 * @return string
+	 */
+	public function random_avatar_filename( $dir, $name, $ext ) {
+		unset( $dir, $name );
+		return 'avatar-' . get_current_user_id() . '-' . strtolower( wp_generate_password( 12, false, false ) ) . $ext;
 	}
 
 	/**
@@ -257,6 +284,7 @@ class TSOLO_Mod_Avatars {
 				'gif'          => 'image/gif',
 				'webp'         => 'image/webp',
 			),
+			'unique_filename_callback' => array( $this, 'random_avatar_filename' ),
 		);
 		$this->upload_override = $uploads;
 		add_filter( 'upload_dir', array( $this, 'filter_upload_dir' ) );
@@ -266,6 +294,15 @@ class TSOLO_Mod_Avatars {
 		if ( isset( $moved['error'] ) ) {
 			tsolo_set_errors( new WP_Error( 'tsolo_avatar', $moved['error'] ) );
 			return;
+		}
+		// Shrink to a square thumbnail so large photos do not slow every page that shows the avatar.
+		if ( ! empty( $moved['file'] ) && function_exists( 'wp_get_image_editor' ) && apply_filters( 'tsolo_avatar_resize', true ) ) {
+			$editor = wp_get_image_editor( $moved['file'] );
+			if ( ! is_wp_error( $editor ) ) {
+				$size = (int) apply_filters( 'tsolo_avatar_size', 256 );
+				$editor->resize( $size, $size, true );
+				$editor->save( $moved['file'] );
+			}
 		}
 		$user_id = get_current_user_id();
 		$old     = get_user_meta( $user_id, self::META_URL, true );

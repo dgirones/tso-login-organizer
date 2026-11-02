@@ -130,13 +130,96 @@ class TSOLO_Mod_Moderation {
 	}
 
 	/**
+	 * Whether this request is a self-registration (not an admin, REST, CLI or import user creation).
+	 *
+	 * @return bool
+	 */
+	public static function is_moderated_request() {
+		if ( ( defined( 'WP_CLI' ) && WP_CLI ) || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) ) {
+			return false;
+		}
+		if ( is_admin() && ! ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) ) {
+			return false;
+		}
+		if ( function_exists( 'current_user_can' ) && is_user_logged_in() && current_user_can( 'create_users' ) ) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Seconds a confirmation link stays valid.
+	 */
+	const CONFIRM_TTL = 172800;
+
+	/**
+	 * Whether the last apply_email_confirm() call rejected an expired link.
+	 *
+	 * @var bool
+	 */
+	private static $last_expired = false;
+
+	/**
+	 * Create a fresh confirmation key and mail the link.
+	 *
+	 * @param int $user_id User ID.
+	 * @return string The new key, or '' when the user does not exist.
+	 */
+	public static function issue_confirmation( $user_id ) {
+		$user_id = absint( $user_id );
+		$user    = get_userdata( $user_id );
+		if ( ! $user ) {
+			return '';
+		}
+		$key = wp_generate_password( 20, false );
+		update_user_meta( $user_id, 'tsolo_email_confirm_key', $key );
+		update_user_meta( $user_id, 'tsolo_email_confirm_time', time() );
+		if ( ! empty( $user->user_email ) && function_exists( 'tsolo_send_email' ) ) {
+			$args = array(
+				'tsolo_confirm' => $key,
+				'user'          => $user_id,
+			);
+			$base = home_url( '/' );
+			$url  = function_exists( 'tsolo_add_query_arg' )
+				? tsolo_add_query_arg( $args, $base )
+				: add_query_arg( $args, $base );
+			tsolo_send_email(
+				$user->user_email,
+				__( 'Confirm your email', 'tso-login-organizer' ),
+				__( 'Confirm your email', 'tso-login-organizer' ),
+				sprintf(
+					/* translators: %s: confirmation URL */
+					__( "Please confirm your email by visiting:\n\n%s", 'tso-login-organizer' ),
+					$url
+				),
+				__( 'Confirm email', 'tso-login-organizer' ),
+				$url
+			);
+		}
+		return $key;
+	}
+
+	/**
+	 * Whether the stored confirmation key is older than the allowed lifetime.
+	 *
+	 * Keys created before the timestamp existed never expire.
+	 *
+	 * @param int $user_id User ID.
+	 * @return bool
+	 */
+	public static function confirmation_expired( $user_id ) {
+		$issued = (int) get_user_meta( absint( $user_id ), 'tsolo_email_confirm_time', true );
+		return $issued > 0 && ( time() - $issued ) > (int) apply_filters( 'tsolo_confirm_ttl', self::CONFIRM_TTL );
+	}
+
+	/**
 	 * On register: set pending flags and optionally mail the confirm link.
 	 *
 	 * @param int $user_id User ID.
 	 */
 	public function on_register( $user_id ) {
 		$user_id = absint( $user_id );
-		if ( $user_id < 1 ) {
+		if ( $user_id < 1 || ! self::is_moderated_request() ) {
 			return;
 		}
 		$s      = self::get_settings();
@@ -146,27 +229,7 @@ class TSOLO_Mod_Moderation {
 		}
 
 		if ( ! empty( $s['email_confirm'] ) ) {
-			$key = wp_generate_password( 20, false );
-			update_user_meta( $user_id, 'tsolo_email_confirm_key', $key );
-			$user = get_userdata( $user_id );
-			if ( $user && ! empty( $user->user_email ) ) {
-				$url = add_query_arg(
-					array(
-						'tsolo_confirm' => rawurlencode( $key ),
-						'user'          => $user_id,
-					),
-					home_url( '/' )
-				);
-				wp_mail(
-					$user->user_email,
-					__( 'Confirm your email', 'tso-login-organizer' ),
-					sprintf(
-						/* translators: %s: confirmation URL */
-						__( "Please confirm your email by visiting:\n\n%s", 'tso-login-organizer' ),
-						$url
-					)
-				);
-			}
+			self::issue_confirmation( $user_id );
 		}
 
 		update_user_meta( $user_id, 'tsolo_moderation_status', $status );
@@ -204,8 +267,9 @@ class TSOLO_Mod_Moderation {
 	 * @return bool True when the key matched and meta was updated.
 	 */
 	public static function apply_email_confirm( $user_id, $key ) {
-		$user_id = absint( $user_id );
-		$key     = (string) $key;
+		self::$last_expired = false;
+		$user_id            = absint( $user_id );
+		$key                = (string) $key;
 		if ( $user_id < 1 || '' === $key ) {
 			return false;
 		}
@@ -213,7 +277,14 @@ class TSOLO_Mod_Moderation {
 		if ( '' === $stored || ! hash_equals( $stored, $key ) ) {
 			return false;
 		}
+		if ( self::confirmation_expired( $user_id ) ) {
+			self::$last_expired = true;
+			// Send a fresh link instead of leaving the user stuck.
+			self::issue_confirmation( $user_id );
+			return false;
+		}
 		delete_user_meta( $user_id, 'tsolo_email_confirm_key' );
+		delete_user_meta( $user_id, 'tsolo_email_confirm_time' );
 		$next = self::status_after_email_confirm( self::get_settings() );
 		if ( '' === $next ) {
 			delete_user_meta( $user_id, 'tsolo_moderation_status' );
@@ -233,9 +304,13 @@ class TSOLO_Mod_Moderation {
 		}
 		$user_id = absint( tsolo_get_request_text( 'user', 'get' ) );
 		if ( ! self::apply_email_confirm( $user_id, $key ) ) {
-			return;
+			$code = self::$last_expired ? 'expired_confirm' : 'invalid_confirm';
+			wp_safe_redirect( tsolo_add_query_arg( 'tsolo_error', $code, tsolo_get_action_url( 'login' ) ) );
+			exit;
 		}
-		wp_safe_redirect( add_query_arg( 'checkemail', 'confirm', tsolo_get_action_url( 'login' ) ) );
+		$after = self::status_after_email_confirm( self::get_settings() );
+		$flag  = ( '' === $after ) ? 'registered' : 'moderate';
+		wp_safe_redirect( tsolo_add_query_arg( 'checkemail', $flag, tsolo_get_action_url( 'login' ) ) );
 		exit;
 	}
 
@@ -250,8 +325,24 @@ class TSOLO_Mod_Moderation {
 		if ( $user_id < 1 ) {
 			return false;
 		}
+		$was_pending = 'pending_admin' === (string) get_user_meta( $user_id, 'tsolo_moderation_status', true );
 		delete_user_meta( $user_id, 'tsolo_moderation_status' );
 		delete_user_meta( $user_id, 'tsolo_email_confirm_key' );
+		delete_user_meta( $user_id, 'tsolo_email_confirm_time' );
+		if ( $was_pending && function_exists( 'tsolo_send_email' ) && apply_filters( 'tsolo_send_approval_email', true, $user_id ) ) {
+			$user = get_userdata( $user_id );
+			if ( $user && ! empty( $user->user_email ) ) {
+				$login = function_exists( 'tsolo_get_action_url' ) ? tsolo_get_action_url( 'login' ) : wp_login_url();
+				tsolo_send_email(
+					$user->user_email,
+					__( 'Your account has been approved', 'tso-login-organizer' ),
+					__( 'Your account has been approved', 'tso-login-organizer' ),
+					__( 'An administrator approved your account. You can now log in.', 'tso-login-organizer' ),
+					__( 'Log in', 'tso-login-organizer' ),
+					$login
+				);
+			}
+		}
 		return true;
 	}
 

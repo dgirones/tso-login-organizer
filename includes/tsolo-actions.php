@@ -170,7 +170,7 @@ function tsolo_action_has_page( $action = '' ) {
  * @return WP_Post[]
  */
 function tsolo_get_wp_pages_matching_slugs() {
-	$cached = wp_cache_get( 'pages', 'tso-login-organizer' );
+	$cached = get_transient( 'tsolo_pages_cache' );
 	if ( false !== $cached ) {
 		return is_array( $cached ) ? $cached : array();
 	}
@@ -277,8 +277,15 @@ function tsolo_get_wp_pages_matching_slugs() {
 		}
 	);
 
-	wp_cache_set( 'pages', $pages, 'tso-login-organizer' );
+	set_transient( 'tsolo_pages_cache', $pages, 10 * MINUTE_IN_SECONDS );
 	return $pages;
+}
+
+/**
+ * Forget the cached list of leftover login pages (page saved or deleted).
+ */
+function tsolo_flush_pages_cache() {
+	delete_transient( 'tsolo_pages_cache' );
 }
 
 /**
@@ -414,7 +421,8 @@ function tsolo_action_handler() {
 		return;
 	}
 
-	if ( force_ssl_admin() && ! is_ssl() ) {
+	// Upgrade to HTTPS only when the request is still plain HTTP (not TLS-terminated proxy).
+	if ( force_ssl_admin() && ! tsolo_request_is_ssl() ) {
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Used only for redirect path.
 		$host        = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
 		if ( 0 === strpos( $request_uri, 'http' ) ) {
@@ -440,6 +448,12 @@ function tsolo_action_handler() {
 	}
 
 	nocache_headers();
+	// Page caches (LiteSpeed, WP Super Cache, W3TC…) ignore nocache_headers(): tell them explicitly.
+	if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+		define( 'DONOTCACHEPAGE', true );
+	}
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- LiteSpeed Cache public API.
+	do_action( 'litespeed_control_set_nocache', 'TSO Login Organizer action page' );
 
 	$secure = ( 'https' === wp_parse_url( wp_login_url(), PHP_URL_SCHEME ) );
 	setcookie( TEST_COOKIE, 'WP Cookie check', 0, COOKIEPATH, COOKIE_DOMAIN, $secure );
@@ -562,6 +576,15 @@ function tsolo_login_handler() {
 		$errors->add( 'password_reset', __( 'Your password has been reset.', 'tso-login-organizer' ), 'message' );
 	}
 
+	$notice_code = tsolo_get_request_text( 'tsolo_error', 'get' );
+	if ( 'social_denied' === $notice_code ) {
+		$errors->add( 'social_denied', __( '<strong>Error:</strong> The social login was cancelled or not allowed by the provider.', 'tso-login-organizer' ) );
+	} elseif ( 'expired_confirm' === $notice_code ) {
+		$errors->add( 'expired_confirm', __( '<strong>Error:</strong> This confirmation link has expired. We have sent you a new one.', 'tso-login-organizer' ) );
+	} elseif ( 'invalid_confirm' === $notice_code ) {
+		$errors->add( 'invalid_confirm', __( '<strong>Error:</strong> This confirmation link is invalid or has already been used.', 'tso-login-organizer' ) );
+	}
+
 	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core wp_login_errors filter.
 	$errors = apply_filters( 'wp_login_errors', $errors, $redirect_to );
 	tsolo_set_errors( $errors );
@@ -588,7 +611,7 @@ function tsolo_logout_handler() {
 	$user = wp_get_current_user();
 	wp_logout();
 	if ( '' === $redirect_to ) {
-		$redirect_to = add_query_arg( 'loggedout', 'true', tsolo_get_action_url( 'login' ) );
+		$redirect_to = tsolo_add_query_arg( 'loggedout', 'true', tsolo_get_action_url( 'login' ) );
 	}
 	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core logout_redirect filter.
 	$redirect_to = apply_filters( 'logout_redirect', $redirect_to, tsolo_get_request_text( 'redirect_to', 'request' ), $user );
@@ -605,7 +628,7 @@ function tsolo_registration_handler() {
 		exit;
 	}
 	if ( ! get_option( 'users_can_register' ) ) {
-		wp_safe_redirect( add_query_arg( 'registration', 'disabled', tsolo_get_action_url( 'login' ) ) );
+		wp_safe_redirect( tsolo_add_query_arg( 'registration', 'disabled', tsolo_get_action_url( 'login' ) ) );
 		exit;
 	}
 
@@ -615,9 +638,12 @@ function tsolo_registration_handler() {
 		$user_email = tsolo_get_request_text( 'user_email', 'post' );
 		$result     = register_new_user( $user_login, $user_email );
 		if ( ! is_wp_error( $result ) ) {
-			$fallback = add_query_arg( 'checkemail', 'registered', tsolo_get_action_url( 'login' ) );
+			// $result is the ID of the account register_new_user() just created.
+			tsolo_set_new_user_password( (int) $result );
+			tsolo_handle_auto_login( (int) $result );
+			$fallback = tsolo_add_query_arg( 'checkemail', 'registered', tsolo_get_action_url( 'login' ) );
 			if ( class_exists( 'TSOLO_Mod_Moderation', false ) && TSOLO_Mod_Moderation::blocks_auto_login() ) {
-				$fallback = add_query_arg( 'checkemail', 'moderate', tsolo_get_action_url( 'login' ) );
+				$fallback = tsolo_add_query_arg( 'checkemail', 'moderate', tsolo_get_action_url( 'login' ) );
 			}
 			$redirect = apply_filters( 'tsolo_registration_redirect', $fallback, $result );
 			if ( tsolo_is_ajax_request() ) {
@@ -643,7 +669,7 @@ function tsolo_lost_password_handler() {
 	if ( tsolo_request_post_is_set( 'user_login' ) ) {
 		$result = retrieve_password();
 		if ( true === $result ) {
-			$redirect = add_query_arg( 'checkemail', 'confirm', tsolo_get_action_url( 'login' ) );
+			$redirect = tsolo_add_query_arg( 'checkemail', 'confirm', tsolo_get_action_url( 'login' ) );
 			if ( tsolo_is_ajax_request() ) {
 				tsolo_send_ajax_success( array( 'redirect' => $redirect ) );
 			}
@@ -652,7 +678,7 @@ function tsolo_lost_password_handler() {
 		}
 		$errors = is_wp_error( $result ) ? $result : new WP_Error( 'error', __( 'Unable to send reset email.', 'tso-login-organizer' ) );
 	}
-	if ( 'invalidkey' === tsolo_get_request_text( 'error', 'get' ) ) {
+	if ( 'invalidkey' === tsolo_get_request_text( 'tsolo_error', 'get' ) ) {
 		$errors->add( 'invalidkey', __( 'Your password reset link appears to be invalid.', 'tso-login-organizer' ) );
 	}
 	tsolo_set_errors( $errors );
@@ -665,17 +691,23 @@ function tsolo_lost_password_handler() {
  * Password reset handler.
  */
 function tsolo_password_reset_handler() {
-	list( $rp_path ) = explode( '?', wp_unslash( isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '' ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Cookie path only.
-	$rp_cookie       = 'wp-resetpass-' . COOKIEHASH;
+	// Cookie path comes from the plugin's own reset URL, never from the request.
+	$rp_path = (string) wp_parse_url( tsolo_get_action_url( 'resetpass' ), PHP_URL_PATH );
+	if ( '' === $rp_path ) {
+		$rp_path = COOKIEPATH;
+	}
+	$rp_cookie = 'wp-resetpass-' . COOKIEHASH;
 
-	if ( isset( $_GET['key'] ) && isset( $_GET['login'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Core reset flow.
-		$value = sprintf( '%s:%s', sanitize_user( wp_unslash( $_GET['login'] ) ), wp_unslash( $_GET['key'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended -- Core-compatible reset cookie.
-		setcookie( $rp_cookie, $value, 0, $rp_path, COOKIE_DOMAIN, is_ssl(), true );
-		wp_safe_redirect( remove_query_arg( array( 'key', 'login' ) ) );
+	$rp_get_key   = preg_replace( '/[^A-Za-z0-9]/', '', tsolo_get_request_text( 'key', 'get' ) );
+	$rp_get_login = sanitize_user( tsolo_get_request_text( 'login', 'get' ) );
+	if ( '' !== $rp_get_key && '' !== $rp_get_login ) {
+		// Core-compatible reset cookie (login:key); key is alphanumeric, login is sanitized.
+		setcookie( $rp_cookie, $rp_get_login . ':' . $rp_get_key, 0, $rp_path, COOKIE_DOMAIN, is_ssl(), true );
+		wp_safe_redirect( tsolo_remove_query_arg( array( 'key', 'login' ) ) );
 		exit;
 	}
 
-	$rp_cookie_value = isset( $_COOKIE[ $rp_cookie ] ) ? wp_unslash( $_COOKIE[ $rp_cookie ] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Core reset cookie format.
+	$rp_cookie_value = tsolo_get_cookie_text( $rp_cookie );
 	if ( $rp_cookie_value && 0 < strpos( $rp_cookie_value, ':' ) ) {
 		list( $rp_login, $rp_key ) = explode( ':', $rp_cookie_value, 2 );
 		$user                      = check_password_reset_key( $rp_key, $rp_login );
@@ -685,23 +717,26 @@ function tsolo_password_reset_handler() {
 
 	if ( ! $user || is_wp_error( $user ) ) {
 		setcookie( $rp_cookie, ' ', time() - YEAR_IN_SECONDS, $rp_path, COOKIE_DOMAIN, is_ssl(), true );
-		wp_safe_redirect( add_query_arg( 'error', 'invalidkey', tsolo_get_action_url( 'lostpassword' ) ) );
+		wp_safe_redirect( tsolo_add_query_arg( 'tsolo_error', 'invalidkey', tsolo_get_action_url( 'lostpassword' ) ) );
 		exit;
 	}
 
 	$errors = new WP_Error();
 	if ( tsolo_request_post_is_set( 'pass1' ) && tsolo_request_post_is_set( 'pass2' ) ) {
-		$pass1 = tsolo_get_request_text( 'pass1', 'post' );
-		$pass2 = tsolo_get_request_text( 'pass2', 'post' );
+		$pass1 = tsolo_get_request_password( 'pass1' );
+		$pass2 = tsolo_get_request_password( 'pass2' );
 		if ( $pass1 !== $pass2 ) {
 			$errors->add( 'password_reset_mismatch', __( 'The passwords do not match.', 'tso-login-organizer' ) );
+		}
+		if ( '' === $pass1 && ! $errors->has_errors() ) {
+			$errors->add( 'password_reset_empty', __( '<strong>Error:</strong> Please enter a password.', 'tso-login-organizer' ) );
 		}
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core validate_password_reset action.
 		do_action( 'validate_password_reset', $errors, $user );
 		if ( ! $errors->has_errors() && $pass1 ) {
 			reset_password( $user, $pass1 );
 			setcookie( $rp_cookie, ' ', time() - YEAR_IN_SECONDS, $rp_path, COOKIE_DOMAIN, is_ssl(), true );
-			wp_safe_redirect( add_query_arg( 'resetpass', 'complete', tsolo_get_action_url( 'login' ) ) );
+			wp_safe_redirect( tsolo_add_query_arg( 'resetpass', 'complete', tsolo_get_action_url( 'login' ) ) );
 			exit;
 		}
 	}

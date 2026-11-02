@@ -45,7 +45,10 @@ class TSOLO_Mod_Restrictions {
 	 */
 	private function __construct() {
 		add_action( 'template_redirect', array( $this, 'maybe_private_site' ), 1 );
+		add_action( 'template_redirect', array( $this, 'gate_singular' ), 2 );
+		add_filter( 'rest_authentication_errors', array( $this, 'private_site_rest' ), 20 );
 		add_filter( 'the_content', array( $this, 'filter_content' ), 20 );
+		add_filter( 'get_the_excerpt', array( $this, 'filter_excerpt' ), 20, 2 );
 		add_shortcode( 'tsolo-logged-in', array( $this, 'shortcode_logged_in' ) );
 		add_shortcode( 'tsolo-logged-out', array( $this, 'shortcode_logged_out' ) );
 		add_shortcode( 'tsolo-role', array( $this, 'shortcode_role' ) );
@@ -113,6 +116,37 @@ class TSOLO_Mod_Restrictions {
 		}
 		if ( function_exists( 'tsolo_is_action' ) && tsolo_is_action() ) {
 			return true;
+		}
+		return self::request_path_is_action_slug();
+	}
+
+	/**
+	 * Whether the request path is exactly one of the TSO action slugs.
+	 *
+	 * Fallback when rewrite rules are missing (404): without it a guest sent to
+	 * /login/ would be redirected to /login/ again, forever.
+	 *
+	 * @return bool
+	 */
+	public static function request_path_is_action_slug() {
+		if ( ! function_exists( 'tsolo_get_actions' ) || empty( $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+		$uri  = wp_unslash( $_SERVER['REQUEST_URI'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Path compared only.
+		$path = (string) wp_parse_url( (string) $uri, PHP_URL_PATH );
+		$base = (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH );
+		$path = strtolower( trim( $path, '/' ) );
+		$base = strtolower( trim( $base, '/' ) );
+		if ( '' !== $base && 0 === strpos( $path, $base ) ) {
+			$path = trim( substr( $path, strlen( $base ) ), '/' );
+		}
+		if ( '' === $path ) {
+			return false;
+		}
+		foreach ( tsolo_get_actions() as $action ) {
+			if ( $path === $action->get_slug() ) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -197,16 +231,77 @@ class TSOLO_Mod_Restrictions {
 	}
 
 	/**
+	 * Private site: do not leak content through the REST API to guests.
+	 *
+	 * @param WP_Error|null|true $result Existing authentication result.
+	 * @return WP_Error|null|true
+	 */
+	public function private_site_rest( $result ) {
+		if ( ! empty( $result ) || is_user_logged_in() ) {
+			return $result;
+		}
+		$s = self::get_settings();
+		if ( empty( $s['private_site'] ) ) {
+			return $result;
+		}
+		if ( ! apply_filters( 'tsolo_private_site_block_rest', true ) ) {
+			return $result;
+		}
+		return new WP_Error( 'tsolo_rest_private', __( 'You must be logged in to access this site.', 'tso-login-organizer' ), array( 'status' => 401 ) );
+	}
+
+	/**
+	 * Role-restricted singular posts: guests go to the login page, other users get a 403.
+	 *
+	 * This hides the title, comments and metadata too, not only the content.
+	 * Return false from the tsolo_restrictions_hard_gate filter to keep the inline login prompt only.
+	 */
+	public function gate_singular() {
+		if ( ! is_singular() || ( function_exists( 'tsolo_is_action' ) && tsolo_is_action() ) || ! apply_filters( 'tsolo_restrictions_hard_gate', true ) ) {
+			return;
+		}
+		$post_id = (int) get_queried_object_id();
+		if ( $post_id < 1 ) {
+			return;
+		}
+		$roles = self::sanitize_roles( get_post_meta( $post_id, self::META_ROLES, true ) );
+		if ( empty( $roles ) ) {
+			return;
+		}
+		$user = is_user_logged_in() ? wp_get_current_user() : null;
+		if ( self::user_can_view_roles( $roles, $user ) ) {
+			return;
+		}
+		if ( ! is_user_logged_in() ) {
+			wp_safe_redirect( wp_login_url( get_permalink( $post_id ) ) );
+			exit;
+		}
+		wp_die( esc_html__( 'You do not have permission to view this content.', 'tso-login-organizer' ), '', array( 'response' => 403 ) );
+	}
+
+	/**
+	 * Post types that get the restrict-by-role box.
+	 *
+	 * @return string[]
+	 */
+	public static function restricted_post_types() {
+		$types = get_post_types( array( 'public' => true ), 'names' );
+		$types = is_array( $types ) ? array_values( array_diff( $types, array( 'attachment' ) ) ) : array( 'post', 'page' );
+		return (array) apply_filters( 'tsolo_restrictions_post_types', $types );
+	}
+
+	/**
 	 * Restrict singular content by role meta.
 	 *
 	 * @param string $content Content.
 	 * @return string
 	 */
 	public function filter_content( $content ) {
-		if ( ! is_singular() ) {
+		$post_id = get_the_ID();
+		if ( ! $post_id ) {
 			return $content;
 		}
-		$roles = get_post_meta( get_the_ID(), self::META_ROLES, true );
+		$roles = get_post_meta( $post_id, self::META_ROLES, true );
 		$roles = self::sanitize_roles( $roles );
 		if ( empty( $roles ) ) {
 			return $content;
@@ -216,9 +311,30 @@ class TSOLO_Mod_Restrictions {
 			return $content;
 		}
 		if ( ! is_user_logged_in() ) {
-			return '<p>' . esc_html__( 'Please log in to view this content.', 'tso-login-organizer' ) . '</p>' . tsolo_render_form( 'login', array( 'show_links' => true ) );
+			$form = is_singular() ? tsolo_render_form( 'login', array( 'show_links' => true ) ) : '';
+			return '<p>' . esc_html__( 'Please log in to view this content.', 'tso-login-organizer' ) . '</p>' . $form;
 		}
 		return '<p>' . esc_html__( 'You do not have permission to view this content.', 'tso-login-organizer' ) . '</p>';
+	}
+
+	/**
+	 * Hide excerpts of role-restricted posts from users who may not read them.
+	 *
+	 * @param string       $excerpt Excerpt.
+	 * @param WP_Post|null $post    Post.
+	 * @return string
+	 */
+	public function filter_excerpt( $excerpt, $post = null ) {
+		$post_id = ( $post instanceof WP_Post ) ? $post->ID : get_the_ID();
+		if ( ! $post_id ) {
+			return $excerpt;
+		}
+		$roles = self::sanitize_roles( get_post_meta( $post_id, self::META_ROLES, true ) );
+		if ( empty( $roles ) ) {
+			return $excerpt;
+		}
+		$user = is_user_logged_in() ? wp_get_current_user() : null;
+		return self::user_can_view_roles( $roles, $user ) ? $excerpt : '';
 	}
 
 	/**
@@ -281,7 +397,7 @@ class TSOLO_Mod_Restrictions {
 	 * Meta box on posts and pages.
 	 */
 	public function register_meta_box() {
-		foreach ( array( 'post', 'page' ) as $type ) {
+		foreach ( self::restricted_post_types() as $type ) {
 			add_meta_box(
 				'tsolo-restrict-roles',
 				__( 'TSO Login Organizer — restrict by role', 'tso-login-organizer' ),
@@ -324,15 +440,11 @@ class TSOLO_Mod_Restrictions {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
-		$nonce = isset( $_POST['tsolo_restrict_roles_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['tsolo_restrict_roles_nonce'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified below.
+		$nonce = tsolo_get_request_text( 'tsolo_restrict_roles_nonce', 'post' );
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'tsolo_restrict_roles_' . $post_id ) ) {
 			return;
 		}
-		$raw = array();
-		if ( isset( $_POST['tsolo_restrict_roles'] ) && is_array( $_POST['tsolo_restrict_roles'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified above.
-			$raw = map_deep( wp_unslash( $_POST['tsolo_restrict_roles'] ), 'sanitize_text_field' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized via map_deep + sanitize_roles.
-		}
-		$roles = self::sanitize_roles( $raw );
+		$roles = self::sanitize_roles( tsolo_get_request_post_array( 'tsolo_restrict_roles' ) );
 		if ( empty( $roles ) ) {
 			delete_post_meta( $post_id, self::META_ROLES );
 		} else {

@@ -178,8 +178,15 @@ class TSOLO_Mod_Redirection {
 	 * @return string
 	 */
 	public function login_redirect( $redirect_to, $requested, $user ) {
-		unset( $requested );
 		if ( is_wp_error( $user ) || ! ( $user instanceof WP_User ) || empty( $user->ID ) ) {
+			return $redirect_to;
+		}
+		// An explicit redirect_to (e.g. from a restricted page) wins over the configured default, unless it is the bare wp-admin default.
+		$requested = is_string( $requested ) ? trim( $requested ) : '';
+		if ( '' !== $requested
+			&& untrailingslashit( $requested ) !== untrailingslashit( admin_url() )
+			&& apply_filters( 'tsolo_redirection_respect_requested', true, $requested, $user )
+		) {
 			return $redirect_to;
 		}
 		return self::resolve_for( 'login', $user, $redirect_to );

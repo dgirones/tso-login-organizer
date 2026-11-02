@@ -170,15 +170,15 @@ function tsolo_get_slug_labels() {
  */
 function tsolo_get_slug_helps() {
 	return array(
-		'login'         => __( 'Virtual sign-in URL (example: yoursite.com/login/). No WordPress page needed.', 'tso-login-organizer' ),
-		'logout'        => __( 'Virtual logout URL (menus and links). No WordPress page needed.', 'tso-login-organizer' ),
-		'register'      => __( 'Virtual registration URL (only if "Anyone can register" is on).', 'tso-login-organizer' ),
+		'login'         => __( 'Virtual sign-in URL (example: yoursite.com/login/).', 'tso-login-organizer' ),
+		'logout'        => __( 'Virtual logout URL (menus and links).', 'tso-login-organizer' ),
+		'register'      => __( "Virtual registration URL.\nOnly if \"Anyone can register\" is on.", 'tso-login-organizer' ),
 		'lostpassword'  => __( 'Virtual forgot-password URL.', 'tso-login-organizer' ),
 		'resetpass'     => __( 'Virtual page opened from the reset link in the email.', 'tso-login-organizer' ),
 		'dashboard'     => __( 'Virtual account dashboard for logged-in users.', 'tso-login-organizer' ),
 		'confirmaction' => __( 'Virtual confirm URL for personal-data export/erase requests (WordPress privacy tools).', 'tso-login-organizer' ),
-		'profile'       => __( 'Virtual frontend profile URL (requires Profiles module).', 'tso-login-organizer' ),
-		'favorites'     => __( 'Virtual favorites URL (requires Favorites module).', 'tso-login-organizer' ),
+		'profile'       => __( 'Virtual frontend profile URL.', 'tso-login-organizer' ),
+		'favorites'     => __( 'Virtual favorites URL.', 'tso-login-organizer' ),
 	);
 }
 
@@ -399,7 +399,20 @@ function tsolo_admin_handle_post() {
 		$imported = tsolo_import_tml_settings( true );
 		if ( 'imported' === $imported ) {
 			tsolo_request_rewrite_flush();
-			tsolo_admin_set_flash( __( 'Theme My Login settings imported.', 'tso-login-organizer' ), 'success' );
+			$hint_keys = tsolo_tml_pending_module_hints();
+			if ( $hint_keys ) {
+				$labels = tsolo_tml_suggested_module_labels( $hint_keys );
+				tsolo_admin_set_flash(
+					sprintf(
+						/* translators: %s: comma-separated module names (Profiles, Favorites). */
+						__( 'Theme My Login settings imported. Enable these modules under Modules so the imported URLs work: %s.', 'tso-login-organizer' ),
+						implode( ', ', $labels )
+					),
+					'warning'
+				);
+			} else {
+				tsolo_admin_set_flash( __( 'Theme My Login settings imported.', 'tso-login-organizer' ), 'success' );
+			}
 		} else {
 			tsolo_admin_set_flash( __( 'No Theme My Login settings were found, so nothing was changed.', 'tso-login-organizer' ), 'warning' );
 		}
@@ -414,6 +427,7 @@ function tsolo_admin_handle_post() {
 			'registration_type' => tsolo_get_admin_post_text( 'registration_type', 'default' ),
 			'user_passwords'    => tsolo_admin_post_is_set( 'user_passwords' ) ? 1 : 0,
 			'auto_login'        => tsolo_admin_post_is_set( 'auto_login' ) ? 1 : 0,
+			'delete_data'       => tsolo_admin_post_is_set( 'delete_data' ) ? 1 : 0,
 			'texts'             => tsolo_get_admin_post_array( 'texts' ),
 			'branding'          => array(
 				'logo_url'       => tsolo_get_admin_post_text( 'branding_logo_url' ),
@@ -429,7 +443,9 @@ function tsolo_admin_handle_post() {
 			update_option( 'users_can_register', 0 );
 		}
 		$role = sanitize_key( tsolo_get_admin_post_text( 'default_role', get_option( 'default_role', 'subscriber' ) ) );
-		if ( $role && get_role( $role ) ) {
+		// Only roles this admin is allowed to assign (same list as Settings > General).
+		$editable_roles = function_exists( 'get_editable_roles' ) ? get_editable_roles() : null;
+		if ( $role && get_role( $role ) && ( null === $editable_roles || isset( $editable_roles[ $role ] ) ) ) {
 			update_option( 'default_role', $role );
 		}
 		tsolo_request_rewrite_flush();
@@ -453,6 +469,7 @@ function tsolo_admin_handle_post() {
 			}
 		}
 		tsolo_update_modules( $mods );
+		tsolo_tml_pending_module_hints();
 		tsolo_request_rewrite_flush();
 		if ( $collide ) {
 			tsolo_admin_set_flash(
@@ -510,8 +527,8 @@ function tsolo_admin_print_flash() {
 	} elseif ( 'error' === $type ) {
 		$class = 'notice-error';
 	}
-	// inline + data-tsoan-keep: stay visible with TSO Admin Notices (non-inline "untagged" notices are hidden after F5).
-	echo '<div class="notice inline ' . esc_attr( $class ) . ' is-dismissible tsolo-admin-flash" data-tsoan-keep="1"><p>' . esc_html( $notice['message'] ) . '</p></div>';
+	// inline: works with TSO Admin Notices. Auto-hides via JS (tsolo-admin-flash).
+	echo '<div class="notice inline ' . esc_attr( $class ) . ' is-dismissible tsolo-admin-flash"><p>' . esc_html( $notice['message'] ) . '</p></div>';
 }
 
 /**
@@ -553,6 +570,9 @@ function tsolo_admin_save_module_settings( $module ) {
 		foreach ( $bool_keys[ $module ] as $bk ) {
 			$data[ $bk ] = ! empty( $data[ $bk ] ) ? 1 : 0;
 		}
+	}
+	if ( 'security' === $module ) {
+		$data['ip_whitelist'] = tsolo_get_admin_post_textarea( 'mod_ip_whitelist' );
 	}
 	if ( 'notifications' === $module ) {
 		$data['new_user_body'] = tsolo_get_admin_post_textarea( 'mod_new_user_body' );
@@ -621,7 +641,10 @@ function tsolo_admin_render_page() {
 	$lang = tsolo_get_ui_lang();
 	tsolo_apply_admin_ui_locale( $lang );
 
-	$tab         = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'core'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tab navigation.
+	$tab = sanitize_key( tsolo_get_admin_query_arg( 'tab', 'core' ) );
+	if ( '' === $tab ) {
+		$tab = 'core';
+	}
 	$settings    = tsolo_get_settings();
 	$modules     = tsolo_get_modules();
 	$defs        = tsolo_get_module_definitions();
@@ -637,12 +660,7 @@ function tsolo_admin_render_page() {
 	$lang_url_ca  = wp_nonce_url( add_query_arg( TSOLO_ADMIN_QUERY_SET_LANG, 'ca', $lang_base ), TSOLO_ADMIN_QUERY_SET_LANG );
 	$lang_url_es  = wp_nonce_url( add_query_arg( TSOLO_ADMIN_QUERY_SET_LANG, 'es', $lang_base ), TSOLO_ADMIN_QUERY_SET_LANG );
 	$lang_url_en  = wp_nonce_url( add_query_arg( TSOLO_ADMIN_QUERY_SET_LANG, 'en', $lang_base ), TSOLO_ADMIN_QUERY_SET_LANG );
-	$donate_label = tsolo_ui_triple_text(
-		$lang,
-		'☕ Dona suport al plugin',
-		'☕ Apoya este plugin',
-		'☕ Support this plugin'
-	);
+	$donate_label = __( '☕ Support this plugin', 'tso-login-organizer' );
 	?>
 	<div class="wrap tsolo-admin-wrap" id="tsolo-wrap" data-theme="day" data-theme-pref="auto">
 		<div class="tsolo-nav-top">
@@ -653,7 +671,7 @@ function tsolo_admin_render_page() {
 			<div class="tsolo-nav-meta">
 				<?php tsolo_render_theme_toggle( $lang ); ?>
 				<a class="tsolo-donate-btn" href="<?php echo esc_url( tsolo_get_kofi_donate_url() ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $donate_label ); ?></a>
-				<div class="tsolo-lang-switch" aria-label="<?php echo esc_attr( tsolo_ui_triple_text( $lang, 'Idioma de la interfície', 'Idioma de la interfaz', 'Interface language' ) ); ?>">
+				<div class="tsolo-lang-switch" aria-label="<?php echo esc_attr__( 'Interface language', 'tso-login-organizer' ); ?>">
 					<span class="tsolo-lang-globe" aria-hidden="true">🌐</span>
 					<a href="<?php echo esc_url( $lang_url_ca ); ?>" class="tsolo-lang-btn<?php echo 'ca' === $lang ? ' is-active' : ''; ?>">CA</a>
 					<a href="<?php echo esc_url( $lang_url_es ); ?>" class="tsolo-lang-btn<?php echo 'es' === $lang ? ' is-active' : ''; ?>">ES</a>
@@ -684,7 +702,11 @@ function tsolo_admin_render_page() {
 			<?php endif; ?>
 		<?php tsolo_admin_print_flash(); ?>
 		<?php if ( $collisions ) : ?>
-			<div class="notice inline notice-warning tsolo-collision-notice" data-tsoan-keep="1"><p>
+			<?php
+			$collision_tabs = array( 'modules', 'security', 'captcha', 'two_factor' );
+			$collision_show = in_array( $tab, $collision_tabs, true );
+			?>
+			<div class="notice inline notice-warning tsolo-collision-notice"<?php echo $collision_show ? '' : ' hidden style="display:none"'; ?>><p>
 				<?php
 				echo esc_html(
 					sprintf(
@@ -707,7 +729,7 @@ function tsolo_admin_render_page() {
 						<th scope="row"><?php esc_html_e( 'Forms', 'tso-login-organizer' ); ?></th>
 						<td>
 							<label><input type="checkbox" name="ajax" value="1" <?php checked( ! empty( $settings['ajax'] ) ); ?> /> <?php esc_html_e( 'Send login, registration and password forms without reloading the whole page', 'tso-login-organizer' ); ?></label>
-							<p class="description tsolo-option-help"><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'With this on, the visitor stays on the same screen and only the form updates (this is called AJAX). With this off, the browser loads the page again after each submit. Turn it off if another plugin already updates these forms in place.', 'tso-login-organizer' ) ) ); ?></p>
+							<p class="description tsolo-option-help tsolo-help-multiline"><?php echo wp_kses_post( tsolo_admin_emphasize( __( "Enabled: the visitor stays on the same screen and only the form updates (AJAX).\nDisabled: the browser reloads the page. Turn it off if another plugin already updates these forms in place.", 'tso-login-organizer' ) ) ); ?></p>
 						</td>
 					</tr>
 					<?php if ( ! is_multisite() ) : ?>
@@ -760,6 +782,13 @@ function tsolo_admin_render_page() {
 						</td>
 					</tr>
 					<tr>
+						<th scope="row"><?php esc_html_e( 'Plugin data', 'tso-login-organizer' ); ?></th>
+						<td>
+							<label><input type="checkbox" name="delete_data" value="1" <?php checked( ! empty( $settings['delete_data'] ) ); ?> /> <?php esc_html_e( 'Delete all plugin data when the plugin is deleted', 'tso-login-organizer' ); ?></label>
+							<p class="description"><?php esc_html_e( 'Settings, two-factor keys, linked social accounts, avatars and favorites. Leave unchecked to keep them if you reinstall.', 'tso-login-organizer' ); ?></p>
+						</td>
+					</tr>
+					<tr>
 						<th scope="row"><?php esc_html_e( 'Default role', 'tso-login-organizer' ); ?></th>
 						<td>
 							<?php
@@ -782,7 +811,7 @@ function tsolo_admin_render_page() {
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Form texts', 'tso-login-organizer' ); ?></th>
 						<td>
-							<p class="description tsolo-option-help"><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Leave a field empty to keep the built-in label. These strings only change this plugin’s frontend forms.', 'tso-login-organizer' ) ) ); ?></p>
+							<p class="description tsolo-option-help"><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Optional. These replace the heading above each form and the submit button label on this plugin’s login, register, lost-password and reset-password pages (not wp-admin). Leave a box empty to keep the built-in text.', 'tso-login-organizer' ) ) ); ?></p>
 							<p><label for="tsolo-text-login-heading"><?php esc_html_e( 'Login heading', 'tso-login-organizer' ); ?></label><br />
 							<input id="tsolo-text-login-heading" class="regular-text" type="text" name="texts[login_heading]" value="<?php echo esc_attr( isset( $texts['login_heading'] ) ? $texts['login_heading'] : '' ); ?>" /></p>
 							<p><label for="tsolo-text-login-button"><?php esc_html_e( 'Login button', 'tso-login-organizer' ); ?></label><br />
@@ -852,9 +881,12 @@ function tsolo_admin_render_page() {
 							?>
 							<tr>
 								<td class="tsolo-slug-label" data-label="<?php echo esc_attr( $col_action ); ?>">
-									<strong><?php echo esc_html( $label ); ?></strong>
+									<strong class="tsolo-slug-title"><?php echo esc_html( $label ); ?></strong>
 									<?php if ( $help ) : ?>
-										<span class="description"><?php echo wp_kses_post( tsolo_admin_emphasize( $help ) ); ?></span>
+										<span class="description tsolo-help-multiline"><?php echo wp_kses_post( tsolo_admin_emphasize( $help ) ); ?></span>
+									<?php endif; ?>
+									<?php if ( ! $action_live ) : ?>
+										<span class="description tsolo-slug-disabled"><?php esc_html_e( 'Disabled', 'tso-login-organizer' ); ?></span>
 									<?php endif; ?>
 								</td>
 								<td class="tsolo-slug-input" data-label="<?php echo esc_attr( $col_slug ); ?>">
@@ -864,7 +896,7 @@ function tsolo_admin_render_page() {
 									<?php if ( $action_live ) : ?>
 										<span class="description"><?php esc_html_e( 'Virtual (active)', 'tso-login-organizer' ); ?></span>
 									<?php else : ?>
-										<span class="description"><?php esc_html_e( 'Virtual (enable module)', 'tso-login-organizer' ); ?></span>
+										<span class="description"><?php esc_html_e( 'Disabled', 'tso-login-organizer' ); ?></span>
 									<?php endif; ?>
 								</td>
 								<td class="tsolo-slug-preview" data-label="<?php echo esc_attr( $col_preview ); ?>">
@@ -938,27 +970,78 @@ function tsolo_admin_render_page() {
 					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Whether registration asks for username and email, or email only.', 'tso-login-organizer' ) ) ); ?></li>
 					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Whether new users choose their own password, or WordPress emails a generated one.', 'tso-login-organizer' ) ) ); ?></li>
 					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Whether a new account is signed in immediately after registration.', 'tso-login-organizer' ) ) ); ?></li>
-					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'The address slugs for login, logout, register, lost password, reset password, dashboard and confirm-action.', 'tso-login-organizer' ) ) ); ?></li>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'All address slugs Theme My Login had configured (login, logout, register, lost password, reset password, dashboard, confirm-action, and profile / favorites when present), using the same names.', 'tso-login-organizer' ) ) ); ?></li>
 				</ul>
 				<p><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Extensions, email designs, widgets, menus and the WordPress pages Theme My Login created are not copied. Those pages can be moved to the trash; the addresses keep working here as virtual pages. The shortcode [theme-my-login] already works with this plugin.', 'tso-login-organizer' ) ) ); ?></p>
+				<p><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Optional modules (Profiles, Favorites, and others) are not turned on automatically. If Theme My Login used profile or favorites pages, enable the matching modules under Modules after import so those URLs work.', 'tso-login-organizer' ) ) ); ?></p>
 				<h3><?php esc_html_e( 'When to deactivate Theme My Login', 'tso-login-organizer' ); ?></h3>
 				<p><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Either moment works for the copy. The saved options remain if Theme My Login is still active and also if you already deactivated it. Leave it active until you have opened the new addresses and they look right, then deactivate it. If both plugins stay active they can fight over the same login addresses.', 'tso-login-organizer' ) ) ); ?></p>
 				<h3><?php esc_html_e( 'After the import', 'tso-login-organizer' ); ?></h3>
 				<ol>
 					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Keep friendly permalinks (not Plain). Use the check below.', 'tso-login-organizer' ) ) ); ?></li>
 					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Move the old Theme My Login pages to the trash if they are listed below. This plugin already serves those addresses.', 'tso-login-organizer' ) ) ); ?></li>
+					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'If the import suggests Profiles or Favorites, enable those modules under Modules.', 'tso-login-organizer' ) ) ); ?></li>
 					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Open each virtual URL from Core → URL slugs and confirm the form loads.', 'tso-login-organizer' ) ) ); ?></li>
 					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Update menus and links that still point at the old pages.', 'tso-login-organizer' ) ) ); ?></li>
 					<li><?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Deactivate Theme My Login.', 'tso-login-organizer' ) ) ); ?></li>
 				</ol>
 			</div>
+			<?php
+			if ( tsolo_tml_plugin_is_active() ) :
+				?>
+				<div class="notice notice-error inline"><p>
+					<?php echo wp_kses_post( tsolo_admin_emphasize( __( 'Theme My Login is still active. Import is safe, but both plugins can fight over the same login addresses until you deactivate Theme My Login.', 'tso-login-organizer' ) ) ); ?>
+				</p></div>
+			<?php endif; ?>
+			<?php
+			$tml_hints = tsolo_tml_pending_module_hints();
+			if ( $tml_hints ) :
+				$tml_hint_labels = tsolo_tml_suggested_module_labels( $tml_hints );
+				?>
+				<div class="notice notice-warning inline"><p>
+					<?php
+					echo esc_html(
+						sprintf(
+							/* translators: %s: comma-separated module names (Profiles, Favorites). */
+							__( 'After importing Theme My Login, enable these modules under Modules so the imported profile / favorites URLs work: %s.', 'tso-login-organizer' ),
+							implode( ', ', $tml_hint_labels )
+						)
+					);
+					?>
+				</p></div>
+			<?php endif; ?>
 			<p><?php echo tsolo_tml_options_present() ? esc_html__( 'TML options detected on this site.', 'tso-login-organizer' ) : esc_html__( 'No TML options detected (you can still use this plugin with its own defaults).', 'tso-login-organizer' ); ?></p>
+			<?php
+			$tml_imported_at = absint( get_option( TSOLO_OPT_TML_IMPORTED, 0 ) );
+			if ( $tml_imported_at > 0 ) :
+				$imported_label = function_exists( 'wp_date' )
+					? wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $tml_imported_at )
+					: date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $tml_imported_at );
+				?>
+				<p class="description">
+					<?php
+					echo esc_html(
+						sprintf(
+							/* translators: %s: localized date and time of the last import. */
+							__( 'Last import: %s. Running import again overwrites matching core settings (AJAX, login type, registration, passwords, auto login, and slugs) with Theme My Login values.', 'tso-login-organizer' ),
+							$imported_label
+						)
+					);
+					?>
+				</p>
+			<?php endif; ?>
 			<?php tsolo_admin_render_virtual_pages_notice(); ?>
 			<?php tsolo_admin_render_permalink_status(); ?>
 			<form method="post">
 				<?php wp_nonce_field( TSOLO_NONCE_FORM ); ?>
 				<input type="hidden" name="tsolo_admin_action" value="import_tml" />
-				<?php submit_button( __( 'Import Theme My Login settings', 'tso-login-organizer' ) ); ?>
+				<?php
+				submit_button(
+					$tml_imported_at > 0
+						? __( 'Re-import Theme My Login settings', 'tso-login-organizer' )
+						: __( 'Import Theme My Login settings', 'tso-login-organizer' )
+				);
+				?>
 			</form>
 			</section>
 
@@ -1133,13 +1216,31 @@ function tsolo_admin_render_module_tab( $module, $def = array() ) {
 		echo '<tr><th scope="row">' . wp_kses_post( tsolo_admin_emphasize( __( 'Lockout minutes', 'tso-login-organizer' ) ) ) . '</th><td><input type="number" name="mod[lockout_minutes]" value="' . esc_attr( $s['lockout_minutes'] ) . '" min="1" /><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'How long the lockout lasts.', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
 		echo '<tr><th scope="row">' . wp_kses_post( tsolo_admin_emphasize( __( 'Min password length', 'tso-login-organizer' ) ) ) . '</th><td><input type="number" name="mod[password_min_length]" value="' . esc_attr( $s['password_min_length'] ) . '" min="0" /><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Minimum characters when users choose a password (0 = no extra rule).', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
 		echo '<tr><th scope="row">' . wp_kses_post( tsolo_admin_emphasize( __( 'Hide wp-login.php', 'tso-login-organizer' ) ) ) . '</th><td><label><input type="checkbox" name="mod[hide_wp_login]" value="1" ' . checked( ! empty( $s['hide_wp_login'] ), true, false ) . ' /> ' . wp_kses_post( tsolo_admin_emphasize( __( 'Return 404 on wp-login.php', 'tso-login-organizer' ) ) ) . '</label><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Do not combine with Swiss Knife custom login URL or other plugins that rename wp-login.php.', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
+		$ip_labels = array(
+			'remote_addr' => __( 'Server address (REMOTE_ADDR) — default', 'tso-login-organizer' ),
+			'cf'          => __( 'Cloudflare (CF-Connecting-IP)', 'tso-login-organizer' ),
+			'xff'         => __( 'X-Forwarded-For (first address)', 'tso-login-organizer' ),
+			'real'        => __( 'X-Real-IP', 'tso-login-organizer' ),
+		);
+		echo '<tr><th scope="row">' . esc_html__( 'Visitor IP source', 'tso-login-organizer' ) . '</th><td><select name="mod[ip_header]">';
+		foreach ( $ip_labels as $ip_key => $ip_label ) {
+			echo '<option value="' . esc_attr( $ip_key ) . '" ' . selected( $s['ip_header'], $ip_key, false ) . '>' . esc_html( $ip_label ) . '</option>';
+		}
+		echo '</select><p class="description tsolo-option-help">' . esc_html__( 'Behind Cloudflare or another proxy every visitor can look like the same IP, so one attacker could lock everyone out. Pick the header your proxy sets. Only choose a header your server really overwrites.', 'tso-login-organizer' ) . ' ' . esc_html(
+			sprintf(
+				/* translators: %s: IP address detected for the current request */
+				__( 'Detected IP for your current request: %s', 'tso-login-organizer' ),
+				TSOLO_Mod_Security::client_ip()
+			)
+		) . '</p></td></tr>';
+		echo '<tr><th scope="row">' . esc_html__( 'Always allowed IPs', 'tso-login-organizer' ) . '</th><td><textarea class="large-text code" rows="3" name="mod_ip_whitelist">' . esc_textarea( $s['ip_whitelist'] ) . '</textarea><p class="description tsolo-option-help">' . esc_html__( 'One IP or IPv4 range (example 203.0.113.0/24) per line. These IPs are never locked out. Add your own IP here.', 'tso-login-organizer' ) . '</p></td></tr>';
 		echo '</table>';
 	} elseif ( 'captcha' === $module ) {
 		$s = TSOLO_Mod_Captcha::get_settings();
 		echo '<p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Pick a provider, create keys for your domain, then paste both values here.', 'tso-login-organizer' ) ) ) . ' ';
-		echo tsolo_admin_blank_link( 'https://www.google.com/recaptcha/admin', __( 'Google reCAPTCHA', 'tso-login-organizer' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in helper.
+		echo tsolo_admin_blank_link( 'https://www.google.com/recaptcha/admin', __( 'Google reCAPTCHA', 'tso-login-organizer' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Escaped in helper; provider console docs link (readme External services).
 		echo ' · ';
-		echo tsolo_admin_blank_link( 'https://dash.cloudflare.com/?to=/:account/turnstile', __( 'Cloudflare Turnstile', 'tso-login-organizer' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in helper.
+		echo tsolo_admin_blank_link( 'https://dash.cloudflare.com/?to=/:account/turnstile', __( 'Cloudflare Turnstile', 'tso-login-organizer' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Escaped in helper; provider console docs link (readme External services).
 		echo '</p>';
 		echo '<table class="form-table" role="presentation">';
 		echo '<tr><th scope="row">' . esc_html__( 'Provider', 'tso-login-organizer' ) . '</th><td>';
@@ -1152,7 +1253,7 @@ function tsolo_admin_render_module_tab( $module, $def = array() ) {
 		}
 		echo '</td></tr>';
 		echo '<tr><th scope="row">' . wp_kses_post( tsolo_admin_emphasize( __( 'Site key', 'tso-login-organizer' ) ) ) . '</th><td><input class="regular-text" type="text" name="mod[site_key]" value="' . esc_attr( $s['site_key'] ) . '" autocomplete="off" /><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Public key from the provider console.', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
-		echo '<tr><th scope="row">' . wp_kses_post( tsolo_admin_emphasize( __( 'Secret key', 'tso-login-organizer' ) ) ) . '</th><td><input class="regular-text" type="text" name="mod[secret_key]" value="' . esc_attr( $s['secret_key'] ) . '" autocomplete="off" /><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Private key used server-side to verify tokens. Leave empty and keep the module off if another captcha plugin already protects forms.', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
+		echo '<tr><th scope="row">' . wp_kses_post( tsolo_admin_emphasize( __( 'Secret key', 'tso-login-organizer' ) ) ) . '</th><td><input class="regular-text" type="password" name="mod[secret_key]" value="' . esc_attr( $s['secret_key'] ) . '" autocomplete="new-password" /><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Private key used server-side to verify tokens. Leave empty and keep the module off if another captcha plugin already protects forms.', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
 		echo '<tr><th scope="row">' . esc_html__( 'reCAPTCHA v3 min score', 'tso-login-organizer' ) . '</th><td><input type="number" name="mod[score]" value="' . esc_attr( (string) $s['score'] ) . '" min="0" max="1" step="0.05" /><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Only used with v3. 0.0 is permissive; 1.0 is strict. Default 0.5.', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
 		echo '</table>';
 	} elseif ( 'fields' === $module ) {
@@ -1171,7 +1272,7 @@ function tsolo_admin_render_module_tab( $module, $def = array() ) {
 		echo '<tr><th scope="row">' . wp_kses_post( tsolo_admin_emphasize( __( 'Private site', 'tso-login-organizer' ) ) ) . '</th><td><label><input type="checkbox" name="mod[private_site]" value="1" ' . checked( ! empty( $s['private_site'] ), true, false ) . ' /> ' . wp_kses_post( tsolo_admin_emphasize( __( 'Require login for all pages', 'tso-login-organizer' ) ) ) . '</label><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Guests are redirected to the login page. Login, register and password URLs stay public.', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
 		echo '</table>';
 		echo '<h3>' . esc_html__( 'Shortcodes', 'tso-login-organizer' ) . '</h3>';
-		echo '<p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Paste a shortcode into the content of a post or a page. In the block editor, add a Shortcode block and paste the whole snippet, including the closing tag. In the classic editor, paste it in the text. The words between the opening tag and the closing tag are the part that is shown or hidden. Text outside the shortcode stays visible to everyone. These tags do nothing in a menu or in a widget unless that area runs shortcodes.', 'tso-login-organizer' ) ) ) . '</p>';
+		echo '<p class="description tsolo-option-help tsolo-help-fullwidth">' . wp_kses_post( tsolo_admin_emphasize( __( 'Paste a shortcode into a post or page. Block editor: Shortcode block. Classic editor: paste in the text. Content between the tags is shown or hidden; text outside stays visible to everyone. Menus and widgets ignore these unless they run shortcodes.', 'tso-login-organizer' ) ) ) . '</p>';
 		echo '<p class="description tsolo-option-help"><strong>' . wp_kses_post( tsolo_admin_emphasize( __( 'Example: a note only members see', 'tso-login-organizer' ) ) ) . '</strong></p>';
 		echo '<code class="tsolo-shortcode-example">' . esc_html( "[tsolo-logged-in]\n" . __( 'Welcome back. Your downloads are on this page.', 'tso-login-organizer' ) . "\n[/tsolo-logged-in]" ) . '</code>';
 		echo '<p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Guests see nothing from that block. Logged-in users see the sentence.', 'tso-login-organizer' ) ) ) . '</p>';
@@ -1192,7 +1293,7 @@ function tsolo_admin_render_module_tab( $module, $def = array() ) {
 		echo '<table class="form-table" role="presentation">';
 		echo '<tr><th scope="row">' . esc_html__( 'HTML emails', 'tso-login-organizer' ) . '</th><td><label><input type="checkbox" name="mod[html]" value="1" ' . checked( ! empty( $s['html'] ), true, false ) . ' /> ' . esc_html__( 'Send notification emails as HTML', 'tso-login-organizer' ) . '</label></td></tr>';
 		echo '<tr><th scope="row">' . wp_kses_post( tsolo_admin_emphasize( __( 'New user subject', 'tso-login-organizer' ) ) ) . '</th><td><input class="large-text" type="text" name="mod[new_user_subject]" value="' . esc_attr( $s['new_user_subject'] ) . '" /><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Subject line for the welcome / new-account email.', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
-		echo '<tr><th scope="row">' . esc_html__( 'New user body', 'tso-login-organizer' ) . '</th><td><textarea class="large-text" rows="6" name="mod_new_user_body">' . esc_textarea( $s['new_user_body'] ) . '</textarea><p class="description">{site_name} {user_login} {user_email} {login_url}</p></td></tr>';
+		echo '<tr><th scope="row">' . esc_html__( 'New user body', 'tso-login-organizer' ) . '</th><td><textarea class="large-text" rows="6" name="mod_new_user_body">' . esc_textarea( $s['new_user_body'] ) . '</textarea><p class="description">{site_name} {user_login} {user_email} {login_url} {set_password_url}</p></td></tr>';
 		echo '<tr><th scope="row">' . esc_html__( 'Reset body', 'tso-login-organizer' ) . '</th><td><textarea class="large-text" rows="6" name="mod_reset_body">' . esc_textarea( $s['reset_body'] ) . '</textarea><p class="description">{user_login} {reset_url} {site_name}</p></td></tr>';
 		echo '</table>';
 	} elseif ( 'social' === $module ) {
@@ -1205,7 +1306,7 @@ function tsolo_admin_render_module_tab( $module, $def = array() ) {
 		echo tsolo_admin_blank_link( 'https://mailchimp.com/help/find-audience-id/', __( 'How to find Audience ID', 'tso-login-organizer' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in helper.
 		echo '</p>';
 		echo '<table class="form-table" role="presentation">';
-		echo '<tr><th scope="row">' . wp_kses_post( tsolo_admin_emphasize( __( 'API key', 'tso-login-organizer' ) ) ) . '</th><td><input class="regular-text" type="text" name="mod[api_key]" value="' . esc_attr( $s['api_key'] ) . '" autocomplete="off" /><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Mailchimp API key ending with your data center (example: …-us21). Nothing is sent while the key or list ID is empty.', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
+		echo '<tr><th scope="row">' . wp_kses_post( tsolo_admin_emphasize( __( 'API key', 'tso-login-organizer' ) ) ) . '</th><td><input class="regular-text" type="password" name="mod[api_key]" value="' . esc_attr( $s['api_key'] ) . '" autocomplete="new-password" /><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Mailchimp API key ending with your data center (example: …-us21). Nothing is sent while the key or list ID is empty.', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
 		echo '<tr><th scope="row">' . wp_kses_post( tsolo_admin_emphasize( __( 'List ID', 'tso-login-organizer' ) ) ) . '</th><td><input class="regular-text" type="text" name="mod[list_id]" value="' . esc_attr( $s['list_id'] ) . '" autocomplete="off" /><p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Audience / list ID where new subscribers are added.', 'tso-login-organizer' ) ) ) . '</p></td></tr>';
 		echo '<tr><th scope="row">' . esc_html__( 'Show checkbox', 'tso-login-organizer' ) . '</th><td><label><input type="checkbox" name="mod[checkbox]" value="1" ' . checked( ! empty( $s['checkbox'] ), true, false ) . ' /> ' . esc_html__( 'Ask for newsletter consent on the registration form', 'tso-login-organizer' ) . '</label><p class="description tsolo-option-help">' . esc_html__( 'When this is off, every new registrant is subscribed automatically (only if API key and list ID are set).', 'tso-login-organizer' ) . '</p></td></tr>';
 		echo '<tr><th scope="row">' . esc_html__( 'Checkbox checked by default', 'tso-login-organizer' ) . '</th><td><label><input type="checkbox" name="mod[default_optin]" value="1" ' . checked( ! empty( $s['default_optin'] ), true, false ) . ' /> ' . esc_html__( 'Pre-check the newsletter box (only when the checkbox is shown)', 'tso-login-organizer' ) . '</label></td></tr>';
@@ -1223,18 +1324,50 @@ function tsolo_admin_render_module_tab( $module, $def = array() ) {
 		$ex_shop  = home_url( '/shop/' );
 		$ex_admin = admin_url();
 		$ex_hello = home_url( '/welcome/' );
-		echo '<div class="tsolo-howto"><p><strong>' . wp_kses_post( tsolo_admin_emphasize( __( 'What to type in the boxes', 'tso-login-organizer' ) ) ) . '</strong></p>';
-		echo '<p>' . wp_kses_post( tsolo_admin_emphasize( __( 'Type a full address, including https:// and your domain. A path alone (/shop/) is rejected by the browser. Leave a box empty to keep the WordPress default for that case: usually the dashboard after login, the home page after logout, and the login page after registration.', 'tso-login-organizer' ) ) ) . '</p>';
-		echo '<p>' . esc_html(
+		echo '<div class="tsolo-howto tsolo-help-fullwidth"><p><strong>' . esc_html__( 'How redirects work', 'tso-login-organizer' ) . '</strong></p>';
+		echo '<ol class="tsolo-redirect-howto">';
+		echo '<li>' . wp_kses_post( tsolo_admin_emphasize( __( 'Write a full URL: https:// plus your domain and path (example below). A path alone such as /shop/ is not accepted.', 'tso-login-organizer' ) ) ) . '</li>';
+		echo '<li>' . esc_html__( 'Leave a box empty to keep the WordPress default for that case.', 'tso-login-organizer' ) . '</li>';
+		echo '<li>' . esc_html__( 'Default applies to every role that has no box of its own. A role box overrides Default only for that role.', 'tso-login-organizer' ) . '</li>';
+		echo '</ol>';
+		echo '<p><strong>' . esc_html__( 'Examples with this site', 'tso-login-organizer' ) . '</strong></p>';
+		echo '<ul class="tsolo-redirect-howto">';
+		echo '<li>' . esc_html(
 			sprintf(
-				/* translators: 1: home URL, 2: shop URL, 3: admin URL, 4: welcome URL */
-				__( 'Example. After login → Default: %1$s (everyone). Subscriber: %2$s (only subscribers; they ignore Default). Administrator: %3$s. After logout → Default: %1$s. After registration → Default: %4$s. Leave Administrator empty under After login if those users should follow Default.', 'tso-login-organizer' ),
-				$ex_home,
-				$ex_shop,
-				$ex_admin,
+				/* translators: %s: home URL */
+				__( 'After login → Default: %s (everyone with no role-specific URL).', 'tso-login-organizer' ),
+				$ex_home
+			)
+		) . '</li>';
+		echo '<li>' . esc_html(
+			sprintf(
+				/* translators: %s: shop URL */
+				__( 'After login → Subscriber: %s (only subscribers; they ignore Default).', 'tso-login-organizer' ),
+				$ex_shop
+			)
+		) . '</li>';
+		echo '<li>' . esc_html(
+			sprintf(
+				/* translators: %s: admin URL */
+				__( 'After login → Administrator: %s — or leave empty so admins follow Default.', 'tso-login-organizer' ),
+				$ex_admin
+			)
+		) . '</li>';
+		echo '<li>' . esc_html(
+			sprintf(
+				/* translators: %s: home URL */
+				__( 'After logout → Default: %s', 'tso-login-organizer' ),
+				$ex_home
+			)
+		) . '</li>';
+		echo '<li>' . esc_html(
+			sprintf(
+				/* translators: %s: welcome URL */
+				__( 'After registration → Default: %s', 'tso-login-organizer' ),
 				$ex_hello
 			)
-		) . '</p></div>';
+		) . '</li>';
+		echo '</ul></div>';
 		$placeholders = array(
 			'login'    => $ex_shop,
 			'logout'   => $ex_home,
@@ -1404,7 +1537,9 @@ function tsolo_admin_render_social_settings() {
 	echo '<p class="description tsolo-option-help">' . wp_kses_post( tsolo_admin_emphasize( __( 'Leave a provider empty to hide its button. After saving, test from the login page.', 'tso-login-organizer' ) ) ) . '</p>';
 
 	foreach ( $providers as $key => $p ) {
-		$cb = add_query_arg( 'tsolo_social', $key, home_url( '/' ) );
+		$cb = function_exists( 'tsolo_add_query_arg' )
+			? tsolo_add_query_arg( 'tsolo_social', $key, home_url( '/' ) )
+			: add_query_arg( 'tsolo_social', $key, home_url( '/' ) );
 		echo '<div class="tsolo-provider-card">';
 		echo '<h3>' . esc_html( $p['title'] ) . '</h3>';
 		echo '<p>' . tsolo_admin_blank_link( $p['console'], $p['console_label'] ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in helper.
@@ -1421,7 +1556,7 @@ function tsolo_admin_render_social_settings() {
 		echo '<p><label for="tsolo-' . esc_attr( $p['id'] ) . '">' . esc_html( $p['id_label'] ) . '</label>';
 		echo '<input id="tsolo-' . esc_attr( $p['id'] ) . '" class="regular-text" type="text" name="mod[' . esc_attr( $p['id'] ) . ']" value="' . esc_attr( $s[ $p['id'] ] ) . '" autocomplete="off" /></p>';
 		echo '<p><label for="tsolo-' . esc_attr( $p['secret'] ) . '">' . esc_html( $p['secret_label'] ) . '</label>';
-		echo '<input id="tsolo-' . esc_attr( $p['secret'] ) . '" class="regular-text" type="text" name="mod[' . esc_attr( $p['secret'] ) . ']" value="' . esc_attr( $s[ $p['secret'] ] ) . '" autocomplete="off" /></p>';
+		echo '<input id="tsolo-' . esc_attr( $p['secret'] ) . '" class="regular-text" type="password" name="mod[' . esc_attr( $p['secret'] ) . ']" value="' . esc_attr( $s[ $p['secret'] ] ) . '" autocomplete="new-password" /></p>';
 		echo '</div>';
 		echo '</div>';
 	}

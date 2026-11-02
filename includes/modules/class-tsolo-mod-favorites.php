@@ -45,6 +45,7 @@ class TSOLO_Mod_Favorites {
 	 */
 	private function __construct() {
 		add_action( 'wp_ajax_tsolo_toggle_favorite', array( $this, 'ajax_toggle' ) );
+		add_action( 'wp_ajax_tsolo_refresh_nonce', array( $this, 'ajax_refresh_nonce' ) );
 		add_filter( 'the_content', array( $this, 'append_button' ), 30 );
 	}
 
@@ -261,6 +262,18 @@ class TSOLO_Mod_Favorites {
 		$active = self::is_favorite( get_current_user_id(), $post_id );
 		$btn    = '<p class="tsolo-favorite-wrap">' . self::render_toggle_button( $post_id, $active ) . '</p>';
 		return $content . $btn;
+	}
+
+	/**
+	 * Hand a fresh AJAX nonce to a logged-in user whose cached page carried an expired one.
+	 *
+	 * The response is only readable by the same origin, so this does not weaken CSRF protection.
+	 */
+	public function ajax_refresh_nonce() {
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( array( 'message' => 'forbidden' ), 403 );
+		}
+		wp_send_json_success( array( 'nonce' => wp_create_nonce( TSOLO_NONCE_AJAX ) ) );
 	}
 
 	/**

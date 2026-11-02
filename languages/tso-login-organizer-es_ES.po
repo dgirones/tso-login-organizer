@@ -1,5 +1,23 @@
+# TSO Login Organizer — es_ES
+# Copyright (C) 2026 Tu Soporte Online
+#
 msgid ""
-msgstr "Project-Id-Version: TSO Login Organizer 1.0.0\nLanguage: es_ES\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+msgstr ""
+"Project-Id-Version: TSO Login Organizer 1.0.0\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "0 keeps the default (~448px). Allowed range 200–1200."
+msgstr "0 mantiene el valor por defecto (~448px). Rango permitido 200–1200."
+
+msgid "<strong>Error:</strong> %s is required."
+msgstr "<strong>Error:</strong> %s es obligatorio."
+
+msgid "<strong>Error:</strong> %s must be a valid email address."
+msgstr "<strong>Error:</strong> %s debe ser un correo electrónico válido."
 
 msgid "<strong>Error:</strong> Captcha verification failed."
 msgstr "<strong>Error:</strong> Falló la verificación del captcha."
@@ -55,6 +73,12 @@ msgstr "Cuenta"
 msgid "Action"
 msgstr "Acción"
 
+msgid "Add a row per field: a machine key (letters/numbers), a label, type, and whether it appears on register and/or profile."
+msgstr "Añade una fila por campo: clave técnica (letras/números), etiqueta, tipo y si aparece en el registro y/o el perfil."
+
+msgid "Add extra fields to registration and/or the frontend profile (name, phone, URL, custom meta)."
+msgstr "Añade campos extra al registro y/o al perfil frontend (nombre, teléfono, URL, meta personalizada)."
+
 msgid "Add the Facebook Login product to the app."
 msgstr "Añade el producto Facebook Login a la app."
 
@@ -67,6 +91,9 @@ msgstr "Añadir al menú"
 msgid "Add to favorites"
 msgstr "Añadir a favoritos"
 
+msgid "Added to the outer .tsolo wrapper so your theme or custom CSS can target these forms. Up to five class names."
+msgstr "Se añade al contenedor .tsolo para que el tema o el CSS personalizado puedan apuntar a estos formularios. Hasta cinco clases."
+
 msgid "Admin approval"
 msgstr "Aprobación del administrador"
 
@@ -76,8 +103,8 @@ msgstr "La aprobación del administrador deja la cuenta pendiente en Usuarios ha
 msgid "After a successful registration the new person is signed in immediately. If Moderation has email confirmation or admin approval turned on, this box is ignored and they stay logged out until that step is finished."
 msgstr "Tras un registro correcto la persona nueva inicia sesión al momento. Si Moderación tiene confirmación por correo o aprobación activa, esta casilla se ignora y permanece desconectada hasta terminar ese paso."
 
-msgid "After import: trash the old Theme My Login WordPress pages, keep pretty permalinks, then open each virtual URL from Core → URL slugs to confirm forms load."
-msgstr "Tras la importación: envía a la papelera las páginas antiguas de Theme My Login, mantén enlaces permanentes amigables y abre cada URL virtual desde Núcleo → Slugs de URL para confirmar los formularios."
+msgid "After importing Theme My Login, enable these modules under Modules so the imported profile / favorites URLs work: %s."
+msgstr "Tras importar Theme My Login, activa estos módulos en Módulos para que funcionen las URL de perfil / favoritos importadas: %s."
 
 msgid "After login"
 msgstr "Después de iniciar sesión"
@@ -90,6 +117,12 @@ msgstr "Después del registro"
 
 msgid "After that, login asks for the password and for the 6-digit code shown in the app."
 msgstr "Después, el inicio de sesión pide la contraseña y el código de 6 dígitos de la aplicación."
+
+msgid "After the import"
+msgstr "Después de la importación"
+
+msgid "All address slugs Theme My Login had configured (login, logout, register, lost password, reset password, dashboard, confirm-action, and profile / favorites when present), using the same names."
+msgstr "Todos los slugs de dirección que Theme My Login tenía configurados (login, logout, registro, contraseña perdida, restablecimiento, panel, confirm-action y perfil / favoritos si estaban), con los mismos nombres."
 
 msgid "Allow users to set a password at registration"
 msgstr "Permitir que los usuarios elijan una contraseña al registrarse"
@@ -130,14 +163,23 @@ msgstr "También envía usuarios tras entrar, salir o registrarse. El último pl
 msgid "Also stores favorite posts. The buttons and the list page may disagree about what is saved."
 msgstr "También guarda entradas favoritas. Los botones y la página de lista pueden no coincidir."
 
+msgid "An account with this email already exists. Log in with your password, then link this provider from your profile."
+msgstr "Ya existe una cuenta con este correo. Inicia sesión con la contraseña y vincula este proveedor desde el perfil."
+
 msgid "Anyone can register"
 msgstr "Cualquiera puede registrarse"
+
+msgid "Approve"
+msgstr "Aprobar"
 
 msgid "Ask for newsletter consent on the registration form"
 msgstr "Pedir consentimiento del boletín en el formulario de registro"
 
 msgid "Audience / list ID where new subscribers are added."
 msgstr "ID de audiencia / lista donde se añaden los nuevos suscriptores."
+
+msgid "Authentication code or backup code (only if you have two-factor enabled)"
+msgstr "Código de autenticación o código de reserva (solo si tienes el doble factor activado)"
 
 msgid "Authentication code"
 msgstr "Código de autenticación"
@@ -154,11 +196,20 @@ msgstr "El archivo del avatar es demasiado grande."
 msgid "Avatar updated."
 msgstr "Avatar actualizado."
 
+msgid "Avatar upload could not be verified. Please try again."
+msgstr "No se pudo verificar la subida del avatar. Inténtalo de nuevo."
+
+msgid "Avatar upload failed. Please try again."
+msgstr "Falló la subida del avatar. Inténtalo de nuevo."
+
 msgid "Avatars"
 msgstr "Avatares"
 
 msgid "Avatars needs Profiles. The upload field is on the profile page, not on this screen. Max size (KB) below is the only setting here."
 msgstr "Avatares necesita Perfiles. El campo de subida está en la página de perfil, no aquí. El tamaño máximo (KB) es el único ajuste de esta pantalla."
+
+msgid "Biographical info"
+msgstr "Información biográfica"
 
 msgid "Block wp-admin"
 msgstr "Bloquear wp-admin"
@@ -178,6 +229,9 @@ msgstr "Los botones se inyectan en el contenido; maquetadores que sustituyen the
 msgid "Caching plugins may serve public HTML to guests; exclude restricted pages or disable cache for logged-out users when testing."
 msgstr "Los plugins de caché pueden servir HTML público a visitantes; excluye páginas restringidas o desactiva la caché en pruebas."
 
+msgid "Captcha"
+msgstr "Captcha"
+
 msgid "Check friendly URLs"
 msgstr "Comprobar URL amigables"
 
@@ -190,8 +244,23 @@ msgstr "Revisa tu correo"
 msgid "Check your email for the confirmation link."
 msgstr "Revisa tu correo para el enlace de confirmación."
 
+msgid "Checkbox checked by default"
+msgstr "Casilla marcada por defecto"
+
+msgid "Checkbox label"
+msgstr "Etiqueta de la casilla"
+
+msgid "Checking friendly URLs…"
+msgstr "Comprobando las URL amigables…"
+
+msgid "Choose a provider below. For Google, open https://www.google.com/recaptcha/admin and create a v2 checkbox or v3 key. For Turnstile, open the Cloudflare Turnstile dashboard."
+msgstr "Elige un proveedor abajo. Para Google, abre https://www.google.com/recaptcha/admin y crea una clave v2 (casilla) o v3. Para Turnstile, abre el panel de Cloudflare Turnstile."
+
 msgid "Click “Check friendly URLs” to refresh rewrite rules. If this warning stays, open Settings → Permalinks, choose Post name (structure /%postname%/), and click Save Changes."
 msgstr "Haz clic en «Comprobar URL amigables» para refrescar las reglas. Si el aviso sigue, abre Ajustes → Enlaces permanentes, elige Nombre de la entrada (/%postname%/) y guarda."
+
+msgid "Cloudflare Turnstile"
+msgstr "Cloudflare Turnstile"
 
 msgid "Compatibility"
 msgstr "Compatibilidad"
@@ -213,6 +282,9 @@ msgstr "Choca con otros plugins 2FA / TOTP de WordPress en las mismas cuentas."
 
 msgid "Conflicts with other registration-approval plugins that also block wp_authenticate_user."
 msgstr "Choca con otros plugins de aprobación de registros que también bloquean wp_authenticate_user."
+
+msgid "Connect %s"
+msgstr "Conectar %s"
 
 msgid "Continue with Facebook"
 msgstr "Continuar con Facebook"
@@ -238,11 +310,14 @@ msgstr "Ajustes del núcleo guardados."
 msgid "Correct setup: Settings → Permalinks → Post name. The structure box should contain /%postname%/. Then click Save Changes on that screen."
 msgstr "Configuración correcta: Ajustes → Enlaces permanentes → Nombre de la entrada. El campo debe contener /%postname%/. Luego guarda."
 
-msgid "Create a Project and App with OAuth 2.0 enabled."
-msgstr "Crea un Proyecto y una App con OAuth 2.0 activado."
+msgid "Could not check friendly URLs. Please try again."
+msgstr "No se pudieron comprobar las URL amigables. Inténtalo de nuevo."
 
-msgid "Create a v2 \"I'm not a robot\" key, then paste both values here."
-msgstr "Crea una clave v2 «No soy un robot» y pega aquí ambos valores."
+msgid "Could not create the social login account."
+msgstr "No se pudo crear la cuenta de inicio de sesión social."
+
+msgid "Create a Project and App with OAuth 2.0 (confidential client) enabled. PKCE is handled automatically."
+msgstr "Crea un Proyecto y una App con OAuth 2.0 (cliente confidencial) activado. El PKCE se gestiona automáticamente."
 
 msgid "Create an API key at https://admin.mailchimp.com/account/api/ and copy the Audience (list) ID from Audience → Settings."
 msgstr "Crea una clave API en https://admin.mailchimp.com/account/api/ y copia el ID de audiencia (lista) desde Audience → Settings."
@@ -256,11 +331,17 @@ msgstr "Crea credenciales → ID de cliente OAuth → Tipo de aplicación: Aplic
 msgid "Current profile picture"
 msgstr "Imagen de perfil actual"
 
+msgid "Custom Fields"
+msgstr "Campos personalizados"
+
 msgid "Customize welcome and password-reset emails (subject, body, optional HTML)."
 msgstr "Personaliza los correos de bienvenida y de restablecimiento de contraseña (asunto, cuerpo, HTML opcional)."
 
 msgid "Dashboard"
 msgstr "Escritorio"
+
+msgid "Deactivate Theme My Login."
+msgstr "Desactiva Theme My Login."
 
 msgid "Default (all roles)"
 msgstr "Por defecto (todos los roles)"
@@ -271,8 +352,14 @@ msgstr "Por defecto se aplica a cada rol sin dirección propia. Un campo por rol
 msgid "Default form:"
 msgstr "Formulario predeterminado:"
 
+msgid "Default role"
+msgstr "Rol por defecto"
+
 msgid "Delivery"
 msgstr "Entrega"
+
+msgid "Disconnect"
+msgstr "Desconectar"
 
 msgid "Display Name"
 msgstr "Nombre visible"
@@ -283,8 +370,8 @@ msgstr "No lo combines con la URL de acceso personalizada de Swiss Knife ni con 
 msgid "Do not create WordPress pages for these slugs — they are created virtually. You can delete Theme My Login pages with the same names. Profile and Favorites rewrite only when those modules are enabled."
 msgstr "No crees páginas de WordPress para estos slugs: se crean virtualmente. Puedes eliminar las páginas de Theme My Login con los mismos nombres. Perfil y Favoritos solo tienen rewrite con esos módulos activos."
 
-msgid "Do not enable together with CleanTalk, Kadence captcha, or another reCAPTCHA on the same forms (double challenges / failed verifies)."
-msgstr "No lo actives junto con CleanTalk, captcha de Kadence u otro reCAPTCHA en los mismos formularios."
+msgid "Do not enable together with CleanTalk, Kadence captcha, or another captcha on the same forms (double challenges / failed verifies)."
+msgstr "No lo actives junto con CleanTalk, el captcha de Kadence u otro captcha en los mismos formularios (dobles retos / verificaciones fallidas)."
 
 msgid "Each box wants a full address that starts with https:// (a path such as /shop/ is not enough). Empty means keep the WordPress default for that case."
 msgstr "Cada campo quiere una dirección completa que empiece por https:// (una ruta como /shop/ no basta). Vacío = valor por defecto de WordPress."
@@ -294,6 +381,9 @@ msgstr "Cada persona lo activa desde su perfil (Perfiles) o desde Usuarios → P
 
 msgid "Edit a slug below (letters, numbers, hyphens only), then click Save core settings (rewrites are flushed automatically)."
 msgstr "Edita un slug abajo (solo letras, números y guiones) y pulsa Guardar configuración del núcleo (las reglas se regeneran solas)."
+
+msgid "Either moment works for the copy. The saved options remain if Theme My Login is still active and also if you already deactivated it. Leave it active until you have opened the new addresses and they look right, then deactivate it. If both plugins stay active they can fight over the same login addresses."
+msgstr "Cualquier momento vale para la copia. Las opciones guardadas se conservan si Theme My Login sigue activo y también si ya lo desactivaste. Déjalo activo hasta que hayas abierto las direcciones nuevas y se vean bien; después desactívalo. Si ambos plugins siguen activos, pueden pelearse por las mismas direcciones de acceso."
 
 msgid "Email"
 msgstr "Correo electrónico"
@@ -313,11 +403,17 @@ msgstr "Solo correo"
 msgid "Email only creates a username from the email address. Username + email asks for both fields."
 msgstr "Solo correo crea el nombre de usuario a partir de la dirección. Nombre de usuario + correo pide ambos campos."
 
+msgid "Empty key rows are ignored. Use map to write into WordPress user fields; leave map empty for custom meta."
+msgstr "Las filas con clave vacía se ignoran. Usa map para escribir en los campos de usuario de WordPress; deja map vacío para meta personalizada."
+
 msgid "Enable"
 msgstr "Activar"
 
 msgid "Enable lockouts"
 msgstr "Activar bloqueos"
+
+msgid "Enabled modules"
+msgstr "Módulos activados"
 
 msgid "Example. After login → Default: %1$s (everyone). Subscriber: %2$s (only subscribers; they ignore Default). Administrator: %3$s. After logout → Default: %1$s. After registration → Default: %4$s. Leave Administrator empty under After login if those users should follow Default."
 msgstr "Ejemplo. Tras entrar → Por defecto: %1$s (todos). Suscriptor: %2$s (solo suscriptores; ignoran Por defecto). Administrador: %3$s. Tras salir → Por defecto: %1$s. Tras el registro → Por defecto: %4$s. Deja Administrador vacío en Tras entrar si deben seguir Por defecto."
@@ -330,6 +426,12 @@ msgstr "Ejemplo: una nota que solo ven los miembros"
 
 msgid "Example: one role only"
 msgstr "Ejemplo: solo un rol"
+
+msgid "Extensions, email designs, widgets, menus and the WordPress pages Theme My Login created are not copied. Those pages can be moved to the trash; the addresses keep working here as virtual pages. The shortcode [theme-my-login] already works with this plugin."
+msgstr "Las extensiones, los diseños de correo, los widgets, los menús y las páginas de WordPress que creó Theme My Login no se copian. Esas páginas se pueden mover a la papelera; las direcciones siguen funcionando aquí como páginas virtuales. El shortcode [theme-my-login] ya funciona con este plugin."
+
+msgid "Extra CSS class"
+msgstr "Clase CSS extra"
 
 msgid "Facebook"
 msgstr "Facebook"
@@ -352,11 +454,26 @@ msgstr "Favoritos"
 msgid "Favorites module is not available."
 msgstr "El módulo Favoritos no está disponible."
 
+msgid "First name"
+msgstr "Nombre"
+
 msgid "Follow the numbered steps on each provider card. Copy the redirect URI shown there into that provider’s console."
 msgstr "Sigue los pasos numerados de cada proveedor. Copia el URI de redirección en la consola de ese proveedor."
 
+msgid "Form branding"
+msgstr "Marca del formulario"
+
+msgid "Form max width (px)"
+msgstr "Ancho máximo del formulario (px)"
+
+msgid "Form texts"
+msgstr "Textos del formulario"
+
 msgid "Forms"
 msgstr "Formularios"
+
+msgid "Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/)."
+msgstr "Comprobación de URL amigables terminada: WordPress usa enlaces permanentes simples (Plain). Configura los enlaces permanentes a Nombre de la entrada (/%postname%/)."
 
 msgid "Friendly URL check finished: permalinks are not Plain and the login rewrite rule is present."
 msgstr "Comprobación de URL amigables terminada: los enlaces no son Plain y la regla de acceso está presente."
@@ -369,6 +486,12 @@ msgstr "Las URL amigables están desactivadas. WordPress usa Plain, así que /lo
 
 msgid "Friendly URLs are on (current structure: %s). The login rewrite rule is present, so the preview addresses below can open."
 msgstr "Las URL amigables están activas (estructura: %s). Hay regla de acceso; las direcciones de vista previa pueden abrirse."
+
+msgid "Friendly addresses work only when Permalinks is not Plain. The check is on the Migration tab."
+msgstr "Las direcciones amigables solo funcionan cuando los enlaces permanentes no son Plain. La comprobación está en la pestaña Migración."
+
+msgid "Your own login, registration and password-reset pages inside your site, instead of wp-login.php, plus optional 2FA, security and social login."
+msgstr "Páginas propias de inicio de sesión, registro y recuperación de contraseña dentro de tu web, en lugar de wp-login.php, con extras opcionales: 2FA, seguridad y acceso social."
 
 msgid "Frontend login, registration and account pages with optional premium modules. Drop-in replacement for Theme My Login."
 msgstr "Páginas frontend de inicio de sesión, registro y cuenta con módulos premium opcionales. Sustituto de Theme My Login."
@@ -394,8 +517,17 @@ msgstr "ID de cliente de Google"
 msgid "Google client secret"
 msgstr "Secreto de cliente de Google"
 
+msgid "Google reCAPTCHA"
+msgstr "Google reCAPTCHA"
+
 msgid "Google reCAPTCHA admin"
 msgstr "Admin de Google reCAPTCHA"
+
+msgid "Google reCAPTCHA v2 (checkbox)"
+msgstr "Google reCAPTCHA v2 (casilla)"
+
+msgid "Google reCAPTCHA v3 (invisible score)"
+msgstr "Google reCAPTCHA v3 (puntuación invisible)"
 
 msgid "Guests are redirected to the login page. Login, register and password URLs stay public."
 msgstr "Los visitantes se redirigen al inicio de sesión. Las URL de acceso, registro y contraseña siguen públicas."
@@ -439,11 +571,26 @@ msgstr "Si alguna casilla está activa, Núcleo → «Iniciar sesión tras el re
 msgid "If off, WordPress emails a generated password. If on, the register form includes password fields."
 msgstr "Si está desactivado, WordPress envía una contraseña generada. Si está activado, el formulario de registro incluye campos de contraseña."
 
-msgid "Import Theme My Login free settings (AJAX, login type, registration, passwords, auto-login, slugs). Shortcode [theme-my-login] is already aliased. Deactivate Theme My Login after verifying URLs."
-msgstr "Importar los ajustes gratuitos de Theme My Login (AJAX, tipo de acceso, registro, contraseñas, auto-login, slugs). El shortcode [theme-my-login] ya es un alias. Desactiva Theme My Login tras verificar las URL."
+msgid "If the import suggests Profiles or Favorites, enable those modules under Modules."
+msgstr "Si la importación sugiere Perfiles o Favoritos, activa esos módulos en Módulos."
+
+msgid "If the social email matches an existing user, sign into that account (do not create a duplicate)"
+msgstr "Si el correo social coincide con un usuario existente, inicia sesión en esa cuenta (no crear un duplicado)"
 
 msgid "Import Theme My Login settings"
 msgstr "Importar ajustes de Theme My Login"
+
+msgid "Re-import Theme My Login settings"
+msgstr "Volver a importar los ajustes de Theme My Login"
+
+msgid "Last import: %s. Running import again overwrites matching core settings (AJAX, login type, registration, passwords, auto login, and slugs) with Theme My Login values."
+msgstr "Última importación: %s. Volver a importar sobrescribe los ajustes básicos coincidentes (AJAX, tipo de acceso, registro, contraseñas, inicio de sesión automático y slugs) con los valores de Theme My Login."
+
+msgid "Theme My Login is still active. Import is safe, but both plugins can fight over the same login addresses until you deactivate Theme My Login."
+msgstr "Theme My Login sigue activo. La importación es segura, pero ambos plugins pueden pelearse por las mismas direcciones de acceso hasta que desactives Theme My Login."
+
+msgid "Import only copies the free settings into this plugin. It does not delete them, it does not change Theme My Login, and it does not turn that plugin off. The original options stay in the database."
+msgstr "La importación solo copia los ajustes gratuitos a este plugin. No los borra, no cambia Theme My Login y no lo desactiva. Las opciones originales permanecen en la base de datos."
 
 msgid "In Facebook Login → Settings, paste the Facebook callback URL below into Valid OAuth Redirect URIs."
 msgstr "En Facebook Login → Settings, pega la URL de callback de Facebook en Valid OAuth Redirect URIs."
@@ -463,23 +610,50 @@ msgstr "Solicitud de cierre de sesión no válida."
 msgid "Invalid social login request."
 msgstr "Solicitud de inicio de sesión social no válida."
 
+msgid "Invalid user for social login."
+msgstr "Usuario no válido para el inicio de sesión social."
+
 msgid "JPG, PNG, GIF or WebP."
 msgstr "JPG, PNG, GIF o WebP."
+
+msgid "Keep friendly permalinks (not Plain). Use the check below."
+msgstr "Mantén los enlaces permanentes amigables (no Plain). Usa la comprobación de abajo."
 
 msgid "Keep “Show on posts” checked to put Add/Remove at the end of each single post for logged-in users."
 msgstr "Mantén «Mostrar en entradas» marcado para poner Añadir/Quitar al final de cada entrada para usuarios conectados."
 
+msgid "Key"
+msgstr "Clave"
+
 msgid "Key to type into the app (Google Authenticator or similar):"
 msgstr "Clave para introducir en la app (Google Authenticator o similar):"
 
+msgid "Label"
+msgstr "Etiqueta"
+
+msgid "Last name"
+msgstr "Apellidos"
+
+msgid "Leave a field empty to keep the built-in label. These strings only change this plugin’s frontend forms."
+msgstr "Deja un campo vacío para mantener la etiqueta integrada. Estos textos solo cambian los formularios frontend de este plugin."
+
 msgid "Leave a provider empty to hide its button. After saving, test from the login page."
 msgstr "Deja un proveedor vacío para ocultar su botón. Tras guardar, prueba desde la página de acceso."
+
+msgid "Leave all unchecked for public content. Checked roles (and administrators) can read the full content; everyone else sees a login prompt or a permission message."
+msgstr "Déjalo todo desmarcado para contenido público. Los roles marcados (y los administradores) pueden leer el contenido completo; el resto ve una petición de acceso o un mensaje de permisos."
 
 msgid "Leave this unchecked if the password is enough. Check it and click Save Profile to turn two-factor on. The key is created only when you save, not when you tick the box. After saving you will see a key: type it into an authenticator app. From the next login, the password alone is not enough — the site also asks for the 6-digit code from that app."
 msgstr "Déjalo desmarcado si basta la contraseña. Márcalo y haz clic en Guardar perfil para activar el doble factor. La clave se crea al guardar, no al marcar. Después verás una clave: introdúcela en una app. En el próximo inicio, la contraseña sola no basta: también pide el código de 6 dígitos."
 
 msgid "Let users upload a local profile picture instead of only using Gravatar."
 msgstr "Permite subir una foto de perfil local en lugar de usar solo Gravatar."
+
+msgid "Link existing accounts"
+msgstr "Vincular cuentas existentes"
+
+msgid "Linked to %s."
+msgstr "Vinculado a %s."
 
 msgid "List ID"
 msgstr "ID de lista"
@@ -523,11 +697,20 @@ msgstr "Login Protect pide un código por correo tras la contraseña. No exijas 
 msgid "Login Protect is hiding wp-login.php or locking failed logins. Leave hide-login and lockouts off in this plugin while that is on."
 msgstr "Login Protect oculta wp-login.php o bloquea inicios fallidos. Deja ocultar-login y bloqueos desactivados aquí mientras aquello esté activo."
 
+msgid "Login button"
+msgstr "Botón de acceso"
+
+msgid "Login heading"
+msgstr "Título de acceso"
+
 msgid "Login type"
 msgstr "Tipo de acceso"
 
 msgid "Login, register or account links."
 msgstr "Enlaces de acceso, registro o cuenta."
+
+msgid "Logo URL"
+msgstr "URL del logotipo"
 
 msgid "Logout"
 msgstr "Salida"
@@ -538,14 +721,20 @@ msgstr "Contraseña perdida"
 msgid "Lost password"
 msgstr "Contraseña perdida"
 
+msgid "Lost password button"
+msgstr "Botón de contraseña perdida"
+
+msgid "Lost password heading"
+msgstr "Título de contraseña perdida"
+
 msgid "Lost your password?"
 msgstr "¿Has perdido tu contraseña?"
 
 msgid "Mailchimp"
 msgstr "Mailchimp"
 
-msgid "Mailchimp API key from your account. Data is sent only when this module is enabled and a list is set."
-msgstr "Clave API de Mailchimp de tu cuenta. Los datos solo se envían con el módulo activo y una lista definida."
+msgid "Mailchimp API key ending with your data center (example: …-us21). Nothing is sent while the key or list ID is empty."
+msgstr "Clave API de Mailchimp que termina con tu centro de datos (ejemplo: …-us21). No se envía nada mientras la clave o el ID de lista estén vacíos."
 
 msgid "Mailchimp API keys"
 msgstr "Claves API de Mailchimp"
@@ -553,14 +742,20 @@ msgstr "Claves API de Mailchimp"
 msgid "Make the site private (login required) and restrict content with shortcodes."
 msgstr "Haz el sitio privado (hace falta iniciar sesión) y restringe contenido con shortcodes."
 
+msgid "Map"
+msgstr "Mapeo"
+
+msgid "Map can store into WordPress first name, last name, biographical info or website. Leave map empty to store as user meta (tsolo_cf_…)."
+msgstr "El mapeo puede guardar en el nombre, apellidos, biografía o sitio web de WordPress. Déjalo vacío para guardar como meta de usuario (tsolo_cf_…)."
+
 msgid "Max attempts"
 msgstr "Máximo de intentos"
 
 msgid "Max size (KB)"
 msgstr "Tamaño máximo (KB)"
 
-msgid "Maximum upload size for profile pictures stored under uploads/tso-login-organizer/."
-msgstr "Tamaño máximo de subida para fotos de perfil en uploads/tso-login-organizer/."
+msgid "Maximum upload size for profile pictures stored under uploads/tso-login-organizer/ (50–8192 KB). Replacing a photo deletes the previous file in that folder."
+msgstr "Tamaño máximo de subida para fotos de perfil guardadas en uploads/tso-login-organizer/ (50–8192 KB). Sustituir una foto elimina el archivo anterior de esa carpeta."
 
 msgid "May conflict with TSO Swiss Knife Login Protect and Kadence Security (lockouts / hide login)."
 msgstr "Puede chocar con TSO Swiss Knife Login Protect y Kadence Security (bloqueos / ocultar login)."
@@ -595,6 +790,9 @@ msgstr "Módulos actualizados."
 msgid "Modules updated. You enabled a module that may conflict with Swiss Knife, Kadence Security or CleanTalk — keep overlapping features off elsewhere."
 msgstr "Módulos actualizados. Has activado un módulo que puede entrar en conflicto con Swiss Knife, Kadence Security o CleanTalk: desactiva las funciones solapadas en el otro sitio."
 
+msgid "Move the old Theme My Login pages to the trash if they are listed below. This plugin already serves those addresses."
+msgstr "Mueve a la papelera las páginas antiguas de Theme My Login si aparecen abajo. Este plugin ya atiende esas direcciones."
+
 msgid "New Password"
 msgstr "Contraseña nueva"
 
@@ -609,6 +807,9 @@ msgstr "Asunto del correo de nuevo usuario"
 
 msgid "No TML options detected (you can still use this plugin with its own defaults)."
 msgstr "No se detectaron opciones de TML (puedes usar el plugin con sus valores por defecto)."
+
+msgid "No Theme My Login settings were found, so nothing was changed."
+msgstr "No se encontraron ajustes de Theme My Login, así que no se cambió nada."
 
 msgid "No extra settings for this module."
 msgstr "Este módulo no tiene ajustes adicionales."
@@ -625,6 +826,12 @@ msgstr "No encontrado."
 msgid "Notifications"
 msgstr "Notificaciones"
 
+msgid "One-time backup codes (each works once):"
+msgstr "Códigos de reserva de un solo uso (cada uno sirve una vez):"
+
+msgid "Only used with v3. 0.0 is permissive; 1.0 is strict. Default 0.5."
+msgstr "Solo con v3. 0.0 es permisivo; 1.0 es estricto. Por defecto 0.5."
+
 msgid "Only users with the Subscriber role see that sentence. Use the role slug (subscriber, customer, editor), not the translated name. Several roles: role=\"subscriber,customer\". Everyone else, including guests, sees nothing from that block."
 msgstr "Solo los usuarios con el rol Subscriber ven esa frase. Usa el slug (subscriber, customer, editor), no el nombre traducido. Varios roles: role=\"subscriber,customer\". El resto, incluidos visitantes, no ven nada del bloque."
 
@@ -639,9 +846,6 @@ msgstr "Abre Credenciales de Google Cloud y crea (o selecciona) un proyecto."
 
 msgid "Open Google Cloud → Credentials"
 msgstr "Abrir Google Cloud → Credenciales"
-
-msgid "Open Google reCAPTCHA admin"
-msgstr "Abrir admin de Google reCAPTCHA"
 
 msgid "Open Mailchimp API keys"
 msgstr "Abrir claves API de Mailchimp"
@@ -661,11 +865,11 @@ msgstr "Abrir el portal de desarrolladores de X"
 msgid "Open callback URL"
 msgstr "Abrir URL de callback"
 
+msgid "Open each virtual URL from Core → URL slugs and confirm the form loads."
+msgstr "Abre cada URL virtual desde Núcleo → Slugs de URL y confirma que el formulario carga."
+
 msgid "Open favorites page"
 msgstr "Abrir página de favoritos"
-
-msgid "Open https://www.google.com/recaptcha/admin and create a reCAPTCHA v2 \"I'm not a robot\" key for your domain."
-msgstr "Abre https://www.google.com/recaptcha/admin y crea una clave reCAPTCHA v2 «No soy un robot» para tu dominio."
 
 msgid "Open in new tab"
 msgstr "Abrir en una pestaña nueva"
@@ -682,6 +886,12 @@ msgstr "Abrir página de registro"
 msgid "Open the new URL in the browser (e.g. /accedir/ if you changed login to accedir). Update menus/links that pointed to the old path."
 msgstr "Abre la nueva URL en el navegador (p. ej. /accedir/ si cambiaste login por accedir). Actualiza menús/enlaces de la ruta antigua."
 
+msgid "Optional image shown above login, register and password forms. Use a full https:// URL (Media Library → copy file URL)."
+msgstr "Imagen opcional sobre los formularios de acceso, registro y contraseña. Usa una URL https:// completa (Medios → copiar URL del archivo)."
+
+msgid "Optional modules (Profiles, Favorites, and others) are not turned on automatically. If Theme My Login used profile or favorites pages, enable the matching modules under Modules after import so those URLs work."
+msgstr "Los módulos opcionales (Perfiles, Favoritos y otros) no se activan solos. Si Theme My Login usaba páginas de perfil o favoritos, activa los módulos correspondientes en Módulos tras la importación para que esas URL funcionen."
+
 msgid "Optionally subscribe new registrants to a Mailchimp audience (API key + list ID)."
 msgstr "Suscribe opcionalmente a los nuevos registros a una audiencia de Mailchimp (clave API + ID de lista)."
 
@@ -690,6 +900,9 @@ msgstr "Otros plugins de avatares que filtran get_avatar / get_avatar_url pueden
 
 msgid "Other login/redirect plugins (membership, LMS, WooCommerce “redirect after login”) may override these URLs depending on filter priority."
 msgstr "Otros plugins de redirección (miembros, LMS, WooCommerce) pueden sobrescribir estas URL según la prioridad del filtro."
+
+msgid "Other registration-form plugins that also inject fields may show duplicates."
+msgstr "Otros plugins de formulario de registro que también inyecten campos pueden mostrar duplicados."
 
 msgid "Other security/spam plugins were detected. Enable colliding modules only if you know they will not conflict."
 msgstr "Se detectaron otros plugins de seguridad/antispam. Activa módulos conflictivos solo si sabes que no chocarán."
@@ -706,17 +919,26 @@ msgstr "Contraseñas"
 msgid "Paste a shortcode into the content of a post or a page. In the block editor, add a Shortcode block and paste the whole snippet, including the closing tag. In the classic editor, paste it in the text. The words between the opening tag and the closing tag are the part that is shown or hidden. Text outside the shortcode stays visible to everyone. These tags do nothing in a menu or in a widget unless that area runs shortcodes."
 msgstr "Pega un shortcode en el contenido de una entrada o página. En el editor de bloques, añade un bloque Shortcode. En el clásico, pégalo en el texto. El texto entre las etiquetas es lo que se muestra u oculta. Fuera del shortcode todos lo ven. No hacen nada en menús o widgets salvo que ejecuten shortcodes."
 
-msgid "Paste the API key and the list ID below. With “Ask for newsletter consent” on, only people who tick the box on the registration form are added. Nothing is sent while the key or the list ID is empty."
-msgstr "Pega la clave API y el ID de lista. Con «Pedir consentimiento del boletín» activo, solo se añaden quienes marquen la casilla en el registro. No se envía nada si clave o lista están vacíos."
+msgid "Paste the API key (it must end with your data center, e.g. -us21) and the list ID below. With “Ask for newsletter consent” on, only people who tick the box are added; you can also pre-check that box. When the checkbox is off, every new registrant is subscribed automatically. Nothing is sent while the key or the list ID is empty, and registration never waits on Mailchimp errors."
+msgstr "Pega la clave API (debe terminar con tu centro de datos, p. ej. -us21) y el ID de lista abajo. Con «Pedir consentimiento al boletín» activado, solo se añaden quienes marcan la casilla; también puedes dejarla marcada por defecto. Si la casilla está desactivada, cada nuevo registro se suscribe automáticamente. No se envía nada mientras la clave o el ID de lista estén vacíos, y el registro nunca espera errores de Mailchimp."
 
 msgid "Paste the client ID (or app ID) and the secret for each provider you want. Leave a provider’s fields empty to hide its button."
 msgstr "Pega el ID de cliente (o de app) y el secreto de cada proveedor. Deja campos vacíos para ocultar el botón."
 
-msgid "Paste the site key and the secret key below, then save. The checkbox appears on this plugin’s login, register and lost-password forms. Empty keys mean the check stays off."
-msgstr "Pega la clave del sitio y la secreta, y guarda. La casilla aparece en los formularios de acceso, registro y contraseña perdida. Claves vacías = comprobación desactivada."
+msgid "Paste the site key and the secret key, then save. Empty keys mean the check stays off. Do not enable more than one captcha plugin on the same forms."
+msgstr "Pega la clave del sitio y la secreta, y guarda. Con claves vacías la comprobación permanece desactivada. No actives más de un plugin de captcha en los mismos formularios."
+
+msgid "Pending approval"
+msgstr "Pendiente de aprobación"
+
+msgid "Pending email"
+msgstr "Correo pendiente"
 
 msgid "Permalinks are not Plain (current structure: %s) but the login rewrite rule is missing, so the virtual address may 404."
 msgstr "Los enlaces no son Plain (estructura: %s) pero falta la regla de acceso; la dirección virtual puede dar 404."
+
+msgid "Pick a provider, create keys for your domain, then paste both values here."
+msgstr "Elige un proveedor, crea claves para tu dominio y pega aquí ambos valores."
 
 msgid "Please log in at %s to read the rest of this page."
 msgstr "Inicia sesión en %s para leer el resto de esta página."
@@ -730,8 +952,11 @@ msgstr "Secciones del plugin"
 msgid "Possible collisions detected: %s. Keep Security, Captcha and 2FA off unless you disable overlapping features elsewhere."
 msgstr "Posibles colisiones detectadas: %s. Mantén Seguridad, Captcha y 2FA desactivados si ya tienes funciones equivalentes en otro sitio."
 
-msgid "Private key used server-side to verify tokens. Leave empty and keep the module off if CleanTalk (or similar) already protects forms."
-msgstr "Clave privada para verificar tokens en el servidor. Déjala vacía y el módulo desactivado si CleanTalk (o similar) ya protege los formularios."
+msgid "Pre-check the newsletter box (only when the checkbox is shown)"
+msgstr "Marcar por defecto la casilla del boletín (solo si se muestra la casilla)"
+
+msgid "Private key used server-side to verify tokens. Leave empty and keep the module off if another captcha plugin already protects forms."
+msgstr "Clave privada para verificar tokens en el servidor. Déjala vacía y el módulo desactivado si otro plugin de captcha ya protege los formularios."
 
 msgid "Private site"
 msgstr "Sitio privado"
@@ -745,6 +970,9 @@ msgstr "Sitio privado redirige a los visitantes en todo el sitio: no lo combines
 msgid "Profile"
 msgstr "Perfil"
 
+msgid "Profile fields need the Profiles module enabled. Registration fields work on their own."
+msgstr "Los campos de perfil necesitan el módulo Perfiles activo. Los de registro funcionan solos."
+
 msgid "Profile picture"
 msgstr "Imagen de perfil"
 
@@ -754,11 +982,14 @@ msgstr "Perfil actualizado."
 msgid "Profiles"
 msgstr "Perfiles"
 
-msgid "Protect login and registration forms with Google reCAPTCHA (needs site and secret keys)."
-msgstr "Protege los formularios de acceso y registro con Google reCAPTCHA (necesita claves pública y secreta)."
+msgid "Protect login and registration forms with Google reCAPTCHA v2/v3 or Cloudflare Turnstile (needs site and secret keys)."
+msgstr "Protege los formularios de acceso y registro con Google reCAPTCHA v2/v3 o Cloudflare Turnstile (hacen falta claves pública y secreta)."
 
-msgid "Public key from the Google reCAPTCHA admin console."
-msgstr "Clave pública de la consola de administración de Google reCAPTCHA."
+msgid "Provider"
+msgstr "Proveedor"
+
+msgid "Public key from the provider console."
+msgstr "Clave pública de la consola del proveedor."
 
 msgid "Redirect / callback URI (copy into the provider console):"
 msgstr "URI de redirección / callback (cópiala en la consola del proveedor):"
@@ -772,17 +1003,29 @@ msgstr "Redirección"
 msgid "Register"
 msgstr "Registrarse"
 
+msgid "Register button"
+msgstr "Botón de registro"
+
+msgid "Register heading"
+msgstr "Título de registro"
+
 msgid "Registration complete. You may now log in."
 msgstr "Registro completado. Ya puedes iniciar sesión."
 
 msgid "Registration confirmation will be emailed to you."
 msgstr "La confirmación del registro se enviará a tu correo."
 
+msgid "Registration is currently closed on this site."
+msgstr "El registro está cerrado actualmente en este sitio."
+
 msgid "Registration received. You are not signed in yet: confirm your email and/or wait until an administrator approves the account."
 msgstr "Registro recibido. Aún no has iniciado sesión: confirma el correo y/o espera la aprobación de un administrador."
 
 msgid "Registration type"
 msgstr "Tipo de registro"
+
+msgid "Registration “password by email” note"
+msgstr "Nota de registro «contraseña por correo»"
 
 msgid "Remember Me"
 msgstr "Recuérdame"
@@ -802,6 +1045,9 @@ msgstr "Exigir inicio de sesión en todas las páginas"
 msgid "Require users to confirm their email before they can log in"
 msgstr "Exige que los usuarios confirmen su correo antes de iniciar sesión"
 
+msgid "Required"
+msgstr "Obligatorio"
+
 msgid "Required roles"
 msgstr "Roles obligatorios"
 
@@ -817,11 +1063,17 @@ msgstr "Cuerpo del correo de restablecimiento"
 msgid "Reset password"
 msgstr "Restablecer contraseña"
 
+msgid "Reset password button"
+msgstr "Botón de restablecer contraseña"
+
 msgid "Restrictions"
 msgstr "Restricciones"
 
 msgid "Return 404 on wp-login.php"
 msgstr "Devolver 404 en wp-login.php"
+
+msgid "Role assigned to new accounts on registration. Same as Settings → General → New User Default Role."
+msgstr "Rol asignado a las cuentas nuevas al registrarse. Igual que Ajustes → Generales → Rol por defecto de los nuevos usuarios."
 
 msgid "SMTP / email-template plugins may still wrap or override outgoing mail after this filter runs."
 msgstr "Plugins SMTP / plantillas de correo aún pueden envolver o sobrescribir el correo tras este filtro."
@@ -862,11 +1114,8 @@ msgstr "Envía el correo (y el nombre si hay) a la API de Mailchimp (ver servici
 msgid "Sends users to Google / Facebook / X and exchanges tokens with those APIs (see readme External services). Off until credentials are saved."
 msgstr "Envía a los usuarios a Google / Facebook / X e intercambia tokens (ver servicios externos). Inactivo hasta guardar credenciales."
 
-msgid "Sends visitor IP and token to Google for verification when forms are submitted (see readme External services)."
-msgstr "Envía la IP y el token a Google para verificar al enviar formularios (ver servicios externos en el readme)."
-
-msgid "Set App permissions to include users email if you want email on new accounts."
-msgstr "Configura los permisos de la app para incluir el correo si quieres email en las cuentas nuevas."
+msgid "Sends visitor IP and token to Google or Cloudflare for verification when forms are submitted (see readme External services)."
+msgstr "Envía la IP y el token del visitante a Google o Cloudflare para verificar al enviar los formularios (véase External services en el readme)."
 
 msgid "Settings"
 msgstr "Ajustes"
@@ -904,8 +1153,17 @@ msgstr "Slug"
 msgid "Social Login"
 msgstr "Inicio de sesión social"
 
-msgid "Social login did not return an email address."
-msgstr "El inicio de sesión social no devolvió un correo."
+msgid "Social account linked."
+msgstr "Cuenta social vinculada."
+
+msgid "Social accounts"
+msgstr "Cuentas sociales"
+
+msgid "Social login did not return a usable identity."
+msgstr "El inicio de sesión social no devolvió una identidad usable."
+
+msgid "Social login is not configured for this provider."
+msgstr "El inicio de sesión social no está configurado para este proveedor."
 
 msgid "Strength indicator"
 msgstr "Indicador de fortaleza"
@@ -940,11 +1198,17 @@ msgstr "TSO Login Organizer 2FA"
 msgid "TSO Login Organizer creates login, logout, register, lost password, reset password, dashboard, confirm-action, and (when modules are on) profile and favorites as virtual URLs via rewrite rules. You do not create WordPress pages for them, and you do not need to keep Theme My Login pages."
 msgstr "TSO Login Organizer crea login, logout, registro, contraseña perdida, restablecimiento, escritorio, confirm-action y (con módulos activos) perfil y favoritos como URL virtuales con reglas de rewrite. No hace falta crear páginas de WordPress ni conservar las de Theme My Login."
 
+msgid "TSO Login Organizer — restrict by role"
+msgstr "TSO Login Organizer — restringir por rol"
+
 msgid "TSOLO Action"
 msgstr "Acción TSOLO"
 
 msgid "Temporarily block logins from an IP after too many failed attempts."
 msgstr "Bloquea temporalmente los inicios de sesión de una IP tras demasiados intentos fallidos."
+
+msgid "Text shown next to the newsletter checkbox on the registration form."
+msgstr "Texto junto a la casilla del boletín en el formulario de registro."
 
 msgid "The passwords do not match."
 msgstr "Las contraseñas no coinciden."
@@ -952,14 +1216,20 @@ msgstr "Las contraseñas no coinciden."
 msgid "The saved list is the Favorites slug from Core, currently %s."
 msgstr "La lista guardada es el slug de Favoritos del Núcleo, actualmente %s."
 
+msgid "The social provider did not verify this email address, so it cannot be linked to an existing account."
+msgstr "El proveedor social no verificó esta dirección de correo, así que no se puede vincular a una cuenta existente."
+
 msgid "Theme My Login settings imported."
 msgstr "Se importaron los ajustes de Theme My Login."
 
-msgid "No Theme My Login settings were found, so nothing was changed."
-msgstr "No se encontró ninguna configuración de Theme My Login, así que no se cambió nada."
+msgid "Theme My Login settings imported. Enable these modules under Modules so the imported URLs work: %s."
+msgstr "Se importaron los ajustes de Theme My Login. Activa estos módulos en Módulos para que funcionen las URL importadas: %s."
 
 msgid "These values are the path after your site URL for each virtual form. With the default \"login\" slug, the form is at:"
 msgstr "Estos valores son la ruta tras la URL del sitio para cada formulario virtual. Con el slug por defecto «login», el formulario está en:"
+
+msgid "This account requires two-factor authentication. Please log in with your username and password, then enter the code from your authenticator app."
+msgstr "Esta cuenta requiere autenticación de dos factores. Inicia sesión con tu nombre de usuario y contraseña y luego introduce el código de tu aplicación de autenticación."
 
 msgid "This also overrides Core → “Log users in after registration”. The new person stays logged out until an administrator approves them on the Users screen, even if that Core box is checked. If both moderation boxes are off, the Core option signs them in as usual."
 msgstr "También anula Núcleo → «Iniciar sesión tras el registro». La persona nueva permanece desconectada hasta la aprobación en Usuarios, aunque la casilla del núcleo esté marcada. Si ambas de moderación están off, el núcleo inicia sesión como siempre."
@@ -970,20 +1240,32 @@ msgstr "Este módulo necesita activar antes: %s."
 msgid "This overrides Core → “Log users in after registration”. The new person stays logged out until they open the link in the email, even if that Core box is checked."
 msgstr "Anula Núcleo → «Iniciar sesión tras el registro». La persona nueva permanece desconectada hasta abrir el enlace del correo, aunque la casilla del núcleo esté marcada."
 
+msgid "This post cannot be added to favorites."
+msgstr "Esta entrada no se puede añadir a favoritos."
+
+msgid "This site is protected by reCAPTCHA."
+msgstr "Este sitio está protegido con reCAPTCHA."
+
+msgid "This social account is already linked to another user."
+msgstr "Esta cuenta social ya está vinculada a otro usuario."
+
 msgid "Tick Enable on the features you want, then click Save modules."
 msgstr "Marca Activar en las funciones que quieras y pulsa Guardar módulos."
 
 msgid "Tick HTML emails only when the body contains HTML tags. Otherwise leave it off and write plain text."
 msgstr "Marca correos HTML solo si el cuerpo tiene etiquetas HTML. Si no, déjalo off y escribe texto plano."
 
-msgid "Tick roles that must enter a TOTP code after the password. Users enable the authenticator on the frontend profile (Profiles) or in wp-admin → Profile."
-msgstr "Marca los roles que deben introducir un código TOTP tras la contraseña. El usuario activa el autenticador en el perfil frontend (Perfiles) o en wp-admin → Perfil."
+msgid "Tick roles that must use two-factor. Users without a key can still sign in once with the password and are sent to their profile to enable the authenticator. After enrollment, every login needs the password plus the app code (or a backup code)."
+msgstr "Marca los roles que deben usar dos factores. Los usuarios sin clave aún pueden iniciar sesión una vez con la contraseña y se les envía al perfil para activar el autenticador. Tras la configuración, cada acceso necesita la contraseña más el código de la app (o un código de reserva)."
 
 msgid "Tick the roles that must use a second code, then save. People in other roles keep password-only login."
 msgstr "Marca los roles que deben usar un segundo código y guarda. El resto mantiene solo contraseña."
 
 msgid "Title:"
 msgstr "Título:"
+
+msgid "To add more fields, fill the empty rows and save, then reopen this tab for new blank rows."
+msgstr "Para añadir más campos, rellena las filas vacías y guarda; vuelve a abrir esta pestaña para ver filas en blanco nuevas."
 
 msgid "Turn on Avatars as well if the profile page should accept a photo upload."
 msgstr "Activa también Avatares si la página de perfil debe aceptar una foto."
@@ -994,11 +1276,20 @@ msgstr "Activa los bloqueos, luego define fallos permitidos y minutos de bloqueo
 msgid "Two-Factor Authentication"
 msgstr "Autenticación de dos factores"
 
+msgid "Two-factor authentication is required for your role. Enable it below before continuing."
+msgstr "La autenticación de dos factores es obligatoria para tu rol. Actívala abajo antes de continuar."
+
 msgid "Two-factor is already on for this account. The key below is the one your authenticator app should contain. Saving again with the box checked does not create a new key. Uncheck the box and click Save Profile to turn two-factor off: the key is deleted and the app code stops working. Login then asks for the password only."
 msgstr "El doble factor ya está activo en esta cuenta. La clave de abajo es la que debe tener la app. Guardar otra vez con la casilla marcada no crea una clave nueva. Desmarca y haz clic en Guardar perfil para desactivarlo: se borra la clave y el código deja de servir. Entonces el acceso solo pide la contraseña."
 
 msgid "Two-factor is already on. Saving with the box checked keeps this same key. Uncheck and update the profile to turn it off and delete the key."
 msgstr "El doble factor ya está activo. Guardar con la casilla marcada mantiene la misma clave. Desmarca y actualiza el perfil para desactivarlo y borrar la clave."
+
+msgid "Two-factor required"
+msgstr "Dos factores obligatorios"
+
+msgid "Type"
+msgstr "Tipo"
 
 msgid "Type a full address, including https:// and your domain. A path alone (/shop/) is rejected by the browser. Leave a box empty to keep the WordPress default for that case: usually the dashboard after login, the home page after logout, and the login page after registration."
 msgstr "Escribe una dirección completa con https:// y tu dominio. Una ruta sola (/shop/) la rechaza el navegador. Campo vacío = valor por defecto de WordPress: suele ser el escritorio tras entrar, la portada tras salir y el acceso tras el registro."
@@ -1021,8 +1312,14 @@ msgstr "Respuesta inesperada del servidor. Inténtalo de nuevo."
 msgid "Until a module is enabled, it does nothing and has no settings tab. Disable it again anytime to turn that feature off."
 msgstr "Hasta que no actives un módulo, no hace nada y no tiene pestaña de ajustes. Puedes desactivarlo en cualquier momento."
 
+msgid "Update menus and links that still point at the old pages."
+msgstr "Actualiza los menús y los enlaces que aún apuntan a las páginas antiguas."
+
 msgid "Use the placeholders listed under each field (for example {user_login}, {reset_url}). An empty field keeps the WordPress default text."
 msgstr "Usa los marcadores bajo cada campo (p. ej. {user_login}, {reset_url}). Campo vacío = texto por defecto de WordPress."
+
+msgid "User approved. They can log in now."
+msgstr "Usuario aprobado. Ya puede iniciar sesión."
 
 msgid "Username"
 msgstr "Nombre de usuario"
@@ -1075,8 +1372,14 @@ msgstr "URL virtual de registro (solo si «Cualquiera puede registrarse» está 
 msgid "Virtual sign-in URL (example: yoursite.com/login/). No WordPress page needed."
 msgstr "URL virtual de inicio de sesión (ejemplo: tusitio.com/login/). No hace falta página de WordPress."
 
+msgid "Website"
+msgstr "Sitio web"
+
 msgid "Welcome back. Your downloads are on this page."
 msgstr "Bienvenido de nuevo. Las descargas están en esta página."
+
+msgid "What is copied"
+msgstr "Qué se copia"
 
 msgid "What to type in the boxes"
 msgstr "Qué escribir en los campos"
@@ -1084,14 +1387,44 @@ msgstr "Qué escribir en los campos"
 msgid "What visitors may type in the login field: either username, email, or both."
 msgstr "Lo que pueden escribir los visitantes en el campo de acceso: nombre de usuario, correo o ambos."
 
+msgid "What visitors may type to log in: username, email, or both."
+msgstr "Qué pueden escribir los visitantes para iniciar sesión: nombre de usuario, correo o ambos."
+
+msgid "When off, matching emails show an error asking the person to log in first and connect the provider from their profile. Google linking also requires a verified email from Google. New social sign-ups still respect “Anyone can register”. Accounts with two-factor enabled cannot complete social login (password + app code required)."
+msgstr "Si está desactivado, los correos coincidentes muestran un error pidiendo iniciar sesión y conectar el proveedor desde el perfil. La vinculación con Google también exige un correo verificado. Los registros sociales nuevos respetan «Cualquiera puede registrarse». Las cuentas con doble factor no pueden completar el acceso social (hace falta contraseña + código de la app)."
+
+msgid "When this is off, every new registrant is subscribed automatically (only if API key and list ID are set)."
+msgstr "Si está desactivado, cada registro nuevo se suscribe automáticamente (solo si hay clave API e ID de lista)."
+
+msgid "When to deactivate Theme My Login"
+msgstr "Cuándo desactivar Theme My Login"
+
+msgid "Whether a new account is signed in immediately after registration."
+msgstr "Si una cuenta nueva inicia sesión inmediatamente después del registro."
+
+msgid "Whether login, registration and password forms update without reloading the page (AJAX)."
+msgstr "Si los formularios de acceso, registro y contraseña se actualizan sin recargar la página (AJAX)."
+
+msgid "Whether new users choose their own password, or WordPress emails a generated one."
+msgstr "Si los usuarios nuevos eligen su propia contraseña, o WordPress envía una generada por correo."
+
+msgid "Whether registration asks for username and email, or email only."
+msgstr "Si el registro pide nombre de usuario y correo, o solo el correo."
+
 msgid "While logged in, open %s. The page says whether a photo is already saved. Choose a JPG, PNG, GIF or WebP to replace it. The file is stored in uploads/tso-login-organizer/ and replaces Gravatar for that user."
 msgstr "Con la sesión iniciada, abre %s. La página indica si ya hay foto. Elige JPG, PNG, GIF o WebP para sustituirla. El archivo va a uploads/tso-login-organizer/ y sustituye Gravatar."
 
 msgid "With this on, the visitor stays on the same screen and only the form updates (this is called AJAX). With this off, the browser loads the page again after each submit. Turn it off if another plugin already updates these forms in place."
 msgstr "Activado: el visitante permanece en la misma pantalla y solo se actualiza el formulario (AJAX). Desactivado: el navegador vuelve a cargar la página. Desactívalo si otro plugin ya actualiza estos formularios."
 
+msgid "With “Link existing accounts” on (default), a returning social login that shares an email with an existing user signs into that account instead of creating a second one. Logged-in users can also connect or disconnect providers from their profile page."
+msgstr "Con «Vincular cuentas existentes» activo (por defecto), un acceso social que comparte correo con un usuario existente inicia sesión en esa cuenta en lugar de crear otra. Los usuarios conectados también pueden vincular o desconectar proveedores desde el perfil."
+
 msgid "WordPress setting: show the registration form and allow new accounts. Same as Settings > General."
 msgstr "Ajuste de WordPress: muestra el formulario de registro y permite cuentas nuevas. Igual que Ajustes > Generales."
+
+msgid "X"
+msgstr "X"
 
 msgid "X (Twitter)"
 msgstr "X (Twitter)"
@@ -1105,8 +1438,14 @@ msgstr "Secreto de cliente de X (Twitter)"
 msgid "X developer portal"
 msgstr "Portal de desarrolladores de X"
 
+msgid "X usually does not return an email: a site-local account is created from the X user id and reused on later logins."
+msgstr "X normalmente no devuelve un correo: se crea una cuenta local a partir del ID de usuario de X y se reutiliza en accesos posteriores."
+
 msgid "You already have a profile picture. It is shown below. Choose a new file only if you want to replace it. Leave the file field empty to keep this one."
 msgstr "Ya tienes una imagen de perfil. Se muestra abajo. Elige un archivo nuevo solo si quieres sustituirla. Deja el campo vacío para mantenerla."
+
+msgid "You are not allowed to do this."
+msgstr "No tienes permiso para hacer esto."
 
 msgid "You are now logged out."
 msgstr "Has cerrado la sesión."
@@ -1119,6 +1458,9 @@ msgstr "No tienes permiso para ver este contenido."
 
 msgid "Your Data Request"
 msgstr "Tu solicitud de datos"
+
+msgid "Your old Theme My Login setup is safe."
+msgstr "Tu configuración antigua de Theme My Login está a salvo."
 
 msgid "Your password has been reset."
 msgstr "Tu contraseña se ha restablecido."
@@ -1135,8 +1477,8 @@ msgstr "activo — posible choque"
 msgid "installed, not active"
 msgstr "instalado, no activo"
 
-msgid "reCAPTCHA"
-msgstr "reCAPTCHA"
+msgid "reCAPTCHA v3 min score"
+msgstr "Puntuación mínima reCAPTCHA v3"
 
 msgid "shortcode"
 msgstr "shortcode"
@@ -1144,285 +1486,237 @@ msgstr "shortcode"
 msgid "slug"
 msgstr "slug"
 
-msgid "Enabled modules"
-msgstr "Módulos activados"
-
-msgid "Your old Theme My Login setup is safe."
-msgstr "Tu configuración anterior de Theme My Login está a salvo."
-
-msgid "Import only copies the free settings into this plugin. It does not delete them, it does not change Theme My Login, and it does not turn that plugin off. The original options stay in the database."
-msgstr "La importación solo copia los ajustes gratuitos a este plugin. No los borra, no modifica Theme My Login y no lo desactiva. Las opciones originales siguen en la base de datos."
-
-msgid "What is copied"
-msgstr "Qué se copia"
-
-msgid "Whether login, registration and password forms update without reloading the page (AJAX)."
-msgstr "Si los formularios de acceso, registro y contraseña se actualizan sin recargar la página (AJAX)."
-
-msgid "What visitors may type to log in: username, email, or both."
-msgstr "Qué puede escribir el visitante para entrar: usuario, correo o ambos."
-
-msgid "Whether registration asks for username and email, or email only."
-msgstr "Si el registro pide usuario y correo, o solo correo."
-
-msgid "Whether new users choose their own password, or WordPress emails a generated one."
-msgstr "Si los usuarios nuevos eligen su contraseña, o WordPress envía una generada."
-
-msgid "Whether a new account is signed in immediately after registration."
-msgstr "Si la cuenta nueva inicia sesión justo después del registro."
-
-msgid "The address slugs for login, logout, register, lost password, reset password, dashboard and confirm-action."
-msgstr "Los slugs de acceso, salida, registro, contraseña perdida, restablecer contraseña, escritorio y confirmar solicitud."
-
-msgid "Extensions, email designs, widgets, menus and the WordPress pages Theme My Login created are not copied. Those pages can be moved to the trash; the addresses keep working here as virtual pages. The shortcode [theme-my-login] already works with this plugin."
-msgstr "No se copian las extensiones, los diseños de correo, los widgets, los menús ni las páginas de WordPress que creó Theme My Login. Esas páginas se pueden enviar a la papelera; las direcciones siguen funcionando aquí como páginas virtuales. El shortcode [theme-my-login] ya funciona con este plugin."
-
-msgid "When to deactivate Theme My Login"
-msgstr "Cuándo desactivar Theme My Login"
-
-msgid "Either moment works for the copy. The saved options remain if Theme My Login is still active and also if you already deactivated it. Leave it active until you have opened the new addresses and they look right, then deactivate it. If both plugins stay active they can fight over the same login addresses."
-msgstr "Da igual el momento para la copia. Las opciones guardadas siguen ahí tanto si Theme My Login está activo como si ya lo has desactivado. Déjalo activo hasta que abras las direcciones nuevas y se vean bien, y entonces desactívalo. Si los dos plugins siguen activos pueden pelearse por las mismas direcciones de acceso."
-
-msgid "After the import"
-msgstr "Después de la importación"
-
-msgid "Keep friendly permalinks (not Plain). Use the check below."
-msgstr "Mantén los enlaces permanentes amigables (no Plain). Usa la comprobación de abajo."
-
-msgid "Move the old Theme My Login pages to the trash if they are listed below. This plugin already serves those addresses."
-msgstr "Envía a la papelera las páginas antiguas de Theme My Login si aparecen abajo. Este plugin ya sirve esas direcciones."
-
-msgid "Open each virtual URL from Core → URL slugs and confirm the form loads."
-msgstr "Abre cada URL virtual en Núcleo → Slugs de URL y comprueba que el formulario carga."
-
-msgid "Update menus and links that still point at the old pages."
-msgstr "Actualiza menús y enlaces que aún apunten a las páginas antiguas."
-
-msgid "Deactivate Theme My Login."
-msgstr "Desactiva Theme My Login."
-
-msgid "Friendly addresses work only when Permalinks is not Plain. The check is on the Migration tab."
-msgstr "Las direcciones amigables solo funcionan si los enlaces no son Plain. La comprobación está en la pestaña Migración."
-
-msgid "Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/)."
-msgstr "Comprobación de URL amigables terminada: WordPress usa enlaces Plain. Pon Enlaces permanentes en Nombre de la entrada (/%postname%/)."
-
-msgid "0 keeps the default (~448px). Allowed range 200–1200."
-msgstr "0 mantiene el valor por defecto (~448px). Rango permitido 200–1200."
-
-msgid "<strong>Error:</strong> %s is required."
-msgstr "<strong>Error:</strong> %s es obligatorio."
-
-msgid "<strong>Error:</strong> %s must be a valid email address."
-msgstr "<strong>Error:</strong> %s debe ser un correo electrónico válido."
-
-msgid "Add a row per field: a machine key (letters/numbers), a label, type, and whether it appears on register and/or profile."
-msgstr "Añade una fila por campo: clave técnica (letras/números), etiqueta, tipo y si aparece en el registro y/o el perfil."
-
-msgid "Add extra fields to registration and/or the frontend profile (name, phone, URL, custom meta)."
-msgstr "Añade campos extra al registro y/o al perfil frontend (nombre, teléfono, URL, meta personalizada)."
-
-msgid "Added to the outer .tsolo wrapper so your theme or custom CSS can target these forms. Up to five class names."
-msgstr "Se añade al contenedor .tsolo para que el tema o el CSS personalizado puedan apuntar a estos formularios. Hasta cinco clases."
-
-msgid "An account with this email already exists. Log in with your password, then link this provider from your profile."
-msgstr "Ya existe una cuenta con este correo. Inicia sesión con la contraseña y vincula este proveedor desde el perfil."
-
-msgid "Biographical info"
-msgstr "Información biográfica"
-
-msgid "Checkbox checked by default"
-msgstr "Casilla marcada por defecto"
-
-msgid "Checkbox label"
-msgstr "Etiqueta de la casilla"
-
-msgid "Choose a provider below. For Google, open https://www.google.com/recaptcha/admin and create a v2 checkbox or v3 key. For Turnstile, open the Cloudflare Turnstile dashboard."
-msgstr "Elige un proveedor abajo. Para Google, abre https://www.google.com/recaptcha/admin y crea una clave v2 (casilla) o v3. Para Turnstile, abre el panel de Cloudflare Turnstile."
-
-msgid "Cloudflare Turnstile"
-msgstr "Cloudflare Turnstile"
-
-msgid "Connect %s"
-msgstr "Conectar %s"
-
-msgid "Create a Project and App with OAuth 2.0 (confidential client) enabled. PKCE is handled automatically."
-msgstr "Crea un Proyecto y una App con OAuth 2.0 (cliente confidencial) activado. El PKCE se gestiona automáticamente."
-
-msgid "Custom Fields"
-msgstr "Campos personalizados"
-
-msgid "Default role"
-msgstr "Rol por defecto"
-
-msgid "Disconnect"
-msgstr "Desconectar"
-
-msgid "Do not enable together with CleanTalk, Kadence captcha, or another captcha on the same forms (double challenges / failed verifies)."
-msgstr "No lo actives junto con CleanTalk, el captcha de Kadence u otro captcha en los mismos formularios (dobles retos / verificaciones fallidas)."
-
-msgid "Empty key rows are ignored. Use map to write into WordPress user fields; leave map empty for custom meta."
-msgstr "Las filas con clave vacía se ignoran. Usa map para escribir en los campos de usuario de WordPress; deja map vacío para meta personalizada."
-
-msgid "Extra CSS class"
-msgstr "Clase CSS extra"
-
-msgid "First name"
-msgstr "Nombre"
-
-msgid "Form branding"
-msgstr "Marca del formulario"
-
-msgid "Form max width (px)"
-msgstr "Ancho máximo del formulario (px)"
-
-msgid "Form texts"
-msgstr "Textos del formulario"
-
-msgid "Google reCAPTCHA"
-msgstr "Google reCAPTCHA"
-
-msgid "Google reCAPTCHA v2 (checkbox)"
-msgstr "Google reCAPTCHA v2 (casilla)"
-
-msgid "Google reCAPTCHA v3 (invisible score)"
-msgstr "Google reCAPTCHA v3 (puntuación invisible)"
-
-msgid "If the social email matches an existing user, sign into that account (do not create a duplicate)"
-msgstr "Si el correo social coincide con un usuario existente, inicia sesión en esa cuenta (no crear un duplicado)"
-
-msgid "Key"
-msgstr "Clave"
-
-msgid "Label"
-msgstr "Etiqueta"
-
-msgid "Last name"
-msgstr "Apellidos"
-
-msgid "Leave a field empty to keep the built-in label. These strings only change this plugin’s frontend forms."
-msgstr "Deja un campo vacío para mantener la etiqueta integrada. Estos textos solo cambian los formularios frontend de este plugin."
-
-msgid "Link existing accounts"
-msgstr "Vincular cuentas existentes"
-
-msgid "Linked to %s."
-msgstr "Vinculado a %s."
-
-msgid "Login button"
-msgstr "Botón de acceso"
-
-msgid "Login heading"
-msgstr "Título de acceso"
-
-msgid "Logo URL"
-msgstr "URL del logotipo"
-
-msgid "Lost password button"
-msgstr "Botón de contraseña perdida"
-
-msgid "Lost password heading"
-msgstr "Título de contraseña perdida"
-
-msgid "Map"
-msgstr "Mapeo"
-
-msgid "Map can store into WordPress first name, last name, biographical info or website. Leave map empty to store as user meta (tsolo_cf_…)."
-msgstr "El mapeo puede guardar en el nombre, apellidos, biografía o sitio web de WordPress. Déjalo vacío para guardar como meta de usuario (tsolo_cf_…)."
-
-msgid "Only used with v3. 0.0 is permissive; 1.0 is strict. Default 0.5."
-msgstr "Solo con v3. 0.0 es permisivo; 1.0 es estricto. Por defecto 0.5."
-
-msgid "Optional image shown above login, register and password forms. Use a full https:// URL (Media Library → copy file URL)."
-msgstr "Imagen opcional sobre los formularios de acceso, registro y contraseña. Usa una URL https:// completa (Medios → copiar URL del archivo)."
-
-msgid "Other registration-form plugins that also inject fields may show duplicates."
-msgstr "Otros plugins de formulario de registro que también inyecten campos pueden mostrar duplicados."
-
-msgid "Paste the site key and the secret key, then save. Empty keys mean the check stays off. Do not enable more than one captcha plugin on the same forms."
-msgstr "Pega la clave del sitio y la secreta, y guarda. Con claves vacías la comprobación permanece desactivada. No actives más de un plugin de captcha en los mismos formularios."
-
-msgid "Pick a provider, create keys for your domain, then paste both values here."
-msgstr "Elige un proveedor, crea claves para tu dominio y pega aquí ambos valores."
-
-msgid "Pre-check the newsletter box (only when the checkbox is shown)"
-msgstr "Marcar por defecto la casilla del boletín (solo si se muestra la casilla)"
-
-msgid "Private key used server-side to verify tokens. Leave empty and keep the module off if another captcha plugin already protects forms."
-msgstr "Clave privada para verificar tokens en el servidor. Déjala vacía y el módulo desactivado si otro plugin de captcha ya protege los formularios."
-
-msgid "Profile fields need the Profiles module enabled. Registration fields work on their own."
-msgstr "Los campos de perfil necesitan el módulo Perfiles activo. Los de registro funcionan solos."
-
-msgid "Protect login and registration forms with Google reCAPTCHA v2/v3 or Cloudflare Turnstile (needs site and secret keys)."
-msgstr "Protege los formularios de acceso y registro con Google reCAPTCHA v2/v3 o Cloudflare Turnstile (hacen falta claves pública y secreta)."
-
-msgid "Provider"
-msgstr "Proveedor"
-
-msgid "Public key from the provider console."
-msgstr "Clave pública de la consola del proveedor."
-
-msgid "Register button"
-msgstr "Botón de registro"
-
-msgid "Register heading"
-msgstr "Título de registro"
-
-msgid "Registration “password by email” note"
-msgstr "Nota de registro «contraseña por correo»"
-
-msgid "Required"
-msgstr "Obligatorio"
-
-msgid "Reset password button"
-msgstr "Botón de restablecer contraseña"
-
-msgid "Role assigned to new accounts on registration. Same as Settings → General → New User Default Role."
-msgstr "Rol asignado a las cuentas nuevas al registrarse. Igual que Ajustes → Generales → Rol por defecto de los nuevos usuarios."
-
-msgid "Sends visitor IP and token to Google or Cloudflare for verification when forms are submitted (see readme External services)."
-msgstr "Envía la IP y el token del visitante a Google o Cloudflare para verificar al enviar los formularios (véase External services en el readme)."
-
-msgid "Social account linked."
-msgstr "Cuenta social vinculada."
-
-msgid "Social accounts"
-msgstr "Cuentas sociales"
-
-msgid "Text shown next to the newsletter checkbox on the registration form."
-msgstr "Texto junto a la casilla del boletín en el formulario de registro."
-
-msgid "This site is protected by reCAPTCHA."
-msgstr "Este sitio está protegido con reCAPTCHA."
-
-msgid "This social account is already linked to another user."
-msgstr "Esta cuenta social ya está vinculada a otro usuario."
-
-msgid "To add more fields, fill the empty rows and save, then reopen this tab for new blank rows."
-msgstr "Para añadir más campos, rellena las filas vacías y guarda; vuelve a abrir esta pestaña para ver filas en blanco nuevas."
-
-msgid "Type"
-msgstr "Tipo"
-
-msgid "Website"
-msgstr "Sitio web"
-
-msgid "When off, matching emails show an error asking the person to log in first and connect the provider from their profile. Google linking also requires a verified email from Google. New social sign-ups still respect “Anyone can register”. Accounts with two-factor enabled cannot complete social login (password + app code required)."
-msgstr "Si está desactivado, los correos coincidentes muestran un error pidiendo iniciar sesión y conectar el proveedor desde el perfil. La vinculación con Google también exige un correo verificado. Los registros sociales nuevos respetan «Cualquiera puede registrarse». Las cuentas con doble factor no pueden completar el acceso social (hace falta contraseña + código de la app)."
-
-msgid "When this is off, every new registrant is subscribed automatically (only if API key and list ID are set)."
-msgstr "Si está desactivado, cada registro nuevo se suscribe automáticamente (solo si hay clave API e ID de lista)."
-
-msgid "With “Link existing accounts” on (default), a returning social login that shares an email with an existing user signs into that account instead of creating a second one. Logged-in users can also connect or disconnect providers from their profile page."
-msgstr "Con «Vincular cuentas existentes» activo (por defecto), un acceso social que comparte correo con un usuario existente inicia sesión en esa cuenta en lugar de crear otra. Los usuarios conectados también pueden vincular o desconectar proveedores desde el perfil."
-
-msgid "X usually does not return an email: a site-local account is created from the X user id and reused on later logins."
-msgstr "X normalmente no devuelve un correo: se crea una cuenta local a partir del ID de usuario de X y se reutiliza en accesos posteriores."
-
-msgid "reCAPTCHA v3 min score"
-msgstr "Puntuación mínima reCAPTCHA v3"
-
 msgid "— Custom meta —"
 msgstr "— Meta personalizada —"
 
+
+#: auto-added
+msgid ""
+"Please confirm your email by visiting:\n"
+"\n"
+"%s"
+msgstr ""
+"Confirma tu correo visitando:\n"
+"\n"
+"%s"
+
+#: auto-added
+msgid "Virtual sign-in URL (example: yoursite.com/login/)."
+msgstr "URL virtual de acceso (ejemplo: tusitio.com/login/)."
+
+#: auto-added
+msgid "Virtual logout URL (menus and links)."
+msgstr "URL virtual de cierre de sesión (menús y enlaces)."
+
+#: auto-added
+msgid ""
+"Virtual registration URL.\n"
+"Only if \"Anyone can register\" is on."
+msgstr ""
+"URL virtual de registro.\n"
+"Solo si «Cualquiera puede registrarse» está activado."
+
+#: auto-added
+msgid "Virtual frontend profile URL."
+msgstr "URL virtual del perfil en el front."
+
+#: auto-added
+msgid "Virtual favorites URL."
+msgstr "URL virtual de favoritos."
+
+#: auto-added
+msgid ""
+"Enabled: the visitor stays on the same screen and only the form updates (AJAX).\n"
+"Disabled: the browser reloads the page. Turn it off if another plugin already updates these forms in place."
+msgstr ""
+"Activado: el visitante se queda en la misma pantalla y solo se actualiza el formulario (AJAX).\n"
+"Desactivado: el navegador recarga la página. Desactívalo si otro plugin ya actualiza estos formularios sin recargar."
+
+#: auto-added
+msgid "Optional. These replace the heading above each form and the submit button label on this plugin’s login, register, lost-password and reset-password pages (not wp-admin). Leave a box empty to keep the built-in text."
+msgstr "Opcional. Sustituyen el título encima de cada formulario y la etiqueta del botón de envío en las páginas de acceso, registro, contraseña perdida y restablecimiento de este plugin (no wp-admin). Deja una casilla vacía para mantener el texto integrado."
+
+#: auto-added
+msgid "Disabled"
+msgstr "Desactivado"
+
+#: auto-added
+msgid "Paste a shortcode into a post or page. Block editor: Shortcode block. Classic editor: paste in the text. Content between the tags is shown or hidden; text outside stays visible to everyone. Menus and widgets ignore these unless they run shortcodes."
+msgstr "Pega un shortcode en una entrada o página. Editor de bloques: bloque Shortcode. Editor clásico: pégalo en el texto. El contenido entre las etiquetas se muestra u oculta; el texto de fuera sigue visible para todos. Los menús y widgets lo ignoran salvo que ejecuten shortcodes."
+
+#: auto-added
+msgid "How redirects work"
+msgstr "Cómo funcionan las redirecciones"
+
+#: auto-added
+msgid "Write a full URL: https:// plus your domain and path (example below). A path alone such as /shop/ is not accepted."
+msgstr "Escribe una URL completa: https:// más tu dominio y la ruta (ejemplo abajo). Una ruta sola como /shop/ no se acepta."
+
+#: auto-added
+msgid "Leave a box empty to keep the WordPress default for that case."
+msgstr "Deja una casilla vacía para mantener el valor por defecto de WordPress en ese caso."
+
+#: auto-added
+msgid "Default applies to every role that has no box of its own. A role box overrides Default only for that role."
+msgstr "Por defecto se aplica a cada rol que no tiene casilla propia. Una casilla de rol solo sustituye el valor por defecto para ese rol."
+
+#: auto-added
+msgid "Examples with this site"
+msgstr "Ejemplos con este sitio"
+
+#: auto-added
+msgid "After login → Default: %s (everyone with no role-specific URL)."
+msgstr "Tras iniciar sesión → Por defecto: %s (todos sin URL específica de rol)."
+
+#: auto-added
+msgid "After login → Subscriber: %s (only subscribers; they ignore Default)."
+msgstr "Tras iniciar sesión → Suscriptor: %s (solo suscriptores; ignoran el valor por defecto)."
+
+#: auto-added
+msgid "After login → Administrator: %s — or leave empty so admins follow Default."
+msgstr "Tras iniciar sesión → Administrador: %s — o déjalo vacío para que los administradores sigan el valor por defecto."
+
+#: auto-added
+msgid "After logout → Default: %s"
+msgstr "Tras cerrar sesión → Por defecto: %s"
+
+#: auto-added
+msgid "After registration → Default: %s"
+msgstr "Tras el registro → Por defecto: %s"
+
+#: auto-added
+msgid "Custom picture uploaded (shown above). Choose a new file only to replace it. Leave the file field empty to keep this one."
+msgstr "Foto personalizada subida (se muestra arriba). Elige un archivo nuevo solo para sustituirla. Deja el campo de archivo vacío para conservar esta."
+
+#: auto-added
+msgid "No custom picture uploaded yet. The preview above is Gravatar or the site default. Upload a file below to replace it on this site."
+msgstr "Aún no se ha subido ninguna foto personalizada. La vista previa de arriba es Gravatar o el valor por defecto del sitio. Sube un archivo abajo para sustituirla en este sitio."
+
+#: auto-added
+msgid "Day mode"
+msgstr "Modo día"
+
+#: auto-added
+msgid "Night mode"
+msgstr "Modo noche"
+
+#: auto-added
+msgid "Auto mode"
+msgstr "Modo auto"
+
+#: auto-added
+msgid "Follows sunrise and sunset (changes with the seasons)"
+msgstr "Sigue la salida y la puesta de sol (cambia con las estaciones)"
+
+#: auto-added
+msgid "☕ Support this plugin"
+msgstr "☕ Apoya este plugin"
+
+#: auto-added
+msgid "Interface language"
+msgstr "Idioma de la interfaz"
+
+#: auto-added
+msgid "This notification was sent by %1$s on %2$s."
+msgstr "Esta notificación la ha enviado %1$s en %2$s."
+
+#: auto-added
+msgid "Welcome to your new account"
+msgstr "Te damos la bienvenida a tu cuenta nueva"
+
+#: auto-added
+msgid "Set your password"
+msgstr "Establece tu contraseña"
+
+#: auto-added
+msgid "New user registration"
+msgstr "Nuevo registro de usuario"
+
+#: auto-added
+msgid "Password reset request"
+msgstr "Solicitud de restablecimiento de contraseña"
+
+#: auto-added
+msgid "Your password was changed"
+msgstr "Se ha cambiado tu contraseña"
+
+#: auto-added
+msgid "Your email address was changed"
+msgstr "Se ha cambiado tu dirección de correo"
+
+#: auto-added
+msgid "Password changed"
+msgstr "Contraseña cambiada"
+
+#: auto-added
+msgid "Confirm email"
+msgstr "Confirmar correo"
+
+msgid "<strong>Error:</strong> Enter your current password to change your email or password, or to turn two-factor off."
+msgstr "<strong>Error:</strong> Introduce tu contraseña actual para cambiar el correo o la contraseña, o para desactivar la verificación en dos pasos."
+
+msgid "Current password"
+msgstr "Contraseña actual"
+
+msgid "Needed only to change your email or password, or to turn two-factor off."
+msgstr "Solo hace falta para cambiar el correo o la contraseña, o para desactivar la verificación en dos pasos."
+
+msgid "<strong>Error:</strong> Too many wrong two-factor codes. Please try again in a few minutes."
+msgstr "<strong>Error:</strong> Demasiados códigos de verificación en dos pasos incorrectos. Inténtalo de nuevo dentro de unos minutos."
+
+msgid "<strong>Error:</strong> This account uses two-factor authentication. Use an application password for XML-RPC."
+msgstr "<strong>Error:</strong> Esta cuenta usa verificación en dos pasos. Usa una contraseña de aplicación para XML-RPC."
+
+msgid "<strong>Error:</strong> The social login was cancelled or not allowed by the provider."
+msgstr "<strong>Error:</strong> El inicio de sesión social se canceló o el proveedor no lo permitió."
+
+msgid "<strong>Error:</strong> This confirmation link is invalid or has already been used."
+msgstr "<strong>Error:</strong> Este enlace de confirmación no es válido o ya se ha usado."
+
+msgid "<strong>Error:</strong> This confirmation link has expired. We have sent you a new one."
+msgstr "<strong>Error:</strong> Este enlace de confirmación ha caducado. Te hemos enviado uno nuevo."
+
+msgid "Always allowed IPs"
+msgstr "IPs siempre permitidas"
+
+msgid "An administrator approved your account. You can now log in."
+msgstr "Un administrador ha aprobado tu cuenta. Ya puedes iniciar sesión."
+
+msgid "Behind Cloudflare or another proxy every visitor can look like the same IP, so one attacker could lock everyone out. Pick the header your proxy sets. Only choose a header your server really overwrites."
+msgstr "Detrás de Cloudflare u otro proxy todos los visitantes pueden parecer la misma IP y un atacante podría bloquear a todos. Elige la cabecera que establece tu proxy. Elige solo una cabecera que tu servidor sobrescriba realmente."
+
+msgid "Cloudflare (CF-Connecting-IP)"
+msgstr "Cloudflare (CF-Connecting-IP)"
+
+msgid "Delete all plugin data when the plugin is deleted"
+msgstr "Eliminar todos los datos del plugin al borrarlo"
+
+msgid "Detected IP for your current request: %s"
+msgstr "IP detectada para tu petición actual: %s"
+
+msgid "For security, administrator accounts cannot be linked by email. Log in with your password and link the provider from your profile."
+msgstr "Por seguridad, las cuentas de administrador no se pueden vincular por correo. Inicia sesión con tu contraseña y vincula el proveedor desde tu perfil."
+
+msgid "One IP or IPv4 range (example 203.0.113.0/24) per line. These IPs are never locked out. Add your own IP here."
+msgstr "Una IP o rango IPv4 (ejemplo 203.0.113.0/24) por línea. Estas IPs nunca se bloquean. Añade aquí tu propia IP."
+
+msgid "Plugin data"
+msgstr "Datos del plugin"
+
+msgid "Server address (REMOTE_ADDR) — default"
+msgstr "Dirección del servidor (REMOTE_ADDR) — por defecto"
+
+msgid "Settings, two-factor keys, linked social accounts, avatars and favorites. Leave unchecked to keep them if you reinstall."
+msgstr "Ajustes, claves de dos factores, cuentas sociales vinculadas, avatares y favoritos. Déjalo sin marcar para conservarlos si reinstalas."
+
+msgid "Visitor IP source"
+msgstr "Origen de la IP del visitante"
+
+msgid "X-Forwarded-For (first address)"
+msgstr "X-Forwarded-For (primera dirección)"
+
+msgid "X-Real-IP"
+msgstr "X-Real-IP"
+
+msgid "Your account has been approved"
+msgstr "Tu cuenta ha sido aprobada"

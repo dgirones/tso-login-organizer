@@ -12,7 +12,84 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once TSOLO_PATH . 'includes/tsolo-compat-scan.php';
 
 /**
- * Module definitions.
+ * Module registry: files, classes and collision flags (no translated strings).
+ *
+ * Safe to call on plugins_loaded: it never invokes gettext.
+ *
+ * @return array
+ */
+function tsolo_get_module_registry() {
+	return array(
+		'redirection'  => array(
+			'file'    => 'class-tsolo-mod-redirection.php',
+			'class'   => 'TSOLO_Mod_Redirection',
+			'collide' => false,
+		),
+		'moderation'   => array(
+			'file'    => 'class-tsolo-mod-moderation.php',
+			'class'   => 'TSOLO_Mod_Moderation',
+			'collide' => false,
+		),
+		'restrictions' => array(
+			'file'    => 'class-tsolo-mod-restrictions.php',
+			'class'   => 'TSOLO_Mod_Restrictions',
+			'collide' => false,
+		),
+		'security'     => array(
+			'file'    => 'class-tsolo-mod-security.php',
+			'class'   => 'TSOLO_Mod_Security',
+			'collide' => true,
+		),
+		'captcha'      => array(
+			'file'    => 'class-tsolo-mod-captcha.php',
+			'class'   => 'TSOLO_Mod_Captcha',
+			'collide' => true,
+		),
+		'fields'       => array(
+			'file'    => 'class-tsolo-mod-fields.php',
+			'class'   => 'TSOLO_Mod_Fields',
+			'collide' => false,
+		),
+		'profiles'     => array(
+			'file'    => 'class-tsolo-mod-profiles.php',
+			'class'   => 'TSOLO_Mod_Profiles',
+			'collide' => false,
+		),
+		'notifications' => array(
+			'file'    => 'class-tsolo-mod-notifications.php',
+			'class'   => 'TSOLO_Mod_Notifications',
+			'collide' => false,
+		),
+		'two_factor'   => array(
+			'file'    => 'class-tsolo-mod-two-factor.php',
+			'class'   => 'TSOLO_Mod_Two_Factor',
+			'collide' => true,
+		),
+		'social'       => array(
+			'file'    => 'class-tsolo-mod-social.php',
+			'class'   => 'TSOLO_Mod_Social',
+			'collide' => false,
+		),
+		'avatars'      => array(
+			'file'    => 'class-tsolo-mod-avatars.php',
+			'class'   => 'TSOLO_Mod_Avatars',
+			'collide' => false,
+		),
+		'favorites'    => array(
+			'file'    => 'class-tsolo-mod-favorites.php',
+			'class'   => 'TSOLO_Mod_Favorites',
+			'collide' => false,
+		),
+		'mailchimp'    => array(
+			'file'    => 'class-tsolo-mod-mailchimp.php',
+			'class'   => 'TSOLO_Mod_Mailchimp',
+			'collide' => false,
+		),
+	);
+}
+
+/**
+ * Module definitions (labels are translated: call on init or later).
  *
  * @return array
  */
@@ -28,7 +105,7 @@ function tsolo_get_module_definitions() {
 	$profile_url   = home_url( '/' . trim( (string) $profile_slug, '/' ) . '/' );
 	$favorites_url = home_url( '/' . trim( (string) $fav_slug, '/' ) . '/' );
 
-	return array(
+	$defs = array(
 		'redirection'   => array(
 			'label'       => __( 'Redirection', 'tso-login-organizer' ),
 			'description' => __( 'Send users to different URLs after login, logout or registration, optionally per role.', 'tso-login-organizer' ),
@@ -39,9 +116,6 @@ function tsolo_get_module_definitions() {
 			'compat'      => array(
 				__( 'Other login/redirect plugins (membership, LMS, WooCommerce “redirect after login”) may override these URLs depending on filter priority.', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-redirection.php',
-			'class'       => 'TSOLO_Mod_Redirection',
-			'collide'     => false,
 		),
 		'moderation'    => array(
 			'label'       => __( 'Moderation', 'tso-login-organizer' ),
@@ -58,9 +132,6 @@ function tsolo_get_module_definitions() {
 			'compat'      => array(
 				__( 'Conflicts with other registration-approval plugins that also block wp_authenticate_user.', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-moderation.php',
-			'class'       => 'TSOLO_Mod_Moderation',
-			'collide'     => false,
 		),
 		'restrictions'  => array(
 			'label'       => __( 'Restrictions', 'tso-login-organizer' ),
@@ -73,9 +144,6 @@ function tsolo_get_module_definitions() {
 				__( 'Private site redirects guests site-wide — do not combine with another “force login” / members-only plugin.', 'tso-login-organizer' ),
 				__( 'Caching plugins may serve public HTML to guests; exclude restricted pages or disable cache for logged-out users when testing.', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-restrictions.php',
-			'class'       => 'TSOLO_Mod_Restrictions',
-			'collide'     => false,
 		),
 		'security'      => array(
 			'label'       => __( 'Security', 'tso-login-organizer' ),
@@ -91,9 +159,6 @@ function tsolo_get_module_definitions() {
 				__( 'May conflict with TSO Swiss Knife Login Protect and Kadence Security (lockouts / hide login).', 'tso-login-organizer' ),
 				__( 'Hide wp-login.php conflicts with any plugin that renames or protects wp-login.php.', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-security.php',
-			'class'       => 'TSOLO_Mod_Security',
-			'collide'     => true,
 		),
 		'captcha'       => array(
 			'label'       => __( 'Captcha', 'tso-login-organizer' ),
@@ -103,7 +168,9 @@ function tsolo_get_module_definitions() {
 				__( 'Paste the site key and the secret key, then save. Empty keys mean the check stays off. Do not enable more than one captcha plugin on the same forms.', 'tso-login-organizer' ),
 			),
 			'test_links'  => array(
+				// phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Provider console documentation links (readme External services), not enqueued assets.
 				__( 'Google reCAPTCHA admin', 'tso-login-organizer' ) => 'https://www.google.com/recaptcha/admin',
+				// phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Provider console documentation links (readme External services), not enqueued assets.
 				__( 'Cloudflare Turnstile', 'tso-login-organizer' )   => 'https://dash.cloudflare.com/?to=/:account/turnstile',
 				__( 'Open login page', 'tso-login-organizer' )        => $login_url,
 			),
@@ -111,9 +178,6 @@ function tsolo_get_module_definitions() {
 				__( 'Do not enable together with CleanTalk, Kadence captcha, or another captcha on the same forms (double challenges / failed verifies).', 'tso-login-organizer' ),
 				__( 'Sends visitor IP and token to Google or Cloudflare for verification when forms are submitted (see readme External services).', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-captcha.php',
-			'class'       => 'TSOLO_Mod_Captcha',
-			'collide'     => true,
 		),
 		'fields'        => array(
 			'label'       => __( 'Custom Fields', 'tso-login-organizer' ),
@@ -130,9 +194,6 @@ function tsolo_get_module_definitions() {
 			'compat'      => array(
 				__( 'Other registration-form plugins that also inject fields may show duplicates.', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-fields.php',
-			'class'       => 'TSOLO_Mod_Fields',
-			'collide'     => false,
 		),
 		'profiles'      => array(
 			'label'       => __( 'Profiles', 'tso-login-organizer' ),
@@ -149,9 +210,6 @@ function tsolo_get_module_definitions() {
 			'compat'      => array(
 				__( 'Block wp-admin prevents those users from reaching wp-admin screens (including other plugins’ profile tabs). Prefer frontend setup for 2FA when this is on.', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-profiles.php',
-			'class'       => 'TSOLO_Mod_Profiles',
-			'collide'     => false,
 		),
 		'notifications' => array(
 			'label'       => __( 'Notifications', 'tso-login-organizer' ),
@@ -163,9 +221,6 @@ function tsolo_get_module_definitions() {
 			'compat'      => array(
 				__( 'SMTP / email-template plugins may still wrap or override outgoing mail after this filter runs.', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-notifications.php',
-			'class'       => 'TSOLO_Mod_Notifications',
-			'collide'     => false,
 		),
 		'two_factor'    => array(
 			'label'       => __( 'Two-Factor Authentication', 'tso-login-organizer' ),
@@ -183,9 +238,6 @@ function tsolo_get_module_definitions() {
 				__( 'Conflicts with other WordPress 2FA / TOTP plugins on the same accounts.', 'tso-login-organizer' ),
 				__( 'If Profiles → Block wp-admin is on, users should enable 2FA on the frontend profile (not wp-admin).', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-two-factor.php',
-			'class'       => 'TSOLO_Mod_Two_Factor',
-			'collide'     => true,
 		),
 		'social'        => array(
 			'label'       => __( 'Social Login', 'tso-login-organizer' ),
@@ -206,9 +258,6 @@ function tsolo_get_module_definitions() {
 				__( 'Other social-login plugins on the same forms can show duplicate buttons or fight over callbacks.', 'tso-login-organizer' ),
 				__( 'Sends users to Google / Facebook / X and exchanges tokens with those APIs (see readme External services). Off until credentials are saved.', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-social.php',
-			'class'       => 'TSOLO_Mod_Social',
-			'collide'     => false,
 		),
 		'avatars'       => array(
 			'label'       => __( 'Avatars', 'tso-login-organizer' ),
@@ -226,9 +275,6 @@ function tsolo_get_module_definitions() {
 				__( 'Other avatar plugins that filter get_avatar / get_avatar_url may override or conflict.', 'tso-login-organizer' ),
 			),
 			'requires'    => array( 'profiles' ),
-			'file'        => 'class-tsolo-mod-avatars.php',
-			'class'       => 'TSOLO_Mod_Avatars',
-			'collide'     => false,
 		),
 		'favorites'     => array(
 			'label'       => __( 'Favorites', 'tso-login-organizer' ),
@@ -244,9 +290,6 @@ function tsolo_get_module_definitions() {
 			'compat'      => array(
 				__( 'Buttons are injected into post content; page builders that replace the_content may hide them — use the favorites page URL as a fallback.', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-favorites.php',
-			'class'       => 'TSOLO_Mod_Favorites',
-			'collide'     => false,
 		),
 		'mailchimp'     => array(
 			'label'       => __( 'Mailchimp', 'tso-login-organizer' ),
@@ -262,11 +305,16 @@ function tsolo_get_module_definitions() {
 			'compat'      => array(
 				__( 'Sends subscriber email (and name if available) to Mailchimp’s API (see readme External services).', 'tso-login-organizer' ),
 			),
-			'file'        => 'class-tsolo-mod-mailchimp.php',
-			'class'       => 'TSOLO_Mod_Mailchimp',
-			'collide'     => false,
 		),
 	);
+
+	foreach ( tsolo_get_module_registry() as $key => $meta ) {
+		if ( isset( $defs[ $key ] ) ) {
+			$defs[ $key ] = array_merge( $defs[ $key ], $meta );
+		}
+	}
+
+	return $defs;
 }
 
 /**
@@ -274,7 +322,7 @@ function tsolo_get_module_definitions() {
  */
 function tsolo_load_modules() {
 	$flags = tsolo_get_modules();
-	$defs  = tsolo_get_module_definitions();
+	$defs  = tsolo_get_module_registry();
 	foreach ( $defs as $key => $def ) {
 		if ( empty( $flags[ $key ] ) ) {
 			continue;

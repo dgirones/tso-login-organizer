@@ -173,7 +173,8 @@ class TSOLO_Mod_Profiles {
 	 * Block wp-admin for subscribers.
 	 */
 	public function block_admin() {
-		if ( wp_doing_ajax() || self::user_can_access_admin() ) {
+		global $pagenow;
+		if ( wp_doing_ajax() || 'admin-post.php' === $pagenow || self::user_can_access_admin() ) {
 			return;
 		}
 		wp_safe_redirect( self::blocked_admin_redirect_url() );
@@ -194,6 +195,47 @@ class TSOLO_Mod_Profiles {
 	}
 
 	/**
+	 * Whether the posted profile changes email, password or switches two-factor off.
+	 *
+	 * These changes need the current password so a stolen session cannot take over the account.
+	 *
+	 * @param int $user_id User ID.
+	 * @return bool
+	 */
+	public static function sensitive_change_requested( $user_id ) {
+		$user = get_userdata( absint( $user_id ) );
+		if ( ! ( $user instanceof WP_User ) ) {
+			return false;
+		}
+		$new_email = sanitize_email( tsolo_get_request_text( 'user_email', 'post' ) );
+		if ( '' !== $new_email && strtolower( $new_email ) !== strtolower( (string) $user->user_email ) ) {
+			return true;
+		}
+		if ( '' !== tsolo_get_request_password( 'pass1' ) || '' !== tsolo_get_request_password( 'pass2' ) ) {
+			return true;
+		}
+		if ( tsolo_is_module_enabled( 'two_factor' ) && class_exists( 'TSOLO_Mod_Two_Factor' ) && TSOLO_Mod_Two_Factor::user_needs_2fa( $user ) && ! tsolo_request_post_is_set( 'tsolo_2fa_enable' ) ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Whether the posted current password matches the account.
+	 *
+	 * @param int $user_id User ID.
+	 * @return bool
+	 */
+	public static function current_password_is_valid( $user_id ) {
+		$user    = get_userdata( absint( $user_id ) );
+		$current = tsolo_get_request_password( 'current_pass' );
+		if ( ! ( $user instanceof WP_User ) || '' === $current ) {
+			return false;
+		}
+		return (bool) wp_check_password( $current, $user->user_pass, $user->ID );
+	}
+
+	/**
 	 * Save profile POST.
 	 */
 	public function handle_profile_save() {
@@ -207,14 +249,18 @@ class TSOLO_Mod_Profiles {
 		if ( ! wp_verify_nonce( $nonce, 'tsolo_save_profile' ) ) {
 			return;
 		}
-		$user_id  = get_current_user_id();
+		$user_id = get_current_user_id();
+		if ( self::sensitive_change_requested( $user_id ) && ! self::current_password_is_valid( $user_id ) ) {
+			tsolo_set_errors( new WP_Error( 'tsolo_current_pass', __( '<strong>Error:</strong> Enter your current password to change your email or password, or to turn two-factor off.', 'tso-login-organizer' ) ) );
+			return;
+		}
 		$prepared = self::prepare_userdata(
 			$user_id,
 			array(
 				'display_name' => tsolo_get_request_text( 'display_name', 'post' ),
 				'user_email'   => tsolo_get_request_text( 'user_email', 'post' ),
-				'pass1'        => tsolo_get_request_text( 'pass1', 'post' ),
-				'pass2'        => tsolo_get_request_text( 'pass2', 'post' ),
+				'pass1'        => tsolo_get_request_password( 'pass1' ),
+				'pass2'        => tsolo_get_request_password( 'pass2' ),
 			)
 		);
 		if ( $prepared['error'] instanceof WP_Error ) {

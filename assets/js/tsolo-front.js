@@ -6,7 +6,19 @@
 			if (!$form.attr('data-ajax')) {
 				return;
 			}
+			// reCAPTCHA v3: the captcha script fetches the token and re-submits; do not send an empty one.
+			var $v3 = $form.find('.tsolo-recaptcha-v3-token');
+			if ($v3.length && !$v3.val()) {
+				return;
+			}
 			e.preventDefault();
+			var resetCaptcha = function () {
+				$v3.val('');
+				try {
+					if (window.grecaptcha && $form.find('.g-recaptcha').length) { window.grecaptcha.reset(); }
+					if (window.turnstile && $form.find('.cf-turnstile').length) { window.turnstile.reset(); }
+				} catch (err) { /* ignore */ }
+			};
 			var $alerts = $form.closest('.tsolo').find('.tsolo-alerts');
 			if (!$alerts.length) {
 				$alerts = $('<div class="tsolo-alerts" />').prependTo($form.closest('.tsolo'));
@@ -16,6 +28,10 @@
 				method: 'POST',
 				data: $form.serialize() + '&ajax=1',
 				dataType: 'json'
+			}).always(function (res) {
+				if (!(res && res.success && res.data && res.data.redirect)) {
+					resetCaptcha();
+				}
 			}).done(function (res) {
 				if (res && res.success) {
 					if (res.data && res.data.redirect) {
@@ -50,10 +66,25 @@
 				return;
 			}
 			$btn.prop('disabled', true);
-			$.post(tsoloFrontConfig.ajaxUrl, {
-				action: 'tsolo_toggle_favorite',
-				_ajax_nonce: tsoloFrontConfig.nonce,
-				post_id: postId
+			var send = function () {
+				return $.post(tsoloFrontConfig.ajaxUrl, {
+					action: 'tsolo_toggle_favorite',
+					_ajax_nonce: tsoloFrontConfig.nonce,
+					post_id: postId
+				});
+			};
+			// A cached page can carry an expired nonce: fetch a fresh one once and retry.
+			send().then(null, function (xhr) {
+				if (!xhr || xhr.status !== 403) {
+					return $.Deferred().reject(xhr).promise();
+				}
+				return $.post(tsoloFrontConfig.ajaxUrl, { action: 'tsolo_refresh_nonce' }).then(function (r) {
+					if (r && r.success && r.data && r.data.nonce) {
+						tsoloFrontConfig.nonce = r.data.nonce;
+						return send();
+					}
+					return $.Deferred().reject().promise();
+				});
 			}).done(function (res) {
 				if (res && res.success && res.data && res.data.label) {
 					var active = !!res.data.active;

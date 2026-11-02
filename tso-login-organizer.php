@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       TSO Login Organizer
- * Description:       Frontend login, registration and account pages with optional modules. Migrates free settings from Theme My Login.
- * Version:           1.0.0
+ * Description:       Your own login, registration and password-reset pages inside your site, instead of wp-login.php, plus optional 2FA, security and social login.
+ * Version:           1.0.1
  * Author:            Tu Soporte Online
  * Author URI:        https://www.tusoporteonline.es/blog
  * Requires at least: 6.1
@@ -25,7 +25,7 @@ if ( ! defined( 'TSOLO_FILE' ) ) {
 }
 
 if ( ! defined( 'TSOLO_VERSION' ) ) {
-	define( 'TSOLO_VERSION', '1.0.0' );
+	define( 'TSOLO_VERSION', '1.0.1' );
 }
 
 if ( ! defined( 'TSOLO_PATH' ) ) {
@@ -46,10 +46,11 @@ if ( ! defined( 'TSOLO_NONCE_FORM' ) ) {
 
 require_once TSOLO_PATH . 'includes/tsolo-storage.php';
 require_once TSOLO_PATH . 'includes/class-tsolo-action.php';
-require_once TSOLO_PATH . 'includes/tsolo-actions.php';
-require_once TSOLO_PATH . 'includes/tsolo-forms.php';
 require_once TSOLO_PATH . 'includes/tsolo-rewrite.php';
 require_once TSOLO_PATH . 'includes/tsolo-urls.php';
+require_once TSOLO_PATH . 'includes/tsolo-email.php';
+require_once TSOLO_PATH . 'includes/tsolo-actions.php';
+require_once TSOLO_PATH . 'includes/tsolo-forms.php';
 require_once TSOLO_PATH . 'includes/tsolo-shortcodes.php';
 require_once TSOLO_PATH . 'includes/class-tsolo-widget.php';
 require_once TSOLO_PATH . 'includes/tsolo-nav-menus.php';
@@ -66,17 +67,16 @@ add_action( 'plugins_loaded', 'tsolo_load_textdomain', 0 );
 function tsolo_load_textdomain() {
 	$locale     = function_exists( 'determine_locale' ) ? determine_locale() : get_locale();
 	$locale     = (string) $locale;
-	$candidates = array( $locale );
-	if ( 0 === strpos( $locale, 'ca' ) ) {
+	// Catalan and Spanish only; any other locale keeps the English source strings.
+	$candidates = array();
+	if ( 'ca' === $locale || 0 === strpos( $locale, 'ca_' ) ) {
 		$candidates[] = 'ca';
-	}
-	if ( 0 === strpos( $locale, 'es_' ) || 'es' === $locale ) {
+	} elseif ( 'es' === $locale || 0 === strpos( $locale, 'es_' ) ) {
 		$candidates[] = 'es_ES';
 	}
-	$candidates = array_unique( $candidates );
 	foreach ( $candidates as $candidate ) {
-		$mofile = TSOLO_PATH . 'languages/tso-login-organizer-' . $candidate . '.mo';
-		if ( is_readable( $mofile ) ) {
+		$mofile = tsolo_get_translation_file( $candidate );
+		if ( '' !== $mofile ) {
 			load_textdomain( 'tso-login-organizer', $mofile, $locale );
 			return;
 		}

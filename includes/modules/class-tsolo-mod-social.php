@@ -53,6 +53,7 @@ class TSOLO_Mod_Social {
 	private function __construct() {
 		add_action( 'tsolo_after_form', array( $this, 'render_buttons' ) );
 		add_action( 'tsolo_profile_fields', array( $this, 'render_profile_links' ), 20 );
+		add_action( 'init', array( $this, 'handle_start' ), 4 );
 		add_action( 'init', array( $this, 'handle_callback' ), 5 );
 		add_action( 'template_redirect', array( $this, 'handle_unlink' ), 2 );
 	}
@@ -138,12 +139,13 @@ class TSOLO_Mod_Social {
 	 * @return string
 	 */
 	public static function callback_url( $provider ) {
-		return add_query_arg(
-			array(
-				'tsolo_social' => sanitize_key( $provider ),
-			),
-			home_url( '/' )
+		$args = array(
+			'tsolo_social' => sanitize_key( $provider ),
 		);
+		$base = home_url( '/' );
+		return function_exists( 'tsolo_add_query_arg' )
+			? tsolo_add_query_arg( $args, $base )
+			: add_query_arg( $args, $base );
 	}
 
 	/**
@@ -272,6 +274,13 @@ class TSOLO_Mod_Social {
 						__( 'The social provider did not verify this email address, so it cannot be linked to an existing account.', 'tso-login-organizer' )
 					);
 				}
+				// Never hand a privileged account to whoever controls a social profile with the same email.
+				if ( user_can( $by_email, 'manage_options' ) && ! apply_filters( 'tsolo_social_link_privileged', false, $by_email ) ) {
+					return new WP_Error(
+						'tsolo_social_privileged',
+						__( 'For security, administrator accounts cannot be linked by email. Log in with your password and link the provider from your profile.', 'tso-login-organizer' )
+					);
+				}
 				$user = $by_email;
 			}
 		}
@@ -379,16 +388,17 @@ class TSOLO_Mod_Social {
 		if ( ! in_array( $form, array( 'login', 'register' ), true ) ) {
 			return;
 		}
-		$s     = self::get_settings();
-		$links = array();
+		$s           = self::get_settings();
+		$links       = array();
+		$redirect_to = tsolo_get_request_text( 'redirect_to', 'get' );
 		if ( self::provider_ready( 'google', $s ) ) {
-			$links['google'] = $this->google_auth_url();
+			$links['google'] = self::start_url( 'google', $redirect_to );
 		}
 		if ( self::provider_ready( 'facebook', $s ) ) {
-			$links['facebook'] = $this->facebook_auth_url();
+			$links['facebook'] = self::start_url( 'facebook', $redirect_to );
 		}
 		if ( self::provider_ready( 'x', $s ) ) {
-			$links['x'] = $this->x_auth_url();
+			$links['x'] = self::start_url( 'x', $redirect_to );
 		}
 		if ( empty( $links ) ) {
 			return;
@@ -402,11 +412,123 @@ class TSOLO_Mod_Social {
 	}
 
 	/**
-	 * Google auth URL.
+	 * Name of the cookie that binds the OAuth state to this browser.
+	 */
+	const STATE_COOKIE = 'tsolo_social_state';
+
+	/**
+	 * URL that starts a social login (sets the state cookie, then redirects to the provider).
+	 *
+	 * @param string $provider google|facebook|x.
+	 * @return string
+	 */
+	public static function start_url( $provider, $redirect_to = '' ) {
+		$args = array( 'tsolo_social_start' => sanitize_key( $provider ) );
+		if ( '' !== (string) $redirect_to ) {
+			$args['redirect_to'] = (string) $redirect_to;
+		}
+		return add_query_arg( $args, home_url( '/' ) );
+	}
+
+	/**
+	 * Remember where to send the user after the provider returns.
+	 *
+	 * @param string $state       OAuth state.
+	 * @param string $redirect_to Requested redirect.
+	 */
+	private static function store_redirect( $state, $redirect_to ) {
+		if ( '' !== (string) $redirect_to ) {
+			set_transient( 'tsolo_social_redir_' . md5( (string) $state ), (string) $redirect_to, 15 * MINUTE_IN_SECONDS );
+		}
+	}
+
+	/**
+	 * Read and forget the stored redirect for a state.
+	 *
+	 * @param string $state OAuth state.
+	 * @return string
+	 */
+	private static function consume_redirect( $state ) {
+		$key = 'tsolo_social_redir_' . md5( (string) $state );
+		$url = get_transient( $key );
+		delete_transient( $key );
+		return is_string( $url ) ? $url : '';
+	}
+
+	/**
+	 * Start the OAuth flow: bind a random state to this browser with a cookie, then redirect.
+	 *
+	 * The state is checked in handle_callback() against this cookie, so a callback
+	 * link crafted by someone else (login CSRF) is rejected for any visitor.
+	 */
+	public function handle_start() {
+		$provider = tsolo_get_request_text( 'tsolo_social_start', 'get' );
+		if ( ! in_array( $provider, array( 'google', 'facebook', 'x' ), true ) ) {
+			return;
+		}
+		if ( ! self::provider_ready( $provider ) ) {
+			wp_die( esc_html__( 'Social login is not configured for this provider.', 'tso-login-organizer' ), 403 );
+		}
+		$state = wp_generate_password( 32, false, false );
+		self::set_state_cookie( $state, time() + 10 * MINUTE_IN_SECONDS );
+		self::store_redirect( $state, tsolo_get_request_text( 'redirect_to', 'get' ) );
+		if ( 'google' === $provider ) {
+			$url = $this->google_auth_url( $state );
+		} elseif ( 'facebook' === $provider ) {
+			$url = $this->facebook_auth_url( $state );
+		} else {
+			$url = $this->x_auth_url( $state );
+		}
+		// Fixed provider endpoints (Google, Facebook, X), not user input.
+		wp_redirect( $url ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
+		exit;
+	}
+
+	/**
+	 * Set or clear the HttpOnly state cookie.
+	 *
+	 * @param string $value   State value ('' clears the cookie).
+	 * @param int    $expires Expiry timestamp.
+	 */
+	private static function set_state_cookie( $value, $expires ) {
+		if ( headers_sent() ) {
+			return;
+		}
+		setcookie(
+			self::STATE_COOKIE,
+			$value,
+			array(
+				'expires'  => $expires,
+				'path'     => COOKIEPATH ? COOKIEPATH : '/',
+				'domain'   => COOKIE_DOMAIN ? COOKIE_DOMAIN : '',
+				'secure'   => is_ssl(),
+				'httponly' => true,
+				'samesite' => 'Lax',
+			)
+		);
+		if ( '' === $value ) {
+			unset( $_COOKIE[ self::STATE_COOKIE ] );
+		} else {
+			$_COOKIE[ self::STATE_COOKIE ] = $value;
+		}
+	}
+
+	/**
+	 * State stored in this browser's cookie.
 	 *
 	 * @return string
 	 */
-	private function google_auth_url() {
+	private static function get_state_cookie() {
+		return preg_replace( '/[^A-Za-z0-9]/', '', tsolo_get_cookie_text( self::STATE_COOKIE ) );
+	}
+
+	/**
+	 * Google auth URL.
+	 *
+	 * @param string $state OAuth state bound to the browser cookie.
+	 * @return string
+	 */
+	private function google_auth_url( $state ) {
 		$s = self::get_settings();
 		return add_query_arg(
 			array(
@@ -414,7 +536,7 @@ class TSOLO_Mod_Social {
 				'redirect_uri'  => self::callback_url( 'google' ),
 				'response_type' => 'code',
 				'scope'         => 'openid email profile',
-				'state'         => wp_create_nonce( 'tsolo_social_google' ),
+				'state'         => $state,
 			),
 			'https://accounts.google.com/o/oauth2/v2/auth'
 		);
@@ -423,16 +545,17 @@ class TSOLO_Mod_Social {
 	/**
 	 * Facebook auth URL.
 	 *
+	 * @param string $state OAuth state bound to the browser cookie.
 	 * @return string
 	 */
-	private function facebook_auth_url() {
+	private function facebook_auth_url( $state ) {
 		$s = self::get_settings();
 		return add_query_arg(
 			array(
 				'client_id'    => $s['facebook_app_id'],
 				'redirect_uri' => self::callback_url( 'facebook' ),
 				'scope'        => 'email,public_profile',
-				'state'        => wp_create_nonce( 'tsolo_social_facebook' ),
+				'state'        => $state,
 			),
 			'https://www.facebook.com/v19.0/dialog/oauth'
 		);
@@ -441,11 +564,11 @@ class TSOLO_Mod_Social {
 	/**
 	 * X auth URL (OAuth 2 + PKCE).
 	 *
+	 * @param string $state OAuth state bound to the browser cookie.
 	 * @return string
 	 */
-	private function x_auth_url() {
+	private function x_auth_url( $state ) {
 		$s        = self::get_settings();
-		$state    = wp_create_nonce( 'tsolo_social_x' );
 		$verifier = wp_generate_password( 64, false, false );
 		self::store_pkce_verifier( $state, $verifier );
 		return add_query_arg(
@@ -473,11 +596,21 @@ class TSOLO_Mod_Social {
 		if ( ! self::provider_ready( $provider ) ) {
 			wp_die( esc_html__( 'Social login is not configured for this provider.', 'tso-login-organizer' ), 403 );
 		}
-		$code  = tsolo_get_request_text( 'code', 'get' );
-		$state = tsolo_get_request_text( 'state', 'get' );
-		if ( '' === $code || ! wp_verify_nonce( $state, 'tsolo_social_' . $provider ) ) {
+		// The user pressed Cancel at the provider (or it refused): back to the login page with a message.
+		if ( '' !== tsolo_get_request_text( 'error', 'get' ) ) {
+			self::set_state_cookie( '', time() - HOUR_IN_SECONDS );
+			wp_safe_redirect( tsolo_add_query_arg( 'tsolo_error', 'social_denied', tsolo_get_action_url( 'login' ) ) );
+			exit;
+		}
+		$code   = tsolo_get_request_text( 'code', 'get' );
+		$state  = tsolo_get_request_text( 'state', 'get' );
+		$cookie = self::get_state_cookie();
+		// The state must match the cookie set when this browser started the login (blocks login CSRF).
+		if ( '' === $code || '' === $state || '' === $cookie || ! hash_equals( $cookie, $state ) ) {
 			wp_die( esc_html__( 'Invalid social login request.', 'tso-login-organizer' ), 403 );
 		}
+		self::set_state_cookie( '', time() - HOUR_IN_SECONDS );
+		$requested_redirect = self::consume_redirect( $state );
 
 		if ( 'google' === $provider ) {
 			$profile = $this->exchange_google( $code );
@@ -499,14 +632,14 @@ class TSOLO_Mod_Social {
 
 		if ( $was_logged_in ) {
 			$profile_url = function_exists( 'tsolo_get_action_url' ) ? tsolo_get_action_url( 'profile' ) : home_url( '/' );
-			wp_safe_redirect( add_query_arg( 'tsolo_social_linked', $provider, $profile_url ) );
+			wp_safe_redirect( tsolo_add_query_arg( 'tsolo_social_linked', $provider, $profile_url ) );
 			exit;
 		}
 
 		$flag = self::moderation_block_flag( $user );
 		if ( $flag ) {
 			$login = function_exists( 'tsolo_get_action_url' ) ? tsolo_get_action_url( 'login' ) : wp_login_url();
-			wp_safe_redirect( add_query_arg( 'checkemail', $flag, $login ) );
+			wp_safe_redirect( tsolo_add_query_arg( 'checkemail', $flag, $login ) );
 			exit;
 		}
 
@@ -523,10 +656,20 @@ class TSOLO_Mod_Social {
 			}
 		}
 
+		// Same gate core applies in wp_authenticate_user, so security and moderation plugins can still block this account.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
+		$allowed = apply_filters( 'wp_authenticate_user', $user, '' );
+		if ( is_wp_error( $allowed ) ) {
+			wp_die( esc_html( $allowed->get_error_message() ), '', array( 'response' => 403 ) );
+		}
+
 		wp_set_current_user( $user->ID );
 		wp_set_auth_cookie( $user->ID, true );
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core wp_login action.
+		do_action( 'wp_login', $user->user_login, $user );
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core login_redirect filter.
-		wp_safe_redirect( apply_filters( 'login_redirect', admin_url(), '', $user ) );
+		$target = '' !== $requested_redirect ? wp_validate_redirect( $requested_redirect, admin_url() ) : admin_url();
+		wp_safe_redirect( apply_filters( 'login_redirect', $target, $requested_redirect, $user ) );
 		exit;
 	}
 
@@ -565,16 +708,13 @@ class TSOLO_Mod_Social {
 		}
 		foreach ( $providers as $key => $label ) {
 			if ( $linked === $key ) {
-				$unlink = wp_nonce_url(
-					add_query_arg(
-						array(
-							'tsolo_social_unlink' => $key,
-						),
-						function_exists( 'tsolo_get_action_url' ) ? tsolo_get_action_url( 'profile' ) : home_url( '/' )
-					),
-					'tsolo_social_unlink_' . $key,
-					'tsolo_social_unlink_nonce'
-				);
+				$base   = function_exists( 'tsolo_get_action_url' ) ? tsolo_get_action_url( 'profile' ) : home_url( '/' );
+				$with   = function_exists( 'tsolo_add_query_arg' )
+					? tsolo_add_query_arg( array( 'tsolo_social_unlink' => $key ), $base )
+					: add_query_arg( array( 'tsolo_social_unlink' => $key ), $base );
+				$unlink = function_exists( 'tsolo_nonce_url' )
+					? tsolo_nonce_url( $with, 'tsolo_social_unlink_' . $key, 'tsolo_social_unlink_nonce' )
+					: wp_nonce_url( $with, 'tsolo_social_unlink_' . $key, 'tsolo_social_unlink_nonce' );
 				echo '<p>' . esc_html(
 					sprintf(
 						/* translators: %s: provider name */
@@ -583,7 +723,7 @@ class TSOLO_Mod_Social {
 					)
 				) . ' <a href="' . esc_url( $unlink ) . '">' . esc_html__( 'Disconnect', 'tso-login-organizer' ) . '</a></p>';
 			} else {
-				$url = 'google' === $key ? $this->google_auth_url() : ( 'facebook' === $key ? $this->facebook_auth_url() : $this->x_auth_url() );
+				$url = self::start_url( $key );
 				echo '<p><a class="tsolo-button tsolo-social-' . esc_attr( $key ) . '" href="' . esc_url( $url ) . '">' . esc_html(
 					sprintf(
 						/* translators: %s: provider name */

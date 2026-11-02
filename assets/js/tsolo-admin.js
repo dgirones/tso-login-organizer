@@ -1,6 +1,20 @@
 (function ($) {
 	'use strict';
 
+	/**
+	 * Short tabs are shorter than #adminmenuwrap; without a floor on #wpbody-content
+	 * the document height follows the menu and wheel-scroll near the bottom jumps.
+	 */
+	function tsoloSyncContentMinHeight() {
+		var menu = document.getElementById('adminmenuwrap');
+		var content = document.getElementById('wpbody-content');
+		if (!menu || !content || !document.querySelector('.tsolo-admin-wrap')) {
+			return;
+		}
+		var mh = menu.offsetHeight || 0;
+		content.style.minHeight = mh > 0 ? mh + 'px' : '';
+	}
+
 	function tsoloSwitchTab(tab) {
 		var $wrap = $('.tsolo-admin-wrap');
 		if (!$wrap.length || !tab) {
@@ -10,6 +24,10 @@
 		if (!$panel.length) {
 			return false;
 		}
+
+		/* Keep the primary tab bar visually fixed (avoids jump tall→short panels). */
+		var anchor = $wrap.find('.tsolo-nav-primary').get(0);
+		var anchorTop = anchor ? anchor.getBoundingClientRect().top : null;
 
 		$wrap.find('.tsolo-nav-tabs .nav-tab').removeClass('nav-tab-active');
 		$wrap.find('.tsolo-nav-tabs .nav-tab[data-tsolo-tab="' + tab + '"]').addClass('nav-tab-active');
@@ -25,14 +43,24 @@
 			}
 		});
 
-		/* After a tall tab, keep scroll near the tabs so a short panel does not leave a blank gap below. */
-		try {
-			var anchor = $wrap.find('.tsolo-nav-primary').get(0) || $wrap.get(0);
-			if (anchor && typeof anchor.scrollIntoView === 'function') {
-				anchor.scrollIntoView({ block: 'start', behavior: 'auto' });
+		/* Collision notice only on Modules / Security / Captcha / 2FA. */
+		var collisionTabs = { modules: 1, security: 1, captcha: 1, two_factor: 1 };
+		var $collision = $wrap.find('.tsolo-collision-notice');
+		if ($collision.length) {
+			if (collisionTabs[tab]) {
+				$collision.removeAttr('hidden').css('display', '');
+			} else {
+				$collision.attr('hidden', 'hidden').css('display', 'none');
 			}
-		} catch (scrollErr) {
-			// Ignore.
+		}
+
+		tsoloSyncContentMinHeight();
+
+		if (anchor && null !== anchorTop) {
+			var delta = anchor.getBoundingClientRect().top - anchorTop;
+			if (Math.abs(delta) > 1) {
+				window.scrollBy(0, delta);
+			}
 		}
 
 		if (window.history && window.history.replaceState) {
@@ -48,7 +76,38 @@
 		return true;
 	}
 
+	/**
+	 * Auto-hide save flashes after a few seconds.
+	 *
+	 * @param {JQuery} $flash Notice element.
+	 */
+	function tsoloAutoHideFlash($flash) {
+		if (!$flash || !$flash.length) {
+			return;
+		}
+		window.setTimeout(function () {
+			$flash.fadeOut(400, function () {
+				$(this).remove();
+			});
+		}, 4500);
+	}
+
 	$(function () {
+		tsoloSyncContentMinHeight();
+		$(window).on('resize', tsoloSyncContentMinHeight);
+		if (window.MutationObserver && document.getElementById('adminmenu')) {
+			try {
+				var mo = new MutationObserver(function () {
+					tsoloSyncContentMinHeight();
+				});
+				mo.observe(document.getElementById('adminmenu'), { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+			} catch (moErr) {
+				// Ignore.
+			}
+		}
+
+		tsoloAutoHideFlash($('.tsolo-admin-wrap .tsolo-admin-flash').not('.tsolo-collision-notice'));
+
 		$('.tsolo-collide-module').on('change', function () {
 			if (!this.checked) {
 				return;
@@ -113,7 +172,7 @@
 				}
 				if (res.data.message) {
 					var noticeClass = res.data.type === 'success' ? 'notice-success' : 'notice-warning';
-					var $flash = $('<div class="notice inline ' + noticeClass + ' is-dismissible tsolo-ajax-flash tsolo-admin-flash" data-tsoan-keep="1"><p></p></div>');
+					var $flash = $('<div class="notice inline ' + noticeClass + ' is-dismissible tsolo-ajax-flash tsolo-admin-flash"><p></p></div>');
 					$flash.find('p').text(res.data.message);
 					$('.tsolo-admin-wrap .tsolo-ajax-flash').remove();
 					var $anchor = $('.tsolo-admin-wrap .tsolo-nav-modules').last();
@@ -125,6 +184,7 @@
 					} else {
 						$('.tsolo-admin-wrap .tsolo-nav-top').after($flash);
 					}
+					tsoloAutoHideFlash($flash);
 				}
 			}).fail(function () {
 				window.alert((cfg.i18n && cfg.i18n.permalinkFailed) || 'Failed');

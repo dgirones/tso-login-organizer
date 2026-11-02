@@ -122,13 +122,14 @@ class TSOLO_Mod_Notifications {
 		$key        = (string) $key;
 		$user_login = (string) $user_login;
 		if ( function_exists( 'tsolo_get_action_url' ) && function_exists( 'tsolo_action_exists' ) && tsolo_action_exists( 'resetpass' ) ) {
-			return add_query_arg(
-				array(
-					'key'   => $key,
-					'login' => $user_login,
-				),
-				tsolo_get_action_url( 'resetpass' )
+			$args = array(
+				'key'   => $key,
+				'login' => $user_login,
 			);
+			$base = tsolo_get_action_url( 'resetpass' );
+			return function_exists( 'tsolo_add_query_arg' )
+				? tsolo_add_query_arg( $args, $base )
+				: add_query_arg( $args, $base );
 		}
 		return network_site_url( 'wp-login.php?action=rp&key=' . rawurlencode( $key ) . '&login=' . rawurlencode( $user_login ), 'login' );
 	}
@@ -195,6 +196,12 @@ class TSOLO_Mod_Notifications {
 			'user_email' => $user->user_email,
 			'login_url'  => wp_login_url(),
 		);
+		if ( false !== strpos( $s['new_user_subject'] . $s['new_user_body'], '{set_password_url}' ) ) {
+			$key = get_password_reset_key( $user );
+			if ( is_string( $key ) ) {
+				$map['set_password_url'] = self::build_reset_url( $key, $user->user_login );
+			}
+		}
 		if ( ! empty( $s['new_user_subject'] ) ) {
 			$email['subject'] = self::apply_placeholders( $s['new_user_subject'], $map );
 		}

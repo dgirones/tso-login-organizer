@@ -71,12 +71,50 @@ function tsolo_nav_menu_meta_box() {
 }
 
 /**
+ * Normalize a menu URL before matching (strip Chrome text fragments, recover pasted admin links).
+ *
+ * Admins sometimes copy “Open profile page” from Tools → TSO Login Organizer via Chrome’s
+ * “Copy link to highlight”, which stores tools.php?page=tso-login-organizer#:~:text=https://…/slug/.
+ *
+ * @param string $url Raw menu item URL.
+ * @return string Candidate front URL to match against actions.
+ */
+function tsolo_normalize_menu_action_url( $url ) {
+	$url = trim( (string) $url );
+	if ( '' === $url ) {
+		return '';
+	}
+
+	// Chrome scroll-to-text fragment: prefer an absolute URL embedded in #:~:text=.
+	if ( false !== strpos( $url, '#:~:text=' ) ) {
+		$parts = explode( '#:~:text=', $url, 2 );
+		$hint  = isset( $parts[1] ) ? rawurldecode( $parts[1] ) : '';
+		if ( preg_match( '#https?://[^\s\"\'<>]+#i', $hint, $m ) ) {
+			return $m[0];
+		}
+		$url = $parts[0];
+	}
+
+	$path  = wp_parse_url( $url, PHP_URL_PATH );
+	$query = wp_parse_url( $url, PHP_URL_QUERY );
+	if ( is_string( $path ) && false !== strpos( $path, 'tools.php' ) && is_string( $query ) && false !== strpos( $query, 'tso-login-organizer' ) ) {
+		return '';
+	}
+
+	return $url;
+}
+
+/**
  * Resolve a TSOLO action from a menu item URL path.
  *
  * @param string $url Menu item URL.
  * @return TSOLO_Action|false
  */
 function tsolo_action_from_menu_url( $url ) {
+	$url = tsolo_normalize_menu_action_url( $url );
+	if ( '' === $url ) {
+		return false;
+	}
 	$path = wp_parse_url( $url, PHP_URL_PATH );
 	if ( ! is_string( $path ) || '' === $path ) {
 		return false;
@@ -104,7 +142,9 @@ function tsolo_action_from_menu_url( $url ) {
 function tsolo_apply_action_to_menu_item( $menu_item, $action ) {
 	$menu_item->url = $action->get_url();
 	if ( 'logout' === $action->get_name() ) {
-		$menu_item->url = wp_nonce_url( $menu_item->url, 'log-out' );
+		$menu_item->url = function_exists( 'tsolo_nonce_url' )
+			? tsolo_nonce_url( $menu_item->url, 'log-out' )
+			: wp_nonce_url( $menu_item->url, 'log-out' );
 	}
 	if ( ! is_admin() && ! $action->show_nav_menu_item ) {
 		$menu_item->_invalid = true;

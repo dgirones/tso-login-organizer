@@ -139,6 +139,8 @@ class TSOLO_Mod_Captcha {
 	public static function api_script_url( $settings = null ) {
 		$s = is_array( $settings ) ? self::sanitize_settings( $settings ) : self::get_settings();
 		if ( 'turnstile' === $s['provider'] ) {
+			// Official Cloudflare Turnstile widget (cannot self-host). Opt-in; see readme External services.
+			// phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Provider CAPTCHA API, not plugin assets offloaded to a CDN.
 			$url = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
 			/**
 			 * Filter the Turnstile api.js URL.
@@ -147,6 +149,8 @@ class TSOLO_Mod_Captcha {
 			 */
 			return (string) apply_filters( 'tsolo_captcha_turnstile_script_url', $url );
 		}
+		// Official Google reCAPTCHA api.js (cannot self-host). Opt-in; see readme External services.
+		// phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Provider CAPTCHA API, not plugin assets offloaded to a CDN.
 		$url = 'https://www.google.com/recaptcha/api.js';
 		if ( 'v3' === $s['provider'] ) {
 			$url = add_query_arg( 'render', $s['site_key'], $url );
@@ -185,6 +189,7 @@ class TSOLO_Mod_Captcha {
 			 *
 			 * @param string $url URL.
 			 */
+			// phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Server-side siteverify to Cloudflare (readme External services), not a front asset.
 			return (string) apply_filters( 'tsolo_captcha_turnstile_verify_endpoint', 'https://challenges.cloudflare.com/turnstile/v0/siteverify' );
 		}
 		/**
@@ -192,6 +197,7 @@ class TSOLO_Mod_Captcha {
 		 *
 		 * @param string $url URL.
 		 */
+		// phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Server-side siteverify to Google (readme External services), not a front asset.
 		return (string) apply_filters( 'tsolo_captcha_verify_endpoint', 'https://www.google.com/recaptcha/api/siteverify' );
 	}
 
@@ -298,11 +304,12 @@ class TSOLO_Mod_Captcha {
 		if ( wp_script_is( 'tsolo-captcha-api', 'enqueued' ) ) {
 			return;
 		}
+		// phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent, PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- Official provider CAPTCHA script (Google/Cloudflare); opt-in module documented in readme External services.
 		wp_enqueue_script(
 			'tsolo-captcha-api',
 			self::api_script_url( $s ),
 			array(),
-			null, // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- CDN self-versions.
+			null, // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- Provider CDN self-versions.
 			true
 		);
 		if ( 'v3' === $s['provider'] ) {
@@ -380,7 +387,17 @@ class TSOLO_Mod_Captcha {
 				'body'    => $body,
 			)
 		);
-		if ( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) || (int) wp_remote_retrieve_response_code( $response ) >= 500 ) {
+			/**
+			 * Whether to let visitors through when the captcha provider cannot be reached.
+			 *
+			 * Default false (fail closed). Return true to avoid locking everyone out during a provider outage.
+			 *
+			 * @param bool $fail_open Fail open.
+			 */
+			if ( apply_filters( 'tsolo_captcha_fail_open', false ) ) {
+				return true;
+			}
 			return new WP_Error( 'tsolo_captcha', __( '<strong>Error:</strong> Captcha verification failed.', 'tso-login-organizer' ) );
 		}
 		$decoded = json_decode( wp_remote_retrieve_body( $response ), true );

@@ -494,7 +494,7 @@ function tsolo_render_form( $name, $args = array() ) {
 	if ( '' !== $heading ) {
 		echo '<h2 class="tsolo-form-heading">' . esc_html( $heading ) . '</h2>';
 	}
-	echo tsolo_render_errors_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped inside helper.
+	echo wp_kses_post( tsolo_render_errors_html() );
 
 	if ( ! empty( $args['show_form'] ) ) {
 		$attrs = '';
@@ -518,7 +518,12 @@ function tsolo_render_form( $name, $args = array() ) {
 		);
 
 		foreach ( $fields as $field_name => $field ) {
-			echo tsolo_render_form_field( $name, $field_name, $field ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in renderer.
+			if ( isset( $field['type'] ) && 'action' === $field['type'] ) {
+				// Core login/register/lostpassword hooks print their own (third-party) markup.
+				tsolo_do_form_action_field( $field_name );
+				continue;
+			}
+			echo wp_kses( tsolo_render_form_field( $name, $field_name, $field ), tsolo_get_form_allowed_html() );
 		}
 
 		do_action( 'tsolo_after_form', $name );
@@ -526,10 +531,105 @@ function tsolo_render_form( $name, $args = array() ) {
 	}
 
 	if ( ! empty( $args['show_links'] ) ) {
-		echo tsolo_render_form_links( $name ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in helper.
+		echo wp_kses( tsolo_render_form_links( $name ), tsolo_get_form_allowed_html() );
 	}
 	echo '</div>';
 	return (string) ob_get_clean();
+}
+
+/**
+ * Run the core form action behind an "action" field (prints third-party markup).
+ *
+ * @param string $field_name Field name: login_form, register_form or lostpassword_form.
+ */
+function tsolo_do_form_action_field( $field_name ) {
+	if ( 'login_form' === $field_name ) {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core login_form action.
+		do_action( 'login_form' );
+	} elseif ( 'register_form' === $field_name ) {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core register_form action.
+		do_action( 'register_form' );
+	} elseif ( 'lostpassword_form' === $field_name ) {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core lostpassword_form action.
+		do_action( 'lostpassword_form' );
+	}
+}
+
+/**
+ * HTML the form renderer is allowed to output (used with wp_kses at echo time).
+ *
+ * @return array
+ */
+function tsolo_get_form_allowed_html() {
+	$global = array(
+		'id'     => true,
+		'class'  => true,
+		'title'  => true,
+		'role'   => true,
+		'aria-*' => true,
+		'data-*' => true,
+	);
+	$input  = array_merge(
+		$global,
+		array(
+			'type'         => true,
+			'name'         => true,
+			'value'        => true,
+			'placeholder'  => true,
+			'checked'      => true,
+			'required'     => true,
+			'disabled'     => true,
+			'readonly'     => true,
+			'autocomplete' => true,
+			'autocapitalize' => true,
+			'spellcheck'   => true,
+			'autofocus'    => true,
+			'maxlength'    => true,
+			'minlength'    => true,
+			'pattern'      => true,
+			'inputmode'    => true,
+			'size'         => true,
+			'min'          => true,
+			'max'          => true,
+			'step'         => true,
+		)
+	);
+	return array(
+		'div'      => $global,
+		'p'        => $global,
+		'span'     => $global,
+		'strong'   => $global,
+		'em'       => $global,
+		'br'       => array(),
+		'h2'       => $global,
+		'nav'      => $global,
+		'a'        => array_merge(
+			$global,
+			array(
+				'href'   => true,
+				'rel'    => true,
+				'target' => true,
+			)
+		),
+		'label'    => array_merge( $global, array( 'for' => true ) ),
+		'input'    => $input,
+		'textarea' => array_merge(
+			$input,
+			array(
+				'rows' => true,
+				'cols' => true,
+			)
+		),
+		'button'   => array_merge(
+			$global,
+			array(
+				'type'     => true,
+				'name'     => true,
+				'value'    => true,
+				'disabled' => true,
+			)
+		),
+	);
 }
 
 /**
@@ -544,16 +644,7 @@ function tsolo_render_form_field( $form_name, $field_name, $field ) {
 	$type = $field['type'];
 	if ( 'action' === $type ) {
 		ob_start();
-		if ( 'login_form' === $field_name ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core login_form action.
-			do_action( 'login_form' );
-		} elseif ( 'register_form' === $field_name ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core register_form action.
-			do_action( 'register_form' );
-		} elseif ( 'lostpassword_form' === $field_name ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core lostpassword_form action.
-			do_action( 'lostpassword_form' );
-		}
+		tsolo_do_form_action_field( $field_name );
 		return (string) ob_get_clean();
 	}
 	if ( 'custom' === $type ) {
@@ -615,10 +706,5 @@ function tsolo_render_form_links( $current ) {
 	if ( empty( $links ) ) {
 		return '';
 	}
-	$html = '<nav class="tsolo-links" aria-label="' . esc_attr__( 'Account', 'tso-login-organizer' ) . '"><ul>';
-	foreach ( $links as $link ) {
-		$html .= '<li>' . $link . '</li>';
-	}
-	$html .= '</ul></nav>';
-	return $html;
+	return '<nav class="tsolo-links tsolo-links--inline" aria-label="' . esc_attr__( 'Account', 'tso-login-organizer' ) . '">' . implode( '', $links ) . '</nav>';
 }

@@ -29,6 +29,34 @@ class TSOLO_Mod_Two_Factor {
 	const META_BACKUP = 'tsolo_2fa_backup';
 
 	/**
+	 * User meta: last accepted TOTP time step (blocks reusing the same code).
+	 *
+	 * @var string
+	 */
+	const META_LAST_STEP = 'tsolo_2fa_last_step';
+
+	/**
+	 * Wrong codes allowed per user before a short pause.
+	 *
+	 * @var int
+	 */
+	const MAX_FAILURES = 5;
+
+	/**
+	 * Pause (seconds) after too many wrong codes.
+	 *
+	 * @var int
+	 */
+	const FAILURE_WINDOW = 900;
+
+	/**
+	 * Users already verified during this request (some plugins authenticate twice).
+	 *
+	 * @var array<int,bool>
+	 */
+	private static $verified = array();
+
+	/**
 	 * Instance.
 	 *
 	 * @var self|null
@@ -59,7 +87,10 @@ class TSOLO_Mod_Two_Factor {
 		add_action( 'personal_options_update', array( $this, 'save_profile_fields' ) );
 		add_action( 'edit_user_profile_update', array( $this, 'save_profile_fields' ) );
 		add_action( 'tsolo_after_form', array( $this, 'maybe_inject_2fa_field' ) );
+		add_action( 'login_form', array( $this, 'maybe_inject_wp_login_field' ) );
 		add_action( 'admin_notices', array( $this, 'maybe_admin_enroll_notice' ) );
+		add_action( 'admin_init', array( $this, 'enforce_enrollment' ), 1 );
+		add_action( 'template_redirect', array( $this, 'enforce_enrollment' ), 3 );
 	}
 
 	/**
@@ -163,9 +194,6 @@ class TSOLO_Mod_Two_Factor {
 		if ( is_wp_error( $user ) || ! ( $user instanceof WP_User ) ) {
 			return $user;
 		}
-		if ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
-			return $user;
-		}
 		// Required role but not enrolled: allow password login so they can enable 2FA on profile.
 		if ( self::user_must_enroll_2fa( $user ) ) {
 			return $user;
@@ -173,15 +201,100 @@ class TSOLO_Mod_Two_Factor {
 		if ( ! self::user_needs_2fa( $user ) ) {
 			return $user;
 		}
+		if ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
+			// An application password is the supported way to use XML-RPC with 2FA; the plain password is not enough.
+			if ( did_action( 'application_password_did_authenticate' ) ) {
+				return $user;
+			}
+			return new WP_Error( 'tsolo_2fa_xmlrpc', __( '<strong>Error:</strong> This account uses two-factor authentication. Use an application password for XML-RPC.', 'tso-login-organizer' ) );
+		}
+		if ( ! empty( self::$verified[ (int) $user->ID ] ) ) {
+			return $user;
+		}
 		$secret = get_user_meta( $user->ID, self::META_SECRET, true );
 		$code   = tsolo_get_request_text( 'tsolo_2fa_code', 'post' );
 		if ( '' === $code ) {
 			return new WP_Error( 'tsolo_2fa_required', __( '<strong>Error:</strong> Enter your two-factor authentication code.', 'tso-login-organizer' ) );
 		}
-		if ( ! self::verify_totp( $secret, $code ) && ! self::verify_backup( $user->ID, $code ) ) {
+		if ( self::is_throttled( $user->ID ) ) {
+			return new WP_Error( 'tsolo_2fa_throttled', __( '<strong>Error:</strong> Too many wrong two-factor codes. Please try again in a few minutes.', 'tso-login-organizer' ) );
+		}
+		if ( ! self::accept_totp( $user->ID, $secret, $code ) && ! self::verify_backup( $user->ID, $code ) ) {
+			self::record_failure( $user->ID );
 			return new WP_Error( 'tsolo_2fa_invalid', __( '<strong>Error:</strong> Invalid two-factor code.', 'tso-login-organizer' ) );
 		}
+		self::clear_failures( $user->ID );
+		self::$verified[ (int) $user->ID ] = true;
 		return $user;
+	}
+
+	/**
+	 * Forget users verified earlier in this request (used by tests and long-running processes).
+	 */
+	public static function reset_verified_cache() {
+		self::$verified = array();
+	}
+
+	/**
+	 * Accept a TOTP code once: a time step that was already used is rejected.
+	 *
+	 * @param int      $user_id User ID.
+	 * @param string   $secret  Secret.
+	 * @param string   $code    Code typed by the user.
+	 * @param int|null $now     Unix time (tests).
+	 * @return bool
+	 */
+	public static function accept_totp( $user_id, $secret, $code, $now = null ) {
+		$step = self::totp_match_step( $secret, $code, $now );
+		if ( false === $step ) {
+			return false;
+		}
+		$last = (int) get_user_meta( $user_id, self::META_LAST_STEP, true );
+		if ( $step <= $last ) {
+			return false;
+		}
+		update_user_meta( $user_id, self::META_LAST_STEP, $step );
+		return true;
+	}
+
+	/**
+	 * Transient key for the wrong-code counter of a user.
+	 *
+	 * @param int $user_id User ID.
+	 * @return string
+	 */
+	private static function failure_key( $user_id ) {
+		return 'tsolo_2fa_fail_' . absint( $user_id );
+	}
+
+	/**
+	 * Whether this user must wait before trying more codes.
+	 *
+	 * @param int $user_id User ID.
+	 * @return bool
+	 */
+	public static function is_throttled( $user_id ) {
+		return (int) get_transient( self::failure_key( $user_id ) ) >= self::MAX_FAILURES;
+	}
+
+	/**
+	 * Count one wrong code.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	private static function record_failure( $user_id ) {
+		$key   = self::failure_key( $user_id );
+		$count = (int) get_transient( $key );
+		set_transient( $key, $count + 1, self::FAILURE_WINDOW );
+	}
+
+	/**
+	 * Reset the wrong-code counter.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	private static function clear_failures( $user_id ) {
+		delete_transient( self::failure_key( $user_id ) );
 	}
 
 	/**
@@ -201,7 +314,41 @@ class TSOLO_Mod_Two_Factor {
 		if ( function_exists( 'tsolo_get_action_url' ) && function_exists( 'tsolo_action_exists' ) && tsolo_action_exists( 'profile' ) ) {
 			$url = tsolo_get_action_url( 'profile' );
 		}
-		return add_query_arg( 'tsolo_2fa_enroll', '1', $url );
+		return function_exists( 'tsolo_add_query_arg' )
+			? tsolo_add_query_arg( 'tsolo_2fa_enroll', '1', $url )
+			: add_query_arg( 'tsolo_2fa_enroll', '1', $url );
+	}
+
+	/**
+	 * Keep users whose role requires 2FA on their profile page until they enable it.
+	 *
+	 * Disable with add_filter( 'tsolo_2fa_enforce_enrollment', '__return_false' ).
+	 */
+	public function enforce_enrollment() {
+		if ( ! is_user_logged_in() || wp_doing_ajax() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) ) {
+			return;
+		}
+		if ( ! apply_filters( 'tsolo_2fa_enforce_enrollment', true ) ) {
+			return;
+		}
+		if ( ! self::user_must_enroll_2fa( wp_get_current_user() ) ) {
+			return;
+		}
+		$front_profile = function_exists( 'tsolo_action_exists' ) && tsolo_action_exists( 'profile' );
+		if ( is_admin() ) {
+			global $pagenow;
+			if ( in_array( $pagenow, array( 'profile.php', 'admin-post.php', 'admin-ajax.php' ), true ) ) {
+				return;
+			}
+			$target = $front_profile ? tsolo_get_action_url( 'profile' ) : admin_url( 'profile.php' );
+		} else {
+			if ( function_exists( 'tsolo_is_action' ) && ( tsolo_is_action( 'profile' ) || tsolo_is_action( 'logout' ) ) ) {
+				return;
+			}
+			$target = $front_profile ? tsolo_get_action_url( 'profile' ) : admin_url( 'profile.php' );
+		}
+		wp_safe_redirect( tsolo_add_query_arg( 'tsolo_2fa_enroll', '1', $target ) );
+		exit;
 	}
 
 	/**
@@ -240,11 +387,26 @@ class TSOLO_Mod_Two_Factor {
 		if ( ! $need && tsolo_request_post_is_set( 'tsolo_2fa_code' ) ) {
 			$need = true;
 		}
+		// Always offer the (optional) field, so 2FA users log in in a single step. No user enumeration: every visitor sees it.
+		if ( ! $need && apply_filters( 'tsolo_2fa_always_show_field', true ) ) {
+			$need = true;
+		}
 		if ( ! $need ) {
 			return;
 		}
-		echo '<p class="tsolo-field tsolo-field-2fa"><label for="tsolo_2fa_code">' . esc_html__( 'Authentication code', 'tso-login-organizer' ) . '</label>';
-		echo '<input type="text" name="tsolo_2fa_code" id="tsolo_2fa_code" class="input" autocomplete="one-time-code" inputmode="numeric" /></p>';
+		echo '<p class="tsolo-field tsolo-field-2fa"><label for="tsolo_2fa_code">' . esc_html__( 'Authentication code or backup code (only if you have two-factor enabled)', 'tso-login-organizer' ) . '</label>';
+		echo '<input type="text" name="tsolo_2fa_code" id="tsolo_2fa_code" class="input" autocomplete="one-time-code" maxlength="24" /></p>';
+	}
+
+	/**
+	 * 2FA field on the real wp-login.php screen (the plugin forms print their own).
+	 */
+	public function maybe_inject_wp_login_field() {
+		if ( ! function_exists( 'tsolo_is_wp_login' ) || ! tsolo_is_wp_login() ) {
+			return;
+		}
+		echo '<p><label for="tsolo_2fa_code">' . esc_html__( 'Authentication code or backup code (only if you have two-factor enabled)', 'tso-login-organizer' ) . '</label>';
+		echo '<input type="text" name="tsolo_2fa_code" id="tsolo_2fa_code" class="input" autocomplete="one-time-code" maxlength="24" /></p>';
 	}
 
 	/**
@@ -277,7 +439,12 @@ class TSOLO_Mod_Two_Factor {
 						<p class="description"><?php esc_html_e( 'Two-factor is already on. Saving with the box checked keeps this same key. Uncheck and update the profile to turn it off and delete the key.', 'tso-login-organizer' ); ?></p>
 						<p class="description"><?php esc_html_e( 'Key to type into the app (Google Authenticator or similar):', 'tso-login-organizer' ); ?> <code><?php echo esc_html( $secret ); ?></code></p>
 						<?php if ( is_array( $backups ) && $backups ) : ?>
-							<p class="description"><?php esc_html_e( 'One-time backup codes (each works once):', 'tso-login-organizer' ); ?> <code><?php echo esc_html( implode( ' ', $backups ) ); ?></code></p>
+							<p class="description"><?php esc_html_e( 'One-time backup codes (each works once):', 'tso-login-organizer' ); ?></p>
+							<ul class="tsolo-backup-codes">
+								<?php foreach ( $backups as $tsolo_backup ) : ?>
+									<li><code><?php echo esc_html( self::format_backup_code( $tsolo_backup ) ); ?></code></li>
+								<?php endforeach; ?>
+							</ul>
 						<?php endif; ?>
 					<?php else : ?>
 						<p class="description"><?php esc_html_e( 'Check the box and update the profile to turn two-factor on. A key is created only then. The user must add that key to an authenticator app. The next login will ask for the password and for the 6-digit code from the app. Leaving the box unchecked changes nothing.', 'tso-login-organizer' ); ?></p>
@@ -298,7 +465,7 @@ class TSOLO_Mod_Two_Factor {
 			return;
 		}
 		check_admin_referer( 'update-user_' . $user_id );
-		$enable = isset( $_POST['tsolo_2fa_enable'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified via check_admin_referer above.
+		$enable = tsolo_request_post_is_set( 'tsolo_2fa_enable' );
 		self::apply_enable_flag( $user_id, (bool) $enable );
 	}
 
@@ -337,6 +504,7 @@ class TSOLO_Mod_Two_Factor {
 		} else {
 			delete_user_meta( $user_id, self::META_SECRET );
 			delete_user_meta( $user_id, self::META_BACKUP );
+			delete_user_meta( $user_id, self::META_LAST_STEP );
 		}
 		return array(
 			'secret'  => (string) $secret,
@@ -368,7 +536,13 @@ class TSOLO_Mod_Two_Factor {
 		$count   = max( 1, absint( $count ) );
 		$backups = array();
 		for ( $i = 0; $i < $count; $i++ ) {
-			$backups[] = strtolower( wp_generate_password( 8, false ) );
+			// No look-alike characters (0/o, 1/l/i) so codes can be typed by hand.
+			$alphabet = 'abcdefghjkmnpqrstuvwxyz23456789';
+			$code     = '';
+			for ( $j = 0; $j < 8; $j++ ) {
+				$code .= $alphabet[ wp_rand( 0, strlen( $alphabet ) - 1 ) ];
+			}
+			$backups[] = $code;
 		}
 		return $backups;
 	}
@@ -382,6 +556,18 @@ class TSOLO_Mod_Two_Factor {
 	 * @return bool
 	 */
 	public static function verify_totp( $secret, $code, $now = null ) {
+		return false !== self::totp_match_step( $secret, $code, $now );
+	}
+
+	/**
+	 * Time step that matches a TOTP code (current step +/- 1), or false.
+	 *
+	 * @param string   $secret Secret.
+	 * @param string   $code   Code.
+	 * @param int|null $now    Unix time (tests).
+	 * @return int|false
+	 */
+	public static function totp_match_step( $secret, $code, $now = null ) {
 		$code = preg_replace( '/\s+/', '', (string) $code );
 		if ( ! preg_match( '/^\d{6}$/', $code ) ) {
 			return false;
@@ -390,7 +576,7 @@ class TSOLO_Mod_Two_Factor {
 		$time = (int) floor( $now / 30 );
 		for ( $i = -1; $i <= 1; $i++ ) {
 			if ( hash_equals( self::totp( $secret, $time + $i ), $code ) ) {
-				return true;
+				return $time + $i;
 			}
 		}
 		return false;
@@ -445,6 +631,26 @@ class TSOLO_Mod_Two_Factor {
 	}
 
 	/**
+	 * Normalize a backup code (case, spaces and dashes ignored).
+	 *
+	 * @param string $code Code.
+	 * @return string
+	 */
+	public static function normalize_backup_code( $code ) {
+		return strtolower( preg_replace( '/[\s\-]+/', '', (string) $code ) );
+	}
+
+	/**
+	 * Format a backup code in blocks of four for display (abcd-efgh).
+	 *
+	 * @param string $code Code.
+	 * @return string
+	 */
+	public static function format_backup_code( $code ) {
+		return implode( '-', str_split( self::normalize_backup_code( $code ), 4 ) );
+	}
+
+	/**
 	 * Verify backup code (consumes it).
 	 *
 	 * @param int    $user_id User ID.
@@ -456,8 +662,19 @@ class TSOLO_Mod_Two_Factor {
 		if ( ! is_array( $codes ) ) {
 			return false;
 		}
-		$code = strtolower( trim( (string) $code ) );
-		$key  = array_search( $code, $codes, true );
+		// If several codes were pasted at once (whole list selected), only the first one is checked.
+		$parts = preg_split( '/\s+/', trim( (string) $code ) );
+		$code  = self::normalize_backup_code( is_array( $parts ) ? $parts[0] : $code );
+		if ( '' === $code ) {
+			return false;
+		}
+		$key = false;
+		foreach ( $codes as $index => $stored ) {
+			if ( is_string( $stored ) && hash_equals( self::normalize_backup_code( $stored ), $code ) ) {
+				$key = $index;
+				break;
+			}
+		}
 		if ( false === $key ) {
 			return false;
 		}

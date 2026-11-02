@@ -228,7 +228,8 @@ function tsolo_compat_plugin_catalog() {
  */
 function tsolo_compat_skip_source_path( $path ) {
 	$path = wp_normalize_path( (string) $path );
-	return (bool) preg_match( '~/(languages|assets|vendor|node_modules|tests|test)/|(maps?|detection|regression|changelog|readme)~i', $path );
+	$base = basename( $path );
+	return (bool) ( preg_match( '~/(languages|assets|vendor|node_modules|tests|test)/~i', $path ) || preg_match( '~(^|[-_.])(maps?|detection|regression|changelog|readme)([-_.]|$)~i', $base ) );
 }
 
 /**
@@ -238,13 +239,16 @@ function tsolo_compat_skip_source_path( $path ) {
  * @return string[]
  */
 function tsolo_compat_plugin_php_files( $plugin_file ) {
-	$main  = wp_normalize_path( WP_PLUGIN_DIR . '/' . $plugin_file );
-	$dir   = wp_normalize_path( dirname( $main ) );
-	$paths = array();
+	$plugins_dir = defined( 'TSOLO_PATH' )
+		? wp_normalize_path( dirname( untrailingslashit( TSOLO_PATH ) ) )
+		: wp_normalize_path( WP_PLUGIN_DIR );
+	$main        = wp_normalize_path( $plugins_dir . '/' . $plugin_file );
+	$dir         = wp_normalize_path( dirname( $main ) );
+	$paths       = array();
 	if ( is_readable( $main ) && ! tsolo_compat_skip_source_path( $main ) ) {
 		$paths[] = $main;
 	}
-	if ( ! is_dir( $dir ) || wp_normalize_path( WP_PLUGIN_DIR ) === $dir ) {
+	if ( ! is_dir( $dir ) || $plugins_dir === $dir ) {
 		return $paths;
 	}
 	try {

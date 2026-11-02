@@ -1,5 +1,22 @@
+# Copyright (C) 2026 Tu Soporte Online
+# This file is distributed under the GPLv2 or later.
 msgid ""
-msgstr "Project-Id-Version: TSO Login Organizer 1.0.0\nReport-Msgid-Bugs-To: https://www.tusoporteonline.es/blog\nLanguage-Team: LANGUAGE <LL@li.org>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+msgstr ""
+"Project-Id-Version: TSO Login Organizer 1.0.1\n"
+"Report-Msgid-Bugs-To: https://www.tusoporteonline.es/blog\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "0 keeps the default (~448px). Allowed range 200–1200."
+msgstr ""
+
+msgid "<strong>Error:</strong> %s is required."
+msgstr ""
+
+msgid "<strong>Error:</strong> %s must be a valid email address."
+msgstr ""
 
 msgid "<strong>Error:</strong> Captcha verification failed."
 msgstr ""
@@ -55,6 +72,12 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
+msgid "Add a row per field: a machine key (letters/numbers), a label, type, and whether it appears on register and/or profile."
+msgstr ""
+
+msgid "Add extra fields to registration and/or the frontend profile (name, phone, URL, custom meta)."
+msgstr ""
+
 msgid "Add the Facebook Login product to the app."
 msgstr ""
 
@@ -67,6 +90,9 @@ msgstr ""
 msgid "Add to favorites"
 msgstr ""
 
+msgid "Added to the outer .tsolo wrapper so your theme or custom CSS can target these forms. Up to five class names."
+msgstr ""
+
 msgid "Admin approval"
 msgstr ""
 
@@ -76,7 +102,7 @@ msgstr ""
 msgid "After a successful registration the new person is signed in immediately. If Moderation has email confirmation or admin approval turned on, this box is ignored and they stay logged out until that step is finished."
 msgstr ""
 
-msgid "After import: trash the old Theme My Login WordPress pages, keep pretty permalinks, then open each virtual URL from Core → URL slugs to confirm forms load."
+msgid "After importing Theme My Login, enable these modules under Modules so the imported profile / favorites URLs work: %s."
 msgstr ""
 
 msgid "After login"
@@ -89,6 +115,12 @@ msgid "After registration"
 msgstr ""
 
 msgid "After that, login asks for the password and for the 6-digit code shown in the app."
+msgstr ""
+
+msgid "After the import"
+msgstr ""
+
+msgid "All address slugs Theme My Login had configured (login, logout, register, lost password, reset password, dashboard, confirm-action, and profile / favorites when present), using the same names."
 msgstr ""
 
 msgid "Allow users to set a password at registration"
@@ -130,13 +162,22 @@ msgstr ""
 msgid "Also stores favorite posts. The buttons and the list page may disagree about what is saved."
 msgstr ""
 
+msgid "An account with this email already exists. Log in with your password, then link this provider from your profile."
+msgstr ""
+
 msgid "Anyone can register"
+msgstr ""
+
+msgid "Approve"
 msgstr ""
 
 msgid "Ask for newsletter consent on the registration form"
 msgstr ""
 
 msgid "Audience / list ID where new subscribers are added."
+msgstr ""
+
+msgid "Authentication code or backup code (only if you have two-factor enabled)"
 msgstr ""
 
 msgid "Authentication code"
@@ -154,10 +195,19 @@ msgstr ""
 msgid "Avatar updated."
 msgstr ""
 
+msgid "Avatar upload could not be verified. Please try again."
+msgstr ""
+
+msgid "Avatar upload failed. Please try again."
+msgstr ""
+
 msgid "Avatars"
 msgstr ""
 
 msgid "Avatars needs Profiles. The upload field is on the profile page, not on this screen. Max size (KB) below is the only setting here."
+msgstr ""
+
+msgid "Biographical info"
 msgstr ""
 
 msgid "Block wp-admin"
@@ -178,6 +228,9 @@ msgstr ""
 msgid "Caching plugins may serve public HTML to guests; exclude restricted pages or disable cache for logged-out users when testing."
 msgstr ""
 
+msgid "Captcha"
+msgstr ""
+
 msgid "Check friendly URLs"
 msgstr ""
 
@@ -190,7 +243,22 @@ msgstr ""
 msgid "Check your email for the confirmation link."
 msgstr ""
 
+msgid "Checkbox checked by default"
+msgstr ""
+
+msgid "Checkbox label"
+msgstr ""
+
+msgid "Checking friendly URLs…"
+msgstr ""
+
+msgid "Choose a provider below. For Google, open https://www.google.com/recaptcha/admin and create a v2 checkbox or v3 key. For Turnstile, open the Cloudflare Turnstile dashboard."
+msgstr ""
+
 msgid "Click “Check friendly URLs” to refresh rewrite rules. If this warning stays, open Settings → Permalinks, choose Post name (structure /%postname%/), and click Save Changes."
+msgstr ""
+
+msgid "Cloudflare Turnstile"
 msgstr ""
 
 msgid "Compatibility"
@@ -212,6 +280,9 @@ msgid "Conflicts with other WordPress 2FA / TOTP plugins on the same accounts."
 msgstr ""
 
 msgid "Conflicts with other registration-approval plugins that also block wp_authenticate_user."
+msgstr ""
+
+msgid "Connect %s"
 msgstr ""
 
 msgid "Continue with Facebook"
@@ -238,10 +309,13 @@ msgstr ""
 msgid "Correct setup: Settings → Permalinks → Post name. The structure box should contain /%postname%/. Then click Save Changes on that screen."
 msgstr ""
 
-msgid "Create a Project and App with OAuth 2.0 enabled."
+msgid "Could not check friendly URLs. Please try again."
 msgstr ""
 
-msgid "Create a v2 \"I'm not a robot\" key, then paste both values here."
+msgid "Could not create the social login account."
+msgstr ""
+
+msgid "Create a Project and App with OAuth 2.0 (confidential client) enabled. PKCE is handled automatically."
 msgstr ""
 
 msgid "Create an API key at https://admin.mailchimp.com/account/api/ and copy the Audience (list) ID from Audience → Settings."
@@ -256,10 +330,16 @@ msgstr ""
 msgid "Current profile picture"
 msgstr ""
 
+msgid "Custom Fields"
+msgstr ""
+
 msgid "Customize welcome and password-reset emails (subject, body, optional HTML)."
 msgstr ""
 
 msgid "Dashboard"
+msgstr ""
+
+msgid "Deactivate Theme My Login."
 msgstr ""
 
 msgid "Default (all roles)"
@@ -271,7 +351,13 @@ msgstr ""
 msgid "Default form:"
 msgstr ""
 
+msgid "Default role"
+msgstr ""
+
 msgid "Delivery"
+msgstr ""
+
+msgid "Disconnect"
 msgstr ""
 
 msgid "Display Name"
@@ -283,7 +369,7 @@ msgstr ""
 msgid "Do not create WordPress pages for these slugs — they are created virtually. You can delete Theme My Login pages with the same names. Profile and Favorites rewrite only when those modules are enabled."
 msgstr ""
 
-msgid "Do not enable together with CleanTalk, Kadence captcha, or another reCAPTCHA on the same forms (double challenges / failed verifies)."
+msgid "Do not enable together with CleanTalk, Kadence captcha, or another captcha on the same forms (double challenges / failed verifies)."
 msgstr ""
 
 msgid "Each box wants a full address that starts with https:// (a path such as /shop/ is not enough). Empty means keep the WordPress default for that case."
@@ -293,6 +379,9 @@ msgid "Each person turns it on from their own profile page (Profiles) or from Us
 msgstr ""
 
 msgid "Edit a slug below (letters, numbers, hyphens only), then click Save core settings (rewrites are flushed automatically)."
+msgstr ""
+
+msgid "Either moment works for the copy. The saved options remain if Theme My Login is still active and also if you already deactivated it. Leave it active until you have opened the new addresses and they look right, then deactivate it. If both plugins stay active they can fight over the same login addresses."
 msgstr ""
 
 msgid "Email"
@@ -313,10 +402,16 @@ msgstr ""
 msgid "Email only creates a username from the email address. Username + email asks for both fields."
 msgstr ""
 
+msgid "Empty key rows are ignored. Use map to write into WordPress user fields; leave map empty for custom meta."
+msgstr ""
+
 msgid "Enable"
 msgstr ""
 
 msgid "Enable lockouts"
+msgstr ""
+
+msgid "Enabled modules"
 msgstr ""
 
 msgid "Example. After login → Default: %1$s (everyone). Subscriber: %2$s (only subscribers; they ignore Default). Administrator: %3$s. After logout → Default: %1$s. After registration → Default: %4$s. Leave Administrator empty under After login if those users should follow Default."
@@ -329,6 +424,12 @@ msgid "Example: a note only members see"
 msgstr ""
 
 msgid "Example: one role only"
+msgstr ""
+
+msgid "Extensions, email designs, widgets, menus and the WordPress pages Theme My Login created are not copied. Those pages can be moved to the trash; the addresses keep working here as virtual pages. The shortcode [theme-my-login] already works with this plugin."
+msgstr ""
+
+msgid "Extra CSS class"
 msgstr ""
 
 msgid "Facebook"
@@ -352,10 +453,25 @@ msgstr ""
 msgid "Favorites module is not available."
 msgstr ""
 
+msgid "First name"
+msgstr ""
+
 msgid "Follow the numbered steps on each provider card. Copy the redirect URI shown there into that provider’s console."
 msgstr ""
 
+msgid "Form branding"
+msgstr ""
+
+msgid "Form max width (px)"
+msgstr ""
+
+msgid "Form texts"
+msgstr ""
+
 msgid "Forms"
+msgstr ""
+
+msgid "Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/)."
 msgstr ""
 
 msgid "Friendly URL check finished: permalinks are not Plain and the login rewrite rule is present."
@@ -368,6 +484,12 @@ msgid "Friendly URLs are off. WordPress is using Plain permalinks, so addresses 
 msgstr ""
 
 msgid "Friendly URLs are on (current structure: %s). The login rewrite rule is present, so the preview addresses below can open."
+msgstr ""
+
+msgid "Friendly addresses work only when Permalinks is not Plain. The check is on the Migration tab."
+msgstr ""
+
+msgid "Your own login, registration and password-reset pages inside your site, instead of wp-login.php, plus optional 2FA, security and social login."
 msgstr ""
 
 msgid "Frontend login, registration and account pages with optional premium modules. Drop-in replacement for Theme My Login."
@@ -394,7 +516,16 @@ msgstr ""
 msgid "Google client secret"
 msgstr ""
 
+msgid "Google reCAPTCHA"
+msgstr ""
+
 msgid "Google reCAPTCHA admin"
+msgstr ""
+
+msgid "Google reCAPTCHA v2 (checkbox)"
+msgstr ""
+
+msgid "Google reCAPTCHA v3 (invisible score)"
 msgstr ""
 
 msgid "Guests are redirected to the login page. Login, register and password URLs stay public."
@@ -439,10 +570,25 @@ msgstr ""
 msgid "If off, WordPress emails a generated password. If on, the register form includes password fields."
 msgstr ""
 
-msgid "Import Theme My Login free settings (AJAX, login type, registration, passwords, auto-login, slugs). Shortcode [theme-my-login] is already aliased. Deactivate Theme My Login after verifying URLs."
+msgid "If the import suggests Profiles or Favorites, enable those modules under Modules."
+msgstr ""
+
+msgid "If the social email matches an existing user, sign into that account (do not create a duplicate)"
 msgstr ""
 
 msgid "Import Theme My Login settings"
+msgstr ""
+
+msgid "Re-import Theme My Login settings"
+msgstr ""
+
+msgid "Last import: %s. Running import again overwrites matching core settings (AJAX, login type, registration, passwords, auto login, and slugs) with Theme My Login values."
+msgstr ""
+
+msgid "Theme My Login is still active. Import is safe, but both plugins can fight over the same login addresses until you deactivate Theme My Login."
+msgstr ""
+
+msgid "Import only copies the free settings into this plugin. It does not delete them, it does not change Theme My Login, and it does not turn that plugin off. The original options stay in the database."
 msgstr ""
 
 msgid "In Facebook Login → Settings, paste the Facebook callback URL below into Valid OAuth Redirect URIs."
@@ -463,22 +609,49 @@ msgstr ""
 msgid "Invalid social login request."
 msgstr ""
 
+msgid "Invalid user for social login."
+msgstr ""
+
 msgid "JPG, PNG, GIF or WebP."
+msgstr ""
+
+msgid "Keep friendly permalinks (not Plain). Use the check below."
 msgstr ""
 
 msgid "Keep “Show on posts” checked to put Add/Remove at the end of each single post for logged-in users."
 msgstr ""
 
+msgid "Key"
+msgstr ""
+
 msgid "Key to type into the app (Google Authenticator or similar):"
 msgstr ""
 
+msgid "Label"
+msgstr ""
+
+msgid "Last name"
+msgstr ""
+
+msgid "Leave a field empty to keep the built-in label. These strings only change this plugin’s frontend forms."
+msgstr ""
+
 msgid "Leave a provider empty to hide its button. After saving, test from the login page."
+msgstr ""
+
+msgid "Leave all unchecked for public content. Checked roles (and administrators) can read the full content; everyone else sees a login prompt or a permission message."
 msgstr ""
 
 msgid "Leave this unchecked if the password is enough. Check it and click Save Profile to turn two-factor on. The key is created only when you save, not when you tick the box. After saving you will see a key: type it into an authenticator app. From the next login, the password alone is not enough — the site also asks for the 6-digit code from that app."
 msgstr ""
 
 msgid "Let users upload a local profile picture instead of only using Gravatar."
+msgstr ""
+
+msgid "Link existing accounts"
+msgstr ""
+
+msgid "Linked to %s."
 msgstr ""
 
 msgid "List ID"
@@ -523,10 +696,19 @@ msgstr ""
 msgid "Login Protect is hiding wp-login.php or locking failed logins. Leave hide-login and lockouts off in this plugin while that is on."
 msgstr ""
 
+msgid "Login button"
+msgstr ""
+
+msgid "Login heading"
+msgstr ""
+
 msgid "Login type"
 msgstr ""
 
 msgid "Login, register or account links."
+msgstr ""
+
+msgid "Logo URL"
 msgstr ""
 
 msgid "Logout"
@@ -538,13 +720,19 @@ msgstr ""
 msgid "Lost password"
 msgstr ""
 
+msgid "Lost password button"
+msgstr ""
+
+msgid "Lost password heading"
+msgstr ""
+
 msgid "Lost your password?"
 msgstr ""
 
 msgid "Mailchimp"
 msgstr ""
 
-msgid "Mailchimp API key from your account. Data is sent only when this module is enabled and a list is set."
+msgid "Mailchimp API key ending with your data center (example: …-us21). Nothing is sent while the key or list ID is empty."
 msgstr ""
 
 msgid "Mailchimp API keys"
@@ -553,13 +741,19 @@ msgstr ""
 msgid "Make the site private (login required) and restrict content with shortcodes."
 msgstr ""
 
+msgid "Map"
+msgstr ""
+
+msgid "Map can store into WordPress first name, last name, biographical info or website. Leave map empty to store as user meta (tsolo_cf_…)."
+msgstr ""
+
 msgid "Max attempts"
 msgstr ""
 
 msgid "Max size (KB)"
 msgstr ""
 
-msgid "Maximum upload size for profile pictures stored under uploads/tso-login-organizer/."
+msgid "Maximum upload size for profile pictures stored under uploads/tso-login-organizer/ (50–8192 KB). Replacing a photo deletes the previous file in that folder."
 msgstr ""
 
 msgid "May conflict with TSO Swiss Knife Login Protect and Kadence Security (lockouts / hide login)."
@@ -595,6 +789,9 @@ msgstr ""
 msgid "Modules updated. You enabled a module that may conflict with Swiss Knife, Kadence Security or CleanTalk — keep overlapping features off elsewhere."
 msgstr ""
 
+msgid "Move the old Theme My Login pages to the trash if they are listed below. This plugin already serves those addresses."
+msgstr ""
+
 msgid "New Password"
 msgstr ""
 
@@ -608,6 +805,9 @@ msgid "New user subject"
 msgstr ""
 
 msgid "No TML options detected (you can still use this plugin with its own defaults)."
+msgstr ""
+
+msgid "No Theme My Login settings were found, so nothing was changed."
 msgstr ""
 
 msgid "No extra settings for this module."
@@ -625,6 +825,12 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
+msgid "One-time backup codes (each works once):"
+msgstr ""
+
+msgid "Only used with v3. 0.0 is permissive; 1.0 is strict. Default 0.5."
+msgstr ""
+
 msgid "Only users with the Subscriber role see that sentence. Use the role slug (subscriber, customer, editor), not the translated name. Several roles: role=\"subscriber,customer\". Everyone else, including guests, sees nothing from that block."
 msgstr ""
 
@@ -638,9 +844,6 @@ msgid "Open Google Cloud Credentials and create (or select) a project."
 msgstr ""
 
 msgid "Open Google Cloud → Credentials"
-msgstr ""
-
-msgid "Open Google reCAPTCHA admin"
 msgstr ""
 
 msgid "Open Mailchimp API keys"
@@ -661,10 +864,10 @@ msgstr ""
 msgid "Open callback URL"
 msgstr ""
 
-msgid "Open favorites page"
+msgid "Open each virtual URL from Core → URL slugs and confirm the form loads."
 msgstr ""
 
-msgid "Open https://www.google.com/recaptcha/admin and create a reCAPTCHA v2 \"I'm not a robot\" key for your domain."
+msgid "Open favorites page"
 msgstr ""
 
 msgid "Open in new tab"
@@ -682,6 +885,12 @@ msgstr ""
 msgid "Open the new URL in the browser (e.g. /accedir/ if you changed login to accedir). Update menus/links that pointed to the old path."
 msgstr ""
 
+msgid "Optional image shown above login, register and password forms. Use a full https:// URL (Media Library → copy file URL)."
+msgstr ""
+
+msgid "Optional modules (Profiles, Favorites, and others) are not turned on automatically. If Theme My Login used profile or favorites pages, enable the matching modules under Modules after import so those URLs work."
+msgstr ""
+
 msgid "Optionally subscribe new registrants to a Mailchimp audience (API key + list ID)."
 msgstr ""
 
@@ -689,6 +898,9 @@ msgid "Other avatar plugins that filter get_avatar / get_avatar_url may override
 msgstr ""
 
 msgid "Other login/redirect plugins (membership, LMS, WooCommerce “redirect after login”) may override these URLs depending on filter priority."
+msgstr ""
+
+msgid "Other registration-form plugins that also inject fields may show duplicates."
 msgstr ""
 
 msgid "Other security/spam plugins were detected. Enable colliding modules only if you know they will not conflict."
@@ -706,16 +918,25 @@ msgstr ""
 msgid "Paste a shortcode into the content of a post or a page. In the block editor, add a Shortcode block and paste the whole snippet, including the closing tag. In the classic editor, paste it in the text. The words between the opening tag and the closing tag are the part that is shown or hidden. Text outside the shortcode stays visible to everyone. These tags do nothing in a menu or in a widget unless that area runs shortcodes."
 msgstr ""
 
-msgid "Paste the API key and the list ID below. With “Ask for newsletter consent” on, only people who tick the box on the registration form are added. Nothing is sent while the key or the list ID is empty."
+msgid "Paste the API key (it must end with your data center, e.g. -us21) and the list ID below. With “Ask for newsletter consent” on, only people who tick the box are added; you can also pre-check that box. When the checkbox is off, every new registrant is subscribed automatically. Nothing is sent while the key or the list ID is empty, and registration never waits on Mailchimp errors."
 msgstr ""
 
 msgid "Paste the client ID (or app ID) and the secret for each provider you want. Leave a provider’s fields empty to hide its button."
 msgstr ""
 
-msgid "Paste the site key and the secret key below, then save. The checkbox appears on this plugin’s login, register and lost-password forms. Empty keys mean the check stays off."
+msgid "Paste the site key and the secret key, then save. Empty keys mean the check stays off. Do not enable more than one captcha plugin on the same forms."
+msgstr ""
+
+msgid "Pending approval"
+msgstr ""
+
+msgid "Pending email"
 msgstr ""
 
 msgid "Permalinks are not Plain (current structure: %s) but the login rewrite rule is missing, so the virtual address may 404."
+msgstr ""
+
+msgid "Pick a provider, create keys for your domain, then paste both values here."
 msgstr ""
 
 msgid "Please log in at %s to read the rest of this page."
@@ -730,7 +951,10 @@ msgstr ""
 msgid "Possible collisions detected: %s. Keep Security, Captcha and 2FA off unless you disable overlapping features elsewhere."
 msgstr ""
 
-msgid "Private key used server-side to verify tokens. Leave empty and keep the module off if CleanTalk (or similar) already protects forms."
+msgid "Pre-check the newsletter box (only when the checkbox is shown)"
+msgstr ""
+
+msgid "Private key used server-side to verify tokens. Leave empty and keep the module off if another captcha plugin already protects forms."
 msgstr ""
 
 msgid "Private site"
@@ -745,6 +969,9 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
+msgid "Profile fields need the Profiles module enabled. Registration fields work on their own."
+msgstr ""
+
 msgid "Profile picture"
 msgstr ""
 
@@ -754,10 +981,13 @@ msgstr ""
 msgid "Profiles"
 msgstr ""
 
-msgid "Protect login and registration forms with Google reCAPTCHA (needs site and secret keys)."
+msgid "Protect login and registration forms with Google reCAPTCHA v2/v3 or Cloudflare Turnstile (needs site and secret keys)."
 msgstr ""
 
-msgid "Public key from the Google reCAPTCHA admin console."
+msgid "Provider"
+msgstr ""
+
+msgid "Public key from the provider console."
 msgstr ""
 
 msgid "Redirect / callback URI (copy into the provider console):"
@@ -772,16 +1002,28 @@ msgstr ""
 msgid "Register"
 msgstr ""
 
+msgid "Register button"
+msgstr ""
+
+msgid "Register heading"
+msgstr ""
+
 msgid "Registration complete. You may now log in."
 msgstr ""
 
 msgid "Registration confirmation will be emailed to you."
 msgstr ""
 
+msgid "Registration is currently closed on this site."
+msgstr ""
+
 msgid "Registration received. You are not signed in yet: confirm your email and/or wait until an administrator approves the account."
 msgstr ""
 
 msgid "Registration type"
+msgstr ""
+
+msgid "Registration “password by email” note"
 msgstr ""
 
 msgid "Remember Me"
@@ -802,6 +1044,9 @@ msgstr ""
 msgid "Require users to confirm their email before they can log in"
 msgstr ""
 
+msgid "Required"
+msgstr ""
+
 msgid "Required roles"
 msgstr ""
 
@@ -817,10 +1062,16 @@ msgstr ""
 msgid "Reset password"
 msgstr ""
 
+msgid "Reset password button"
+msgstr ""
+
 msgid "Restrictions"
 msgstr ""
 
 msgid "Return 404 on wp-login.php"
+msgstr ""
+
+msgid "Role assigned to new accounts on registration. Same as Settings → General → New User Default Role."
 msgstr ""
 
 msgid "SMTP / email-template plugins may still wrap or override outgoing mail after this filter runs."
@@ -862,10 +1113,7 @@ msgstr ""
 msgid "Sends users to Google / Facebook / X and exchanges tokens with those APIs (see readme External services). Off until credentials are saved."
 msgstr ""
 
-msgid "Sends visitor IP and token to Google for verification when forms are submitted (see readme External services)."
-msgstr ""
-
-msgid "Set App permissions to include users email if you want email on new accounts."
+msgid "Sends visitor IP and token to Google or Cloudflare for verification when forms are submitted (see readme External services)."
 msgstr ""
 
 msgid "Settings"
@@ -904,7 +1152,16 @@ msgstr ""
 msgid "Social Login"
 msgstr ""
 
-msgid "Social login did not return an email address."
+msgid "Social account linked."
+msgstr ""
+
+msgid "Social accounts"
+msgstr ""
+
+msgid "Social login did not return a usable identity."
+msgstr ""
+
+msgid "Social login is not configured for this provider."
 msgstr ""
 
 msgid "Strength indicator"
@@ -940,10 +1197,16 @@ msgstr ""
 msgid "TSO Login Organizer creates login, logout, register, lost password, reset password, dashboard, confirm-action, and (when modules are on) profile and favorites as virtual URLs via rewrite rules. You do not create WordPress pages for them, and you do not need to keep Theme My Login pages."
 msgstr ""
 
+msgid "TSO Login Organizer — restrict by role"
+msgstr ""
+
 msgid "TSOLO Action"
 msgstr ""
 
 msgid "Temporarily block logins from an IP after too many failed attempts."
+msgstr ""
+
+msgid "Text shown next to the newsletter checkbox on the registration form."
 msgstr ""
 
 msgid "The passwords do not match."
@@ -952,13 +1215,19 @@ msgstr ""
 msgid "The saved list is the Favorites slug from Core, currently %s."
 msgstr ""
 
+msgid "The social provider did not verify this email address, so it cannot be linked to an existing account."
+msgstr ""
+
 msgid "Theme My Login settings imported."
 msgstr ""
 
-msgid "No Theme My Login settings were found, so nothing was changed."
+msgid "Theme My Login settings imported. Enable these modules under Modules so the imported URLs work: %s."
 msgstr ""
 
 msgid "These values are the path after your site URL for each virtual form. With the default \"login\" slug, the form is at:"
+msgstr ""
+
+msgid "This account requires two-factor authentication. Please log in with your username and password, then enter the code from your authenticator app."
 msgstr ""
 
 msgid "This also overrides Core → “Log users in after registration”. The new person stays logged out until an administrator approves them on the Users screen, even if that Core box is checked. If both moderation boxes are off, the Core option signs them in as usual."
@@ -970,19 +1239,31 @@ msgstr ""
 msgid "This overrides Core → “Log users in after registration”. The new person stays logged out until they open the link in the email, even if that Core box is checked."
 msgstr ""
 
+msgid "This post cannot be added to favorites."
+msgstr ""
+
+msgid "This site is protected by reCAPTCHA."
+msgstr ""
+
+msgid "This social account is already linked to another user."
+msgstr ""
+
 msgid "Tick Enable on the features you want, then click Save modules."
 msgstr ""
 
 msgid "Tick HTML emails only when the body contains HTML tags. Otherwise leave it off and write plain text."
 msgstr ""
 
-msgid "Tick roles that must enter a TOTP code after the password. Users enable the authenticator on the frontend profile (Profiles) or in wp-admin → Profile."
+msgid "Tick roles that must use two-factor. Users without a key can still sign in once with the password and are sent to their profile to enable the authenticator. After enrollment, every login needs the password plus the app code (or a backup code)."
 msgstr ""
 
 msgid "Tick the roles that must use a second code, then save. People in other roles keep password-only login."
 msgstr ""
 
 msgid "Title:"
+msgstr ""
+
+msgid "To add more fields, fill the empty rows and save, then reopen this tab for new blank rows."
 msgstr ""
 
 msgid "Turn on Avatars as well if the profile page should accept a photo upload."
@@ -994,10 +1275,19 @@ msgstr ""
 msgid "Two-Factor Authentication"
 msgstr ""
 
+msgid "Two-factor authentication is required for your role. Enable it below before continuing."
+msgstr ""
+
 msgid "Two-factor is already on for this account. The key below is the one your authenticator app should contain. Saving again with the box checked does not create a new key. Uncheck the box and click Save Profile to turn two-factor off: the key is deleted and the app code stops working. Login then asks for the password only."
 msgstr ""
 
 msgid "Two-factor is already on. Saving with the box checked keeps this same key. Uncheck and update the profile to turn it off and delete the key."
+msgstr ""
+
+msgid "Two-factor required"
+msgstr ""
+
+msgid "Type"
 msgstr ""
 
 msgid "Type a full address, including https:// and your domain. A path alone (/shop/) is rejected by the browser. Leave a box empty to keep the WordPress default for that case: usually the dashboard after login, the home page after logout, and the login page after registration."
@@ -1021,7 +1311,13 @@ msgstr ""
 msgid "Until a module is enabled, it does nothing and has no settings tab. Disable it again anytime to turn that feature off."
 msgstr ""
 
+msgid "Update menus and links that still point at the old pages."
+msgstr ""
+
 msgid "Use the placeholders listed under each field (for example {user_login}, {reset_url}). An empty field keeps the WordPress default text."
+msgstr ""
+
+msgid "User approved. They can log in now."
 msgstr ""
 
 msgid "Username"
@@ -1075,7 +1371,13 @@ msgstr ""
 msgid "Virtual sign-in URL (example: yoursite.com/login/). No WordPress page needed."
 msgstr ""
 
+msgid "Website"
+msgstr ""
+
 msgid "Welcome back. Your downloads are on this page."
+msgstr ""
+
+msgid "What is copied"
 msgstr ""
 
 msgid "What to type in the boxes"
@@ -1084,13 +1386,43 @@ msgstr ""
 msgid "What visitors may type in the login field: either username, email, or both."
 msgstr ""
 
+msgid "What visitors may type to log in: username, email, or both."
+msgstr ""
+
+msgid "When off, matching emails show an error asking the person to log in first and connect the provider from their profile. Google linking also requires a verified email from Google. New social sign-ups still respect “Anyone can register”. Accounts with two-factor enabled cannot complete social login (password + app code required)."
+msgstr ""
+
+msgid "When this is off, every new registrant is subscribed automatically (only if API key and list ID are set)."
+msgstr ""
+
+msgid "When to deactivate Theme My Login"
+msgstr ""
+
+msgid "Whether a new account is signed in immediately after registration."
+msgstr ""
+
+msgid "Whether login, registration and password forms update without reloading the page (AJAX)."
+msgstr ""
+
+msgid "Whether new users choose their own password, or WordPress emails a generated one."
+msgstr ""
+
+msgid "Whether registration asks for username and email, or email only."
+msgstr ""
+
 msgid "While logged in, open %s. The page says whether a photo is already saved. Choose a JPG, PNG, GIF or WebP to replace it. The file is stored in uploads/tso-login-organizer/ and replaces Gravatar for that user."
 msgstr ""
 
 msgid "With this on, the visitor stays on the same screen and only the form updates (this is called AJAX). With this off, the browser loads the page again after each submit. Turn it off if another plugin already updates these forms in place."
 msgstr ""
 
+msgid "With “Link existing accounts” on (default), a returning social login that shares an email with an existing user signs into that account instead of creating a second one. Logged-in users can also connect or disconnect providers from their profile page."
+msgstr ""
+
 msgid "WordPress setting: show the registration form and allow new accounts. Same as Settings > General."
+msgstr ""
+
+msgid "X"
 msgstr ""
 
 msgid "X (Twitter)"
@@ -1105,7 +1437,13 @@ msgstr ""
 msgid "X developer portal"
 msgstr ""
 
+msgid "X usually does not return an email: a site-local account is created from the X user id and reused on later logins."
+msgstr ""
+
 msgid "You already have a profile picture. It is shown below. Choose a new file only if you want to replace it. Leave the file field empty to keep this one."
+msgstr ""
+
+msgid "You are not allowed to do this."
 msgstr ""
 
 msgid "You are now logged out."
@@ -1118,6 +1456,9 @@ msgid "You do not have permission to view this content."
 msgstr ""
 
 msgid "Your Data Request"
+msgstr ""
+
+msgid "Your old Theme My Login setup is safe."
 msgstr ""
 
 msgid "Your password has been reset."
@@ -1135,7 +1476,7 @@ msgstr ""
 msgid "installed, not active"
 msgstr ""
 
-msgid "reCAPTCHA"
+msgid "reCAPTCHA v3 min score"
 msgstr ""
 
 msgid "shortcode"
@@ -1144,285 +1485,230 @@ msgstr ""
 msgid "slug"
 msgstr ""
 
-msgid "Enabled modules"
-msgstr ""
-
-msgid "Your old Theme My Login setup is safe."
-msgstr ""
-
-msgid "Import only copies the free settings into this plugin. It does not delete them, it does not change Theme My Login, and it does not turn that plugin off. The original options stay in the database."
-msgstr ""
-
-msgid "What is copied"
-msgstr ""
-
-msgid "Whether login, registration and password forms update without reloading the page (AJAX)."
-msgstr ""
-
-msgid "What visitors may type to log in: username, email, or both."
-msgstr ""
-
-msgid "Whether registration asks for username and email, or email only."
-msgstr ""
-
-msgid "Whether new users choose their own password, or WordPress emails a generated one."
-msgstr ""
-
-msgid "Whether a new account is signed in immediately after registration."
-msgstr ""
-
-msgid "The address slugs for login, logout, register, lost password, reset password, dashboard and confirm-action."
-msgstr ""
-
-msgid "Extensions, email designs, widgets, menus and the WordPress pages Theme My Login created are not copied. Those pages can be moved to the trash; the addresses keep working here as virtual pages. The shortcode [theme-my-login] already works with this plugin."
-msgstr ""
-
-msgid "When to deactivate Theme My Login"
-msgstr ""
-
-msgid "Either moment works for the copy. The saved options remain if Theme My Login is still active and also if you already deactivated it. Leave it active until you have opened the new addresses and they look right, then deactivate it. If both plugins stay active they can fight over the same login addresses."
-msgstr ""
-
-msgid "After the import"
-msgstr ""
-
-msgid "Keep friendly permalinks (not Plain). Use the check below."
-msgstr ""
-
-msgid "Move the old Theme My Login pages to the trash if they are listed below. This plugin already serves those addresses."
-msgstr ""
-
-msgid "Open each virtual URL from Core → URL slugs and confirm the form loads."
-msgstr ""
-
-msgid "Update menus and links that still point at the old pages."
-msgstr ""
-
-msgid "Deactivate Theme My Login."
-msgstr ""
-
-msgid "Friendly addresses work only when Permalinks is not Plain. The check is on the Migration tab."
-msgstr ""
-
-msgid "Friendly URL check finished: WordPress is using Plain permalinks. Set Permalinks to Post name (/%postname%/)."
-msgstr ""
-
-msgid "0 keeps the default (~448px). Allowed range 200–1200."
-msgstr ""
-
-msgid "<strong>Error:</strong> %s is required."
-msgstr ""
-
-msgid "<strong>Error:</strong> %s must be a valid email address."
-msgstr ""
-
-msgid "Add a row per field: a machine key (letters/numbers), a label, type, and whether it appears on register and/or profile."
-msgstr ""
-
-msgid "Add extra fields to registration and/or the frontend profile (name, phone, URL, custom meta)."
-msgstr ""
-
-msgid "Added to the outer .tsolo wrapper so your theme or custom CSS can target these forms. Up to five class names."
-msgstr ""
-
-msgid "An account with this email already exists. Log in with your password, then link this provider from your profile."
-msgstr ""
-
-msgid "Biographical info"
-msgstr ""
-
-msgid "Checkbox checked by default"
-msgstr ""
-
-msgid "Checkbox label"
-msgstr ""
-
-msgid "Choose a provider below. For Google, open https://www.google.com/recaptcha/admin and create a v2 checkbox or v3 key. For Turnstile, open the Cloudflare Turnstile dashboard."
-msgstr ""
-
-msgid "Cloudflare Turnstile"
-msgstr ""
-
-msgid "Connect %s"
-msgstr ""
-
-msgid "Create a Project and App with OAuth 2.0 (confidential client) enabled. PKCE is handled automatically."
-msgstr ""
-
-msgid "Custom Fields"
-msgstr ""
-
-msgid "Default role"
-msgstr ""
-
-msgid "Disconnect"
-msgstr ""
-
-msgid "Do not enable together with CleanTalk, Kadence captcha, or another captcha on the same forms (double challenges / failed verifies)."
-msgstr ""
-
-msgid "Empty key rows are ignored. Use map to write into WordPress user fields; leave map empty for custom meta."
-msgstr ""
-
-msgid "Extra CSS class"
-msgstr ""
-
-msgid "First name"
-msgstr ""
-
-msgid "Form branding"
-msgstr ""
-
-msgid "Form max width (px)"
-msgstr ""
-
-msgid "Form texts"
-msgstr ""
-
-msgid "Google reCAPTCHA"
-msgstr ""
-
-msgid "Google reCAPTCHA v2 (checkbox)"
-msgstr ""
-
-msgid "Google reCAPTCHA v3 (invisible score)"
-msgstr ""
-
-msgid "If the social email matches an existing user, sign into that account (do not create a duplicate)"
-msgstr ""
-
-msgid "Key"
-msgstr ""
-
-msgid "Label"
-msgstr ""
-
-msgid "Last name"
-msgstr ""
-
-msgid "Leave a field empty to keep the built-in label. These strings only change this plugin’s frontend forms."
-msgstr ""
-
-msgid "Link existing accounts"
-msgstr ""
-
-msgid "Linked to %s."
-msgstr ""
-
-msgid "Login button"
-msgstr ""
-
-msgid "Login heading"
-msgstr ""
-
-msgid "Logo URL"
-msgstr ""
-
-msgid "Lost password button"
-msgstr ""
-
-msgid "Lost password heading"
-msgstr ""
-
-msgid "Map"
-msgstr ""
-
-msgid "Map can store into WordPress first name, last name, biographical info or website. Leave map empty to store as user meta (tsolo_cf_…)."
-msgstr ""
-
-msgid "Only used with v3. 0.0 is permissive; 1.0 is strict. Default 0.5."
-msgstr ""
-
-msgid "Optional image shown above login, register and password forms. Use a full https:// URL (Media Library → copy file URL)."
-msgstr ""
-
-msgid "Other registration-form plugins that also inject fields may show duplicates."
-msgstr ""
-
-msgid "Paste the site key and the secret key, then save. Empty keys mean the check stays off. Do not enable more than one captcha plugin on the same forms."
-msgstr ""
-
-msgid "Pick a provider, create keys for your domain, then paste both values here."
-msgstr ""
-
-msgid "Pre-check the newsletter box (only when the checkbox is shown)"
-msgstr ""
-
-msgid "Private key used server-side to verify tokens. Leave empty and keep the module off if another captcha plugin already protects forms."
-msgstr ""
-
-msgid "Profile fields need the Profiles module enabled. Registration fields work on their own."
-msgstr ""
-
-msgid "Protect login and registration forms with Google reCAPTCHA v2/v3 or Cloudflare Turnstile (needs site and secret keys)."
-msgstr ""
-
-msgid "Provider"
-msgstr ""
-
-msgid "Public key from the provider console."
-msgstr ""
-
-msgid "Register button"
-msgstr ""
-
-msgid "Register heading"
-msgstr ""
-
-msgid "Registration “password by email” note"
-msgstr ""
-
-msgid "Required"
-msgstr ""
-
-msgid "Reset password button"
-msgstr ""
-
-msgid "Role assigned to new accounts on registration. Same as Settings → General → New User Default Role."
-msgstr ""
-
-msgid "Sends visitor IP and token to Google or Cloudflare for verification when forms are submitted (see readme External services)."
-msgstr ""
-
-msgid "Social account linked."
-msgstr ""
-
-msgid "Social accounts"
-msgstr ""
-
-msgid "Text shown next to the newsletter checkbox on the registration form."
-msgstr ""
-
-msgid "This site is protected by reCAPTCHA."
-msgstr ""
-
-msgid "This social account is already linked to another user."
-msgstr ""
-
-msgid "To add more fields, fill the empty rows and save, then reopen this tab for new blank rows."
-msgstr ""
-
-msgid "Type"
-msgstr ""
-
-msgid "Website"
-msgstr ""
-
-msgid "When off, matching emails show an error asking the person to log in first and connect the provider from their profile. Google linking also requires a verified email from Google. New social sign-ups still respect “Anyone can register”. Accounts with two-factor enabled cannot complete social login (password + app code required)."
-msgstr ""
-
-msgid "When this is off, every new registrant is subscribed automatically (only if API key and list ID are set)."
-msgstr ""
-
-msgid "With “Link existing accounts” on (default), a returning social login that shares an email with an existing user signs into that account instead of creating a second one. Logged-in users can also connect or disconnect providers from their profile page."
-msgstr ""
-
-msgid "X usually does not return an email: a site-local account is created from the X user id and reused on later logins."
-msgstr ""
-
-msgid "reCAPTCHA v3 min score"
-msgstr ""
-
 msgid "— Custom meta —"
 msgstr ""
 
+
+#: auto-added
+msgid ""
+"Please confirm your email by visiting:\n"
+"\n"
+"%s"
+msgstr ""
+
+#: auto-added
+msgid "Virtual sign-in URL (example: yoursite.com/login/)."
+msgstr ""
+
+#: auto-added
+msgid "Virtual logout URL (menus and links)."
+msgstr ""
+
+#: auto-added
+msgid ""
+"Virtual registration URL.\n"
+"Only if \"Anyone can register\" is on."
+msgstr ""
+
+#: auto-added
+msgid "Virtual frontend profile URL."
+msgstr ""
+
+#: auto-added
+msgid "Virtual favorites URL."
+msgstr ""
+
+#: auto-added
+msgid ""
+"Enabled: the visitor stays on the same screen and only the form updates (AJAX).\n"
+"Disabled: the browser reloads the page. Turn it off if another plugin already updates these forms in place."
+msgstr ""
+
+#: auto-added
+msgid "Optional. These replace the heading above each form and the submit button label on this plugin’s login, register, lost-password and reset-password pages (not wp-admin). Leave a box empty to keep the built-in text."
+msgstr ""
+
+#: auto-added
+msgid "Disabled"
+msgstr ""
+
+#: auto-added
+msgid "Paste a shortcode into a post or page. Block editor: Shortcode block. Classic editor: paste in the text. Content between the tags is shown or hidden; text outside stays visible to everyone. Menus and widgets ignore these unless they run shortcodes."
+msgstr ""
+
+#: auto-added
+msgid "How redirects work"
+msgstr ""
+
+#: auto-added
+msgid "Write a full URL: https:// plus your domain and path (example below). A path alone such as /shop/ is not accepted."
+msgstr ""
+
+#: auto-added
+msgid "Leave a box empty to keep the WordPress default for that case."
+msgstr ""
+
+#: auto-added
+msgid "Default applies to every role that has no box of its own. A role box overrides Default only for that role."
+msgstr ""
+
+#: auto-added
+msgid "Examples with this site"
+msgstr ""
+
+#: auto-added
+msgid "After login → Default: %s (everyone with no role-specific URL)."
+msgstr ""
+
+#: auto-added
+msgid "After login → Subscriber: %s (only subscribers; they ignore Default)."
+msgstr ""
+
+#: auto-added
+msgid "After login → Administrator: %s — or leave empty so admins follow Default."
+msgstr ""
+
+#: auto-added
+msgid "After logout → Default: %s"
+msgstr ""
+
+#: auto-added
+msgid "After registration → Default: %s"
+msgstr ""
+
+#: auto-added
+msgid "Custom picture uploaded (shown above). Choose a new file only to replace it. Leave the file field empty to keep this one."
+msgstr ""
+
+#: auto-added
+msgid "No custom picture uploaded yet. The preview above is Gravatar or the site default. Upload a file below to replace it on this site."
+msgstr ""
+
+#: auto-added
+msgid "Day mode"
+msgstr ""
+
+#: auto-added
+msgid "Night mode"
+msgstr ""
+
+#: auto-added
+msgid "Auto mode"
+msgstr ""
+
+#: auto-added
+msgid "Follows sunrise and sunset (changes with the seasons)"
+msgstr ""
+
+#: auto-added
+msgid "☕ Support this plugin"
+msgstr ""
+
+#: auto-added
+msgid "Interface language"
+msgstr ""
+
+#: auto-added
+msgid "This notification was sent by %1$s on %2$s."
+msgstr ""
+
+#: auto-added
+msgid "Welcome to your new account"
+msgstr ""
+
+#: auto-added
+msgid "Set your password"
+msgstr ""
+
+#: auto-added
+msgid "New user registration"
+msgstr ""
+
+#: auto-added
+msgid "Password reset request"
+msgstr ""
+
+#: auto-added
+msgid "Your password was changed"
+msgstr ""
+
+#: auto-added
+msgid "Your email address was changed"
+msgstr ""
+
+#: auto-added
+msgid "Password changed"
+msgstr ""
+
+#: auto-added
+msgid "Confirm email"
+msgstr ""
+
+msgid "<strong>Error:</strong> Enter your current password to change your email or password, or to turn two-factor off."
+msgstr ""
+
+msgid "Current password"
+msgstr ""
+
+msgid "Needed only to change your email or password, or to turn two-factor off."
+msgstr ""
+
+msgid "<strong>Error:</strong> Too many wrong two-factor codes. Please try again in a few minutes."
+msgstr ""
+
+msgid "<strong>Error:</strong> This account uses two-factor authentication. Use an application password for XML-RPC."
+msgstr ""
+
+msgid "<strong>Error:</strong> The social login was cancelled or not allowed by the provider."
+msgstr ""
+
+msgid "<strong>Error:</strong> This confirmation link is invalid or has already been used."
+msgstr ""
+
+msgid "<strong>Error:</strong> This confirmation link has expired. We have sent you a new one."
+msgstr ""
+
+msgid "Always allowed IPs"
+msgstr ""
+
+msgid "An administrator approved your account. You can now log in."
+msgstr ""
+
+msgid "Behind Cloudflare or another proxy every visitor can look like the same IP, so one attacker could lock everyone out. Pick the header your proxy sets. Only choose a header your server really overwrites."
+msgstr ""
+
+msgid "Cloudflare (CF-Connecting-IP)"
+msgstr ""
+
+msgid "Delete all plugin data when the plugin is deleted"
+msgstr ""
+
+msgid "Detected IP for your current request: %s"
+msgstr ""
+
+msgid "For security, administrator accounts cannot be linked by email. Log in with your password and link the provider from your profile."
+msgstr ""
+
+msgid "One IP or IPv4 range (example 203.0.113.0/24) per line. These IPs are never locked out. Add your own IP here."
+msgstr ""
+
+msgid "Plugin data"
+msgstr ""
+
+msgid "Server address (REMOTE_ADDR) — default"
+msgstr ""
+
+msgid "Settings, two-factor keys, linked social accounts, avatars and favorites. Leave unchecked to keep them if you reinstall."
+msgstr ""
+
+msgid "Visitor IP source"
+msgstr ""
+
+msgid "X-Forwarded-For (first address)"
+msgstr ""
+
+msgid "X-Real-IP"
+msgstr ""
+
+msgid "Your account has been approved"
+msgstr ""
