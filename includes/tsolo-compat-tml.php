@@ -603,9 +603,3 @@ function tsolo_tml_pending_module_hints() {
 	return $out;
 }
 
-/**
- * Clear stored TML module enable hints.
- */
-function tsolo_tml_clear_module_hints() {
-	delete_option( TSOLO_OPT_TML_MODULE_HINTS );
-}
