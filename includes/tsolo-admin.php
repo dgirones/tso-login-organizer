@@ -680,7 +680,7 @@ function tsolo_admin_render_page() {
 			</div>
 		</div>
 		<p class="description"><?php esc_html_e( 'Frontend login, registration and account pages. Optional modules add redirection, moderation, security and more.', 'tso-login-organizer' ); ?></p>
-		<nav class="nav-tab-wrapper tsolo-nav-tabs tsolo-nav-primary" style="display:flex;flex-wrap:nowrap;clear:both;width:100%;float:none;" aria-label="<?php esc_attr_e( 'Plugin sections', 'tso-login-organizer' ); ?>">
+		<nav class="nav-tab-wrapper tsolo-nav-tabs tsolo-nav-primary" aria-label="<?php esc_attr_e( 'Plugin sections', 'tso-login-organizer' ); ?>">
 			<a class="nav-tab <?php echo 'core' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( tsolo_admin_page_url( array( 'tab' => 'core' ) ) ); ?>" data-tsolo-tab="core"><?php esc_html_e( 'Core', 'tso-login-organizer' ); ?></a>
 			<a class="nav-tab <?php echo 'modules' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( tsolo_admin_page_url( array( 'tab' => 'modules' ) ) ); ?>" data-tsolo-tab="modules"><?php esc_html_e( 'Modules', 'tso-login-organizer' ); ?></a>
 			<a class="nav-tab <?php echo 'migrate' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( tsolo_admin_page_url( array( 'tab' => 'migrate' ) ) ); ?>" data-tsolo-tab="migrate"><?php esc_html_e( 'Migration', 'tso-login-organizer' ); ?></a>
@@ -694,7 +694,7 @@ function tsolo_admin_render_page() {
 		}
 		if ( $tsolo_enabled_modules ) :
 			?>
-		<nav class="nav-tab-wrapper tsolo-nav-tabs tsolo-nav-modules" style="display:flex;flex-wrap:wrap;clear:both;width:100%;float:none;" aria-label="<?php esc_attr_e( 'Enabled modules', 'tso-login-organizer' ); ?>">
+		<nav class="nav-tab-wrapper tsolo-nav-tabs tsolo-nav-modules" aria-label="<?php esc_attr_e( 'Enabled modules', 'tso-login-organizer' ); ?>">
 			<?php foreach ( $tsolo_enabled_modules as $key => $def ) : ?>
 				<a class="nav-tab <?php echo $tab === $key ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( tsolo_admin_page_url( array( 'tab' => $key ) ) ); ?>" data-tsolo-tab="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $def['label'] ); ?></a>
 			<?php endforeach; ?>
@@ -1446,14 +1446,14 @@ function tsolo_admin_render_fields_settings() {
 	echo '</tr></thead><tbody>';
 	foreach ( $fields as $i => $field ) {
 		echo '<tr>';
-		echo '<td class="tsolo-fields-col-key"><input class="regular-text" type="text" name="mod_fields[' . esc_attr( (string) $i ) . '][key]" value="' . esc_attr( $field['key'] ) . '" placeholder="phone" /></td>';
-		echo '<td class="tsolo-fields-col-label"><input class="regular-text" type="text" name="mod_fields[' . esc_attr( (string) $i ) . '][label]" value="' . esc_attr( $field['label'] ) . '" /></td>';
-		echo '<td class="tsolo-fields-col-type"><select name="mod_fields[' . esc_attr( (string) $i ) . '][type]">';
+		echo '<td class="tsolo-fields-col-key" data-label="' . esc_attr__( 'Key', 'tso-login-organizer' ) . '"><input class="regular-text" type="text" name="mod_fields[' . esc_attr( (string) $i ) . '][key]" value="' . esc_attr( $field['key'] ) . '" placeholder="phone" /></td>';
+		echo '<td class="tsolo-fields-col-label" data-label="' . esc_attr__( 'Label', 'tso-login-organizer' ) . '"><input class="regular-text" type="text" name="mod_fields[' . esc_attr( (string) $i ) . '][label]" value="' . esc_attr( $field['label'] ) . '" /></td>';
+		echo '<td class="tsolo-fields-col-type" data-label="' . esc_attr__( 'Type', 'tso-login-organizer' ) . '"><select name="mod_fields[' . esc_attr( (string) $i ) . '][type]">';
 		foreach ( TSOLO_Mod_Fields::allowed_types() as $type ) {
 			echo '<option value="' . esc_attr( $type ) . '" ' . selected( $field['type'], $type, false ) . '>' . esc_html( $type ) . '</option>';
 		}
 		echo '</select></td>';
-		echo '<td class="tsolo-fields-col-map"><select name="mod_fields[' . esc_attr( (string) $i ) . '][map]">';
+		echo '<td class="tsolo-fields-col-map" data-label="' . esc_attr__( 'Map', 'tso-login-organizer' ) . '"><select name="mod_fields[' . esc_attr( (string) $i ) . '][map]">';
 		$maps = array(
 			''            => __( '— Custom meta —', 'tso-login-organizer' ),
 			'first_name'  => __( 'First name', 'tso-login-organizer' ),
@@ -1465,9 +1465,9 @@ function tsolo_admin_render_fields_settings() {
 			echo '<option value="' . esc_attr( $map ) . '" ' . selected( $field['map'], $map, false ) . '>' . esc_html( $label ) . '</option>';
 		}
 		echo '</select></td>';
-		echo '<td class="tsolo-fields-col-check"><input type="checkbox" name="mod_fields[' . esc_attr( (string) $i ) . '][required]" value="1" ' . checked( ! empty( $field['required'] ), true, false ) . ' /></td>';
-		echo '<td class="tsolo-fields-col-check"><input type="checkbox" name="mod_fields[' . esc_attr( (string) $i ) . '][register]" value="1" ' . checked( ! empty( $field['register'] ), true, false ) . ' /></td>';
-		echo '<td class="tsolo-fields-col-check"><input type="checkbox" name="mod_fields[' . esc_attr( (string) $i ) . '][profile]" value="1" ' . checked( ! empty( $field['profile'] ), true, false ) . ' /></td>';
+		echo '<td class="tsolo-fields-col-check" data-label="' . esc_attr__( 'Required', 'tso-login-organizer' ) . '"><input type="checkbox" name="mod_fields[' . esc_attr( (string) $i ) . '][required]" value="1" ' . checked( ! empty( $field['required'] ), true, false ) . ' /></td>';
+		echo '<td class="tsolo-fields-col-check" data-label="' . esc_attr__( 'Register', 'tso-login-organizer' ) . '"><input type="checkbox" name="mod_fields[' . esc_attr( (string) $i ) . '][register]" value="1" ' . checked( ! empty( $field['register'] ), true, false ) . ' /></td>';
+		echo '<td class="tsolo-fields-col-check" data-label="' . esc_attr__( 'Profile', 'tso-login-organizer' ) . '"><input type="checkbox" name="mod_fields[' . esc_attr( (string) $i ) . '][profile]" value="1" ' . checked( ! empty( $field['profile'] ), true, false ) . ' /></td>';
 		echo '</tr>';
 	}
 	echo '</tbody></table>';

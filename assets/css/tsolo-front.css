@@ -344,6 +344,23 @@
 		min-height: 2.85rem;
 	}
 
+	/* Widget/dashboard blocks sit inside a theme sidebar: no floating-menu gutter. */
+	.widget .tsolo,
+	.widget_tsolo_login_organizer .tsolo {
+		padding-bottom: 0;
+	}
+
+	.tsolo-backup-codes {
+		padding-left: 1.25rem;
+		overflow-wrap: anywhere;
+		word-break: break-all;
+	}
+
+	.tsolo-social .tsolo-social-btn,
+	.tsolo-social a {
+		min-height: 2.85rem;
+	}
+
 	.tsolo-dashboard .tsolo-links a {
 		min-height: 0;
 		padding: 0.35rem 0.55rem;
