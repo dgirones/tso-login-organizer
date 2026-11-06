@@ -5,7 +5,7 @@ Tags: login, registration, frontend login, authentication, 2fa
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -100,6 +100,10 @@ Only the administrator’s interface language preference (Catalan, Spanish, or E
 6. Modules tab: every optional module (redirection, moderation, restrictions, security, captcha, custom fields, profiles and more) can be turned on or off.
 
 == Changelog ==
+
+= 1.0.2 =
+* Admin: fixed mobile layout overflows (custom fields table, redirection and social login tabs, help boxes, header and tabs).
+* Front: widgets no longer get extra bottom spacing on mobile, 2FA backup codes wrap and social buttons are easier to tap.
 
 = 1.0.1 =
 * Two-factor: wrong codes are limited, a code cannot be reused, XML-RPC needs an application password and the code field also shows on wp-login.php.
