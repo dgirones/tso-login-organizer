@@ -652,7 +652,8 @@
 }
 
 .tsolo-admin-wrap .tsolo-provider-card {
-	max-width: 48rem;
+	box-sizing: border-box;
+	max-width: min(48rem, 100%);
 	margin: 0 0 1.25rem;
 	padding: 0.85rem 1rem 1rem;
 	background: #fff;
@@ -678,6 +679,8 @@
 
 .tsolo-admin-wrap .tsolo-howto,
 .tsolo-admin-wrap .tsolo-compat {
+	box-sizing: border-box;
+	max-width: 100%;
 	margin: 0.75rem 0;
 	padding: 0.75rem 1rem;
 	background: #fff;
@@ -765,6 +768,45 @@
 }
 
 @media screen and (max-width: 782px) {
+	/* Long URLs / keys in help text, list items and labels must wrap, not push the page wider. */
+	.tsolo-admin-wrap p,
+	.tsolo-admin-wrap li,
+	.tsolo-admin-wrap label,
+	.tsolo-admin-wrap th,
+	.tsolo-admin-wrap td,
+	.tsolo-admin-wrap h2,
+	.tsolo-admin-wrap h3,
+	.tsolo-admin-wrap .description,
+	.tsolo-admin-wrap .notice {
+		overflow-wrap: anywhere;
+		word-break: break-word;
+		max-width: 100%;
+	}
+
+	.tsolo-admin-wrap code,
+	.tsolo-admin-wrap .tsolo-slug-preview a {
+		white-space: normal;
+		overflow-wrap: anywhere;
+		word-break: break-all;
+	}
+
+	.tsolo-admin-wrap .tsolo-howto.tsolo-help-fullwidth,
+	.tsolo-admin-wrap .tsolo-option-help,
+	.tsolo-admin-wrap .tsolo-virtual-pages-notice,
+	.tsolo-admin-wrap .tsolo-permalink-status {
+		max-width: 100%;
+	}
+
+	.tsolo-admin-wrap .tsolo-redirect-howto {
+		margin-left: 1rem;
+		padding-left: 0.5rem;
+	}
+
+	.tsolo-admin-wrap .tsolo-redir-grid,
+	.tsolo-admin-wrap .tsolo-social-grid {
+		max-width: 100%;
+	}
+
 	.tsolo-admin-wrap .tsolo-redir-grid p,
 	.tsolo-admin-wrap .tsolo-social-grid p {
 		grid-template-columns: minmax(0, 1fr);
