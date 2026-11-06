@@ -271,6 +271,132 @@
 
 	.tsolo-admin-wrap .tsolo-nav-primary {
 		flex-wrap: wrap;
+		gap: 0.35rem 0;
+	}
+
+	.tsolo-admin-wrap .tsolo-nav-tabs .nav-tab {
+		margin-left: 0;
+		margin-right: 0.35rem;
+		margin-bottom: 0.35rem;
+		max-width: 100%;
+		overflow-wrap: anywhere;
+	}
+
+	.tsolo-admin-wrap .tsolo-nav-primary .nav-tab {
+		margin-bottom: 0;
+		border-radius: 8px;
+	}
+
+	.tsolo-admin-wrap .tsolo-tab-panels,
+	.tsolo-admin-wrap .tsolo-tab-panel.is-active {
+		min-height: 0;
+	}
+
+	.tsolo-admin-wrap .tsolo-donate-btn,
+	.tsolo-admin-wrap .tsolo-theme-btn {
+		min-height: 32px;
+		justify-content: center;
+	}
+
+	.tsolo-admin-wrap .tsolo-nav-meta {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.tsolo-admin-wrap .tsolo-lang-switch {
+		flex-wrap: wrap;
+	}
+
+	.tsolo-admin-wrap .tsolo-module-list .tsolo-module-row th {
+		width: auto;
+	}
+
+	.tsolo-admin-wrap .form-table input.regular-text,
+	.tsolo-admin-wrap .form-table input.large-text,
+	.tsolo-admin-wrap .form-table textarea.large-text,
+	.tsolo-admin-wrap .form-table select {
+		max-width: 100%;
+	}
+
+	.tsolo-admin-wrap .tsolo-howto,
+	.tsolo-admin-wrap .tsolo-compat,
+	.tsolo-admin-wrap .tsolo-provider-card {
+		padding: 0.65rem 0.75rem;
+		overflow-wrap: anywhere;
+	}
+
+	.tsolo-admin-wrap .tsolo-slugs-howto,
+	.tsolo-admin-wrap .tsolo-redirect-howto {
+		margin-left: 1rem;
+	}
+
+	.tsolo-admin-wrap .tsolo-redir-grid input,
+	.tsolo-admin-wrap .tsolo-social-grid input {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.tsolo-admin-wrap .tsolo-shortcode-example,
+	.tsolo-admin-wrap .tsolo-callback-uri {
+		max-width: 100%;
+		overflow-wrap: anywhere;
+		box-sizing: border-box;
+	}
+
+	/* Custom fields table: one card per row instead of 7 squeezed columns. */
+	.tsolo-admin-wrap .tsolo-fields-table {
+		table-layout: auto;
+		border: 0;
+		background: transparent;
+	}
+
+	.tsolo-admin-wrap .tsolo-fields-table thead {
+		display: none;
+	}
+
+	.tsolo-admin-wrap .tsolo-fields-table,
+	.tsolo-admin-wrap .tsolo-fields-table tbody,
+	.tsolo-admin-wrap .tsolo-fields-table tr,
+	.tsolo-admin-wrap .tsolo-fields-table td {
+		display: block;
+		width: 100% !important;
+		box-sizing: border-box;
+	}
+
+	.tsolo-admin-wrap .tsolo-fields-table tr {
+		margin: 0 0 0.75rem;
+		padding: 0.75rem 0.85rem;
+		border: 1px solid #c3c4c7;
+		background: #fff;
+	}
+
+	.tsolo-admin-wrap .tsolo-fields-table td {
+		border: 0;
+		padding: 0.4rem 0;
+		text-align: left;
+	}
+
+	.tsolo-admin-wrap .tsolo-fields-table td::before {
+		content: attr(data-label);
+		display: block;
+		margin-bottom: 0.2rem;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		color: #646970;
+	}
+
+	.tsolo-admin-wrap .tsolo-fields-table td.tsolo-fields-col-check {
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.tsolo-admin-wrap .tsolo-fields-table td.tsolo-fields-col-check::before {
+		margin: 0;
 	}
 }
 
@@ -639,6 +765,11 @@
 }
 
 @media screen and (max-width: 782px) {
+	.tsolo-admin-wrap .tsolo-redir-grid p,
+	.tsolo-admin-wrap .tsolo-social-grid p {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
 	.tsolo-admin-wrap .tsolo-slugs-table {
 		table-layout: auto;
 		border: 0;
@@ -1031,11 +1162,13 @@ html[data-tsolo-theme="night"] #screen-meta-links .show-settings {
 }
 
 @media screen and (max-width: 782px) {
+	html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-fields-table tr,
 	html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slugs-table tr {
 		background: var(--tsolo-surface);
 		border-color: var(--tsolo-border);
 	}
 
+	html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-fields-table td::before,
 	html[data-tsolo-theme="night"] .tsolo-admin-wrap .tsolo-slugs-table td::before {
 		color: var(--tsolo-muted);
 	}
