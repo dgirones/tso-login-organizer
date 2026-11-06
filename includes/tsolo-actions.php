@@ -143,25 +143,6 @@ function tsolo_get_action_url( $action = '', $scheme = 'login' ) {
 }
 
 /**
- * Find WP page matching action slug (legacy TML pages; not required for front-end).
- *
- * @param string $action Action.
- * @return WP_Post|false
- */
-function tsolo_action_has_page( $action = '' ) {
-	$obj = tsolo_get_action( $action );
-	if ( ! $obj ) {
-		return false;
-	}
-	$pages    = tsolo_get_wp_pages_matching_slugs();
-	$filtered = wp_list_filter( $pages, array( 'post_name' => $obj->get_slug() ) );
-	if ( $filtered ) {
-		return reset( $filtered );
-	}
-	return false;
-}
-
-/**
  * WordPress pages left over from Theme My Login / login forms.
  *
  * Detects by: current + known TML slugs, TML option page IDs, and pages whose

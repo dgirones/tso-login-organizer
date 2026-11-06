@@ -137,15 +137,6 @@ class TSOLO_Action {
 	}
 
 	/**
-	 * Set title.
-	 *
-	 * @param string $title Title.
-	 */
-	public function set_title( $title ) {
-		$this->title = $title;
-	}
-
-	/**
 	 * Get slug.
 	 *
 	 * @return string

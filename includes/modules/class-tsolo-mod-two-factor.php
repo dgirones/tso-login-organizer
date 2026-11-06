@@ -229,13 +229,6 @@ class TSOLO_Mod_Two_Factor {
 	}
 
 	/**
-	 * Forget users verified earlier in this request (used by tests and long-running processes).
-	 */
-	public static function reset_verified_cache() {
-		self::$verified = array();
-	}
-
-	/**
 	 * Accept a TOTP code once: a time step that was already used is rejected.
 	 *
 	 * @param int      $user_id User ID.
